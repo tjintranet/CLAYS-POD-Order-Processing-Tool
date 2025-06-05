@@ -2,6 +2,8 @@
 
 A web-based application for processing print-on-demand orders for Clays Ltd, designed to streamline the conversion of Excel order files into CSV format suitable for POD fulfillment.
 
+https://tjintranet.github.io/CLAYS-POD-Order-Processing-Tool/
+
 ## Overview
 
 This tool allows users to upload Excel files containing book orders, validate them against available inventory, and generate properly formatted CSV files for Clays POD processing. The application provides real-time validation, order management, and export capabilities.
@@ -36,9 +38,8 @@ project-root/
    ```json
    [
      {
-       "code": "9781234567890",
-       "description": "Book Title",
-       "setupdate": "2024-01-01"
+       "code": 9781234567890,
+       "description": "Book Title"
      }
    ]
    ```
