@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLAYS POD Order Processing Tool</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Required libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+</head>
+<body class="bg-light">
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">CLAYS POD Order Processing Tool</h4>
+                        <div>
+                            <button class="btn btn-outline-light me-2" onclick="clearAll()" id="clearBtn" disabled>
+                                Clear All
+                            </button>
+                            <button class="btn btn-outline-light" onclick="downloadCsv()" id="downloadBtn" disabled>
+                                Download CSV
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-4">
+                            <!-- Order Processing Card -->
+                            <div class="col-12">
+                                <div class="card h-100 shadow-sm">
+                                    <div class="card-header bg-light">
+                                        <h5 class="card-title mb-0">Order Processing - Clays POD</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="orderRef" class="form-label">Order Reference (required)</label>
+                                            <input type="text" class="form-control" id="orderRef" placeholder="Enter order reference">
+                                            <div class="order-ref-warning" id="orderRefWarning">Please enter an order reference</div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="excelFile" class="form-label">Upload Excel Order File</label>
+                                            <input type="file" class="form-control" id="excelFile" accept=".xlsx,.xls">
+                                        </div>
+                                        <div class="mb-3">
+                                            <button type="button" class="btn btn-secondary w-100" onclick="downloadTemplate()">
+                                                <i class="fas fa-download"></i> Download Template
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="alert alert-info mt-md-4" id="status" style="display: none;"></div>
+                        </div>
+
+                        <!-- Preview Table -->
+                        <div class="mb-3 d-flex gap-2">
+                        <button class="btn btn-danger" onclick="deleteSelected()" id="deleteSelectedBtn" disabled>
+                        <i class="fas fa-trash"></i> Delete Selected Rows
+                        </button>
+                        <button class="btn btn-secondary" onclick="copyTableToClipboard()" id="copyBtn" disabled>
+                        <i class="fas fa-copy"></i> Copy to Clipboard
+                        </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover" id="previewTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>
+                                            <input type="checkbox" id="selectAll" onclick="toggleAllCheckboxes()">
+                                        </th>
+                                        <th>Action</th>
+                                        <th>Line No</th>
+                                        <th>ISBN</th>
+                                        <th>Description</th>
+                                        <th>Quantity</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="previewBody">
+                                    <tr>
+                                        <td colspan="7" class="text-center">No data loaded</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
