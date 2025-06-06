@@ -2,6 +2,17 @@
 let booksData = [];
 let processedOrders = [];
 
+// Security configuration
+const SECURITY_CONFIG = {
+    maxFileSize: 10 * 1024 * 1024, // 10MB
+    allowedMimeTypes: [
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.ms-excel'
+    ],
+    maxDescriptionLength: 200,
+    enableDebugLogging: false // PRODUCTION: Set to false for production deployment
+};
+
 // Hardcoded Clays POD configuration
 const customerConfig = {
     "name": "Clays Ltd",
@@ -25,37 +36,92 @@ const customerConfig = {
     }
 };
 
+// Security helper functions
+function sanitizeText(text) {
+    if (typeof text !== 'string') return '';
+    
+    // Remove potentially dangerous characters and limit length
+    return text.replace(/[<>'"&]/g, '')
+               .substring(0, SECURITY_CONFIG.maxDescriptionLength)
+               .trim();
+}
+
+function validateFile(file) {
+    if (!file) {
+        throw new Error('No file provided');
+    }
+    
+    // Check file size
+    if (file.size > SECURITY_CONFIG.maxFileSize) {
+        throw new Error(`File size exceeds limit of ${SECURITY_CONFIG.maxFileSize / (1024 * 1024)}MB`);
+    }
+    
+    // Check file type
+    if (!SECURITY_CONFIG.allowedMimeTypes.includes(file.type)) {
+        throw new Error('Invalid file type. Only Excel files (.xlsx, .xls) are allowed');
+    }
+    
+    // Check file extension as additional validation
+    const fileName = file.name.toLowerCase();
+    if (!fileName.endsWith('.xlsx') && !fileName.endsWith('.xls')) {
+        throw new Error('Invalid file extension. Only .xlsx and .xls files are allowed');
+    }
+    
+    return true;
+}
+
+function secureLog(message, data = null) {
+    if (SECURITY_CONFIG.enableDebugLogging) {
+        console.log(message, data);
+    }
+}
+
+function validateISBN(isbn) {
+    if (typeof isbn !== 'string') return false;
+    
+    // Remove all non-digits
+    const cleanISBN = isbn.replace(/\D/g, '');
+    
+    // Check if it's a valid length (10 or 13 digits)
+    return cleanISBN.length >= 10 && cleanISBN.length <= 13;
+}
+
+function validateQuantity(qty) {
+    const quantity = parseInt(qty);
+    return !isNaN(quantity) && quantity > 0 && quantity <= 10000; // Reasonable upper limit
+}
+
 async function fetchData() {
     try {
-        console.log('Attempting to fetch data.json...');
+        secureLog('Attempting to fetch data.json...');
         const response = await fetch('data.json');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const rawData = await response.json();
-        console.log('Raw data loaded:', rawData);
+        secureLog('Raw data loaded:', rawData);
         
-        // Process and normalize the data
+        // Process and normalize the data with security checks
         booksData = rawData.map(item => {
             // Convert numeric codes to strings and pad to 13 digits
             const code = String(item.code).padStart(13, '0');
             
+            // Sanitize description
+            const description = sanitizeText(item.description || 'No description available');
+            
             return {
                 code: code,
-                description: item.description || 'No description available',
-                setupdate: item.setupdate || '' // Default to empty string if not provided
+                description: description,
+                setupdate: sanitizeText(item.setupdate || '')
             };
         });
         
-        console.log('Processed books data:', booksData);
-        console.log(`Successfully loaded ${booksData.length} books`);
+        secureLog('Processed books data:', booksData);
         showStatus(`Successfully loaded ${booksData.length} books from inventory`, 'success');
         
     } catch (error) {
         console.error('Error fetching data:', error);
-        showStatus('Error loading book data: ' + error.message + '. Please ensure data.json exists and is properly formatted.', 'danger');
-        
-        // Set empty array to prevent further errors
+        showStatus('Error loading book data. Please ensure data.json exists and is properly formatted.', 'danger');
         booksData = [];
     }
 }
@@ -66,7 +132,7 @@ async function handleFileSelect(e) {
     const file = e.target.files[0];
     if (!file) return;
 
-    const orderRef = document.getElementById('orderRef').value.trim();
+    const orderRef = sanitizeText(document.getElementById('orderRef').value);
     const orderRefWarning = document.getElementById('orderRefWarning');
     
     if (!orderRef) {
@@ -79,26 +145,29 @@ async function handleFileSelect(e) {
     orderRefWarning.style.display = 'none';
 
     try {
+        // Validate file security
+        validateFile(file);
+        
         showStatus('Processing file...', 'info');
         const arrayBuffer = await file.arrayBuffer();
         const workbook = XLSX.read(arrayBuffer);
         const worksheet = workbook.Sheets[workbook.SheetNames[0]];
         const excelData = XLSX.utils.sheet_to_json(worksheet);
 
-        console.log('Excel data loaded:', excelData);
+        secureLog('Excel data loaded:', excelData);
 
-        // Create a map for faster lookup - using normalized ISBN as key
+        // Create a map for faster lookup
         const booksMap = new Map();
         booksData.forEach(item => {
             booksMap.set(item.code, item);
         });
 
-        console.log('Books map created:', booksMap);
+        secureLog('Books map created:', booksMap);
 
         processedOrders = excelData.map((row, index) => {
-            console.log('Processing Excel row:', row);
+            secureLog('Processing Excel row:', row);
             
-            // Handle ISBN - convert to string and normalize
+            // Handle ISBN with security validation
             let isbn = String(row.ISBN || row.isbn || '').trim();
             
             // Handle scientific notation in Excel
@@ -106,21 +175,27 @@ async function handleFileSelect(e) {
                 isbn = Number(isbn).toFixed(0);
             }
             
-            // Remove all non-digits and pad to 13 digits
-            isbn = isbn.replace(/\D/g, '').padStart(13, '0');
+            // Validate and normalize ISBN
+            if (!validateISBN(isbn)) {
+                secureLog('Invalid ISBN detected:', isbn);
+                isbn = '';
+            } else {
+                isbn = isbn.replace(/\D/g, '').padStart(13, '0');
+            }
             
-            // Handle quantity
-            const quantity = parseInt(row.Qty || row.qty || row.Quantity || row.quantity || 0);
+            // Handle quantity with validation
+            const rawQuantity = row.Qty || row.qty || row.Quantity || row.quantity || 0;
+            const quantity = validateQuantity(rawQuantity) ? parseInt(rawQuantity) : 0;
             
-            console.log('Normalized ISBN:', isbn, 'Quantity:', quantity);
+            secureLog('Normalized ISBN:', isbn, 'Quantity:', quantity);
             
             // Look up book in inventory
             const stockItem = booksMap.get(isbn);
-            console.log('Stock item found:', stockItem);
+            secureLog('Stock item found:', stockItem);
             
             return {
                 lineNumber: String(index + 1).padStart(3, '0'),
-                orderRef,
+                orderRef: sanitizeText(orderRef),
                 isbn,
                 description: stockItem?.description || 'Not Found',
                 quantity,
@@ -129,7 +204,7 @@ async function handleFileSelect(e) {
             };
         });
 
-        console.log('Processed orders:', processedOrders);
+        secureLog('Processed orders:', processedOrders);
         updatePreviewTable();
         
         const availableCount = processedOrders.filter(order => order.available).length;
@@ -139,8 +214,10 @@ async function handleFileSelect(e) {
         
     } catch (error) {
         console.error('Processing error:', error);
-        showStatus('Error processing file. Please check the format and try again. Error: ' + error.message, 'danger');
+        showStatus('Error processing file: ' + error.message, 'danger');
         enableButtons(false);
+        // Clear file input on error
+        document.getElementById('excelFile').value = '';
     }
 }
 
@@ -149,7 +226,13 @@ function updatePreviewTable() {
     tbody.innerHTML = '';
 
     if (processedOrders.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="text-center">No data loaded</td></tr>';
+        const row = document.createElement('tr');
+        const cell = document.createElement('td');
+        cell.colSpan = 7;
+        cell.className = 'text-center';
+        cell.textContent = 'No data loaded';
+        row.appendChild(cell);
+        tbody.appendChild(row);
         return;
     }
 
@@ -161,34 +244,62 @@ function updatePreviewTable() {
     }
 
     if (filteredOrders.length === 0 && showOnlyUnavailable) {
-        tbody.innerHTML = '<tr><td colspan="7" class="text-center text-success">All items are available in inventory!</td></tr>';
+        const row = document.createElement('tr');
+        const cell = document.createElement('td');
+        cell.colSpan = 7;
+        cell.className = 'text-center text-success';
+        cell.textContent = 'All items are available in inventory!';
+        row.appendChild(cell);
+        tbody.appendChild(row);
         return;
     }
 
     filteredOrders.forEach((order, index) => {
-        // Use the original index from processedOrders for operations
         const originalIndex = processedOrders.indexOf(order);
         
         const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>
-                <input type="checkbox" class="row-checkbox" data-index="${originalIndex}">
-            </td>
-            <td>
-                <button class="btn btn-danger btn-sm" onclick="deleteRow(${originalIndex})">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </td>
-            <td>${order.lineNumber}</td>
-            <td>${order.isbn}</td>
-            <td>${order.description}</td>
-            <td>${order.quantity}</td>
-            <td>
-                <span class="badge ${order.available ? 'bg-success' : 'bg-danger'}">
-                    ${order.available ? 'Available' : 'Not Found'}
-                </span>
-            </td>
-        `;
+        
+        // Create cells using secure methods
+        const checkboxCell = document.createElement('td');
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'row-checkbox';
+        checkbox.dataset.index = originalIndex;
+        checkboxCell.appendChild(checkbox);
+        
+        const actionCell = document.createElement('td');
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'btn btn-danger btn-sm';
+        deleteBtn.onclick = () => deleteRow(originalIndex);
+        deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+        actionCell.appendChild(deleteBtn);
+        
+        const lineCell = document.createElement('td');
+        lineCell.textContent = order.lineNumber;
+        
+        const isbnCell = document.createElement('td');
+        isbnCell.textContent = order.isbn;
+        
+        const descCell = document.createElement('td');
+        descCell.textContent = order.description; // Safe from XSS
+        
+        const qtyCell = document.createElement('td');
+        qtyCell.textContent = order.quantity;
+        
+        const statusCell = document.createElement('td');
+        const badge = document.createElement('span');
+        badge.className = `badge ${order.available ? 'bg-success' : 'bg-danger'}`;
+        badge.textContent = order.available ? 'Available' : 'Not Found';
+        statusCell.appendChild(badge);
+        
+        tr.appendChild(checkboxCell);
+        tr.appendChild(actionCell);
+        tr.appendChild(lineCell);
+        tr.appendChild(isbnCell);
+        tr.appendChild(descCell);
+        tr.appendChild(qtyCell);
+        tr.appendChild(statusCell);
+        
         tbody.appendChild(tr);
     });
 }
@@ -219,22 +330,11 @@ function clearAll() {
 }
 
 function downloadTemplate() {
-    // Create a link element
     const link = document.createElement('a');
-    
-    // Set the href to the template file path
     link.href = 'order_template.xlsx';
-    
-    // Set the download attribute to force download with a specific filename
     link.download = 'order_template.xlsx';
-    
-    // Temporarily add the link to the document
     document.body.appendChild(link);
-    
-    // Trigger the download
     link.click();
-    
-    // Remove the link from the document
     document.body.removeChild(link);
 }
 
@@ -246,7 +346,7 @@ function downloadCsv() {
 
     try {
         const formattedDate = formatDate();
-        const orderRef = document.getElementById('orderRef').value;
+        const orderRef = sanitizeText(document.getElementById('orderRef').value);
     
         const csvRow = customerConfig.csvStructure.map(field => {
             switch (field) {
@@ -269,19 +369,16 @@ function downloadCsv() {
             }
         });
     
-        // Safely append an extra blank column for CSV without affecting other functions
         const finalCsvRow = [...csvRow, ''];
-    
         const csvContent = [finalCsvRow];
     
         processedOrders.forEach(order => {
             const dtlRow = Array(customerConfig.csvStructure.length).fill('');
             dtlRow[0] = 'DTL';
-            dtlRow[1] = orderRef; // Add order reference to DTL rows
+            dtlRow[1] = orderRef;
             dtlRow[2] = order.lineNumber;
             dtlRow[3] = order.isbn;
             dtlRow[4] = order.quantity.toString();
-            // Add empty column to match header
             dtlRow.push('');
             csvContent.push(dtlRow);
         });
@@ -337,11 +434,23 @@ function copyTableToClipboard() {
     `;
 
     processedOrders.forEach(order => {
+        // Escape HTML in data for safe insertion
+        const safeDescription = order.description.replace(/[<>&"']/g, function(match) {
+            const escapeMap = {
+                '<': '&lt;',
+                '>': '&gt;',
+                '&': '&amp;',
+                '"': '&quot;',
+                "'": '&#39;'
+            };
+            return escapeMap[match];
+        });
+        
         tableHtml += `
             <tr>
                 <td style="padding: 8px; border: 1px solid #dee2e6;">${order.lineNumber}</td>
                 <td style="padding: 8px; border: 1px solid #dee2e6;">${order.isbn}</td>
-                <td style="padding: 8px; border: 1px solid #dee2e6;">${order.description}</td>
+                <td style="padding: 8px; border: 1px solid #dee2e6;">${safeDescription}</td>
                 <td style="padding: 8px; border: 1px solid #dee2e6;">${order.quantity}</td>
                 <td style="padding: 8px; border: 1px solid #dee2e6; ${order.available ? 'color: green;' : 'color: red;'}">${order.available ? 'Available' : 'Not Found'}</td>
             </tr>
@@ -389,23 +498,8 @@ function deleteSelected() {
     enableButtons(processedOrders.length > 0);
 }
 
-function showStatus(message, type) {
-    const statusDiv = document.getElementById('status');
-    statusDiv.className = `alert alert-${type}`;
-    statusDiv.textContent = message;
-    statusDiv.style.display = 'block';
-    
-    if (type === 'success' || type === 'info') {
-        setTimeout(() => {
-            statusDiv.style.display = 'none';
-        }, 5000); // Increased timeout for better visibility
-    }
-}
-
 function toggleTableFilter() {
     updatePreviewTable();
-    
-    // Update the "Select All" checkbox to unchecked when filter changes
     document.getElementById('selectAll').checked = false;
     
     const showOnlyUnavailable = document.getElementById('showOnlyUnavailable').checked;
@@ -418,6 +512,19 @@ function toggleTableFilter() {
     }
 }
 
+function showStatus(message, type) {
+    const statusDiv = document.getElementById('status');
+    statusDiv.className = `alert alert-${type}`;
+    statusDiv.textContent = message; // Safe from XSS
+    statusDiv.style.display = 'block';
+    
+    if (type === 'success' || type === 'info') {
+        setTimeout(() => {
+            statusDiv.style.display = 'none';
+        }, 5000);
+    }
+}
+
 // Initialize the application
-console.log('Initializing application...');
+secureLog('Initializing application...');
 fetchData();
