@@ -153,14 +153,29 @@ function updatePreviewTable() {
         return;
     }
 
-    processedOrders.forEach((order, index) => {
+    const showOnlyUnavailable = document.getElementById('showOnlyUnavailable').checked;
+    let filteredOrders = processedOrders;
+
+    if (showOnlyUnavailable) {
+        filteredOrders = processedOrders.filter(order => !order.available);
+    }
+
+    if (filteredOrders.length === 0 && showOnlyUnavailable) {
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center text-success">All items are available in inventory!</td></tr>';
+        return;
+    }
+
+    filteredOrders.forEach((order, index) => {
+        // Use the original index from processedOrders for operations
+        const originalIndex = processedOrders.indexOf(order);
+        
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>
-                <input type="checkbox" class="row-checkbox" data-index="${index}">
+                <input type="checkbox" class="row-checkbox" data-index="${originalIndex}">
             </td>
             <td>
-                <button class="btn btn-danger btn-sm" onclick="deleteRow(${index})">
+                <button class="btn btn-danger btn-sm" onclick="deleteRow(${originalIndex})">
                     <i class="fas fa-trash"></i>
                 </button>
             </td>
@@ -384,6 +399,22 @@ function showStatus(message, type) {
         setTimeout(() => {
             statusDiv.style.display = 'none';
         }, 5000); // Increased timeout for better visibility
+    }
+}
+
+function toggleTableFilter() {
+    updatePreviewTable();
+    
+    // Update the "Select All" checkbox to unchecked when filter changes
+    document.getElementById('selectAll').checked = false;
+    
+    const showOnlyUnavailable = document.getElementById('showOnlyUnavailable').checked;
+    const unavailableCount = processedOrders.filter(order => !order.available).length;
+    
+    if (showOnlyUnavailable) {
+        showStatus(`Showing ${unavailableCount} unavailable items`, 'info');
+    } else {
+        showStatus(`Showing all ${processedOrders.length} items`, 'info');
     }
 }
 
