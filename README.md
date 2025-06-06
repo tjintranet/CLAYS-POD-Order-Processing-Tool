@@ -17,6 +17,7 @@ This tool allows users to upload Excel files containing book orders, validate th
 - **CSV Export**: Generate properly formatted CSV files for Clays POD
 - **Template Download**: Get a pre-formatted Excel template for orders
 - **Copy to Clipboard**: Copy order data as formatted HTML table
+- **Filtering Options**: Toggle to show only unavailable items for quick issue identification
 
 ## File Structure
 
@@ -38,8 +39,9 @@ project-root/
    ```json
    [
      {
-       "code": 9781234567890,
-       "description": "Book Title"
+       "code": "9781234567890",
+       "description": "Book Title",
+       "setupdate": "2024-01-01"
      }
    ]
    ```
@@ -86,6 +88,7 @@ project-root/
    - Orders appear in the preview table with validation status
    - Green "Available" badges indicate books found in inventory
    - Red "Not Found" badges indicate missing ISBNs
+   - Use the "Show only unavailable items" toggle to filter and focus on problem orders
 
 ### Managing Orders
 
@@ -98,9 +101,19 @@ project-root/
 - **Select All**: Use the header checkbox to select/deselect all rows
 - **Delete Selected**: Click "Delete Selected Rows" to remove checked items
 
+**View and Filter Options:**
+- **Toggle Filter**: Use the "Show only unavailable items" switch to display only books not found in inventory
+- **Quick Problem Identification**: When filtered, easily see which ISBNs need attention
+- **Status Messages**: Get feedback on how many items are being displayed
+- **All Items View**: Toggle off to return to showing all processed orders
+
 **Data Export:**
 - **Download CSV**: Generate Clays POD-formatted CSV file
 - **Copy to Clipboard**: Copy table as HTML for pasting into other applications
+
+**View Options:**
+- **Filter Toggle**: Use "Show only unavailable items" switch to display only books not found in inventory
+- **Full View**: Toggle off to see all processed orders
 
 ### Excel File Format
 
@@ -149,6 +162,12 @@ DTL,ORDER123,002,9780987654321,3,,,,,,,,,,
 **Books showing "Not Found" status**
 - Check that ISBNs match exactly with codes in `data.json`
 - Verify the inventory database is up to date
+- Use the "Show only unavailable items" toggle to quickly identify problem ISBNs
+
+**Filter not working properly**
+- Refresh the page and try again
+- Ensure JavaScript is enabled in your browser
+- Check browser console for any error messages
 
 ### File Upload Issues
 
