@@ -1,6 +1,754 @@
-// Global variables
+function showInventoryTab() {
+    // Check if inventory access is required and granted
+    if (INVENTORY_ACCESS.enabled && !hasInventoryAccess()) {
+        if (!requestInventoryAccess()) {
+            return; // Stay on current tab if access denied
+        }
+    }
+    
+    const inventoryTab = document.getElementById('inventory-tab');
+    if (inventoryTab && window.bootstrap && bootstrap.Tab) {
+        const tab = new bootstrap.Tab(inventoryTab);
+        tab.show();
+        
+        // Show access status bar if protection is enabled
+        if (INVENTORY_ACCESS.enabled) {
+            showAccessStatusBar();
+            showInventoryStatus('✅ Inventory management access granted', 'success');
+        }
+    } else {
+        // Fallback if Bootstrap JS isn't loaded
+        const inventoryPane = document.getElementById('inventory-pane');
+        const ordersPane = document.getElementById('orders-pane');
+        if (inventoryPane && ordersPane) {
+            ordersPane.classList.remove('show', 'active');
+            inventoryPane.classList.add('show', 'active');
+            inventoryTab.classList.add('active');
+            document.getElementById('orders-tab').classList.remove('active');
+            
+            if (INVENTORY_ACCESS.enabled) {
+                showAccessStatusBar();
+            }
+        }
+    }
+}
+
+// Show the access status bar
+function showAccessStatusBar() {
+    const accessBar = document.getElementById('accessStatusBar');
+    const accessText = document.getElementById('accessStatusText');
+    
+    if (accessBar && accessText) {
+        try {
+            const session = localStorage.getItem(INVENTORY_ACCESS.sessionKey);
+            if (session) {
+                const sessionData = JSON.parse(session);
+                const expiresAt = new Date(sessionData.expires);
+                const timeLeft = sessionData.expires - Date.now();
+                const hoursLeft = Math.floor(timeLeft / (60 * 60 * 1000));
+                const minutesLeft = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
+                
+                accessText.textContent = ` - Session expires in ${hoursLeft}h ${minutesLeft}m`;
+                accessBar.style.display = 'block';
+            }
+        } catch (error) {
+            secureLog('Error showing access status:', error);
+        }
+    }
+}
+
+// Hide the access status bar  
+function hideAccessStatusBar() {
+    const accessBar = document.getElementById('accessStatusBar');
+    if (accessBar) {
+        accessBar.style.display = 'none';
+    }
+}
+
+// Check if user has current inventory access
+function hasInventoryAccess() {
+    if (!INVENTORY_ACCESS.enabled) return true;
+    
+    try {
+        const session = localStorage.getItem(INVENTORY_ACCESS.sessionKey);
+        if (!session) return false;
+        
+        const sessionData = JSON.parse(session);
+        const now = Date.now();
+        return sessionData.expires > now;
+    } catch (error) {
+        secureLog('Session check error:', error);
+        localStorage.removeItem(INVENTORY_ACCESS.sessionKey);
+        return false;
+    }
+}
+
+// Request inventory access with password
+function requestInventoryAccess() {
+    const password = prompt("🔐 Enter inventory management password:");
+    if (!password) {
+        showInventoryStatus('Access cancelled', 'info');
+        return false;
+    }
+    
+    return validatePasswordAndGrantAccess(password);
+}
+
+// Validate password and grant access
+async function validatePasswordAndGrantAccess(password) {
+    try {
+        // Create SHA-256 hash of entered password
+        const encoder = new TextEncoder();
+        const data = encoder.encode(password);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        
+        if (hashHex === INVENTORY_ACCESS.passwordHash) {
+            // Grant access for session duration
+            const sessionData = {
+                granted: true,
+                expires: Date.now() + INVENTORY_ACCESS.sessionDuration,
+                grantedAt: new Date().toISOString()
+            };
+            localStorage.setItem(INVENTORY_ACCESS.sessionKey, JSON.stringify(sessionData));
+            
+            secureLog('Inventory access granted');
+            return true;
+        } else {
+            alert("❌ Incorrect password. Access denied.");
+            secureLog('Inventory access denied - incorrect password');
+            return false;
+        }
+    } catch (error) {
+        console.error('Password validation error:', error);
+        alert("❌ Error validating password. Please try again.");
+        return false;
+    }
+}
+
+// Check if inventory functions should be protected
+function requireInventoryAccess(functionName) {
+    if (INVENTORY_ACCESS.enabled && !hasInventoryAccess()) {
+        showInventoryStatus(`🔒 Access required for ${functionName}. Please authenticate first.`, 'warning');
+        return false;
+    }
+    return true;
+}
+
+// Check session status and warn about expiration
+function checkInventorySession() {
+    if (!INVENTORY_ACCESS.enabled) return;
+    
+    try {
+        const session = localStorage.getItem(INVENTORY_ACCESS.sessionKey);
+        if (!session) {
+            hideAccessStatusBar();
+            return;
+        }
+        
+        const sessionData = JSON.parse(session);
+        const timeLeft = sessionData.expires - Date.now();
+        const minutesLeft = Math.floor(timeLeft / (60 * 1000));
+        
+        // Update access status bar if visible
+        const accessBar = document.getElementById('accessStatusBar');
+        if (accessBar && accessBar.style.display !== 'none') {
+            showAccessStatusBar();
+        }
+        
+        // Show warning when 10 minutes or less remaining
+        if (timeLeft <= 10 * 60 * 1000 && timeLeft > 0) {
+            showInventoryStatus(`⏰ Inventory access expires in ${minutesLeft} minutes`, 'warning');
+        } 
+        // Session expired
+        else if (timeLeft <= 0) {
+            localStorage.removeItem(INVENTORY_ACCESS.sessionKey);
+            hideAccessStatusBar();
+            showInventoryStatus('🔒 Inventory access expired. Please re-authenticate.', 'danger');
+            
+            // Switch back to orders tab
+            const ordersTab = document.getElementById('orders-tab');
+            if (ordersTab && window.bootstrap && bootstrap.Tab) {
+                const tab = new bootstrap.Tab(ordersTab);
+                tab.show();
+            }
+        }
+    } catch (error) {
+        secureLog('Session check error:', error);
+        localStorage.removeItem(INVENTORY_ACCESS.sessionKey);
+        hideAccessStatusBar();
+    }
+}
+
+// Extend session if user is active
+function extendInventorySession() {
+    if (!INVENTORY_ACCESS.enabled || !hasInventoryAccess()) return;
+    
+    try {
+        const session = localStorage.getItem(INVENTORY_ACCESS.sessionKey);
+        if (session) {
+            const sessionData = JSON.parse(session);
+            sessionData.expires = Date.now() + INVENTORY_ACCESS.sessionDuration;
+            localStorage.setItem(INVENTORY_ACCESS.sessionKey, JSON.stringify(sessionData));
+            secureLog('Inventory session extended');
+        }
+    } catch (error) {
+        secureLog('Session extension error:', error);
+    }
+}
+
+// Logout from inventory management
+function logoutInventoryAccess() {
+    localStorage.removeItem(INVENTORY_ACCESS.sessionKey);
+    hideAccessStatusBar();
+    showInventoryStatus('🔓 Logged out of inventory management', 'info');
+    
+    // Switch to orders tab
+    const ordersTab = document.getElementById('orders-tab');
+    if (ordersTab && window.bootstrap && bootstrap.Tab) {
+        const tab = new bootstrap.Tab(ordersTab);
+        tab.show();
+    }
+}
+
+function updateInventoryStats() {
+    const validNewTitles = newTitles.filter(title => title.status === 'new').length;
+    const duplicates = newTitles.filter(title => 
+        booksData.some(book => book.code === title.normalizedISBN)
+    ).length;
+    
+    document.getElementById('currentTitlesCount').textContent = booksData.length;
+    document.getElementById('newTitlesCount').textContent = validNewTitles;
+    document.getElementById('removeTitlesCount').textContent = titlesToRemove.length;
+    document.getElementById('duplicatesCount').textContent = duplicates;
+    
+    const finalTotal = booksData.length + validNewTitles - titlesToRemove.length;
+    const netChange = validNewTitles - titlesToRemove.length;
+    
+    document.getElementById('totalAfterCount').textContent = Math.max(0, finalTotal);
+    document.getElementById('netChangeCount').textContent = netChange >= 0 ? `+${netChange}` : netChange;
+    document.getElementById('netChangeCount').className = netChange >= 0 ? 'text-success mb-1' : 'text-danger mb-1';
+}
+
+async function processInventoryFile() {
+    if (!requireInventoryAccess('file upload')) return;
+    
+    const file = document.getElementById('inventoryFile').files[0];
+    if (!file) return;
+
+    try {
+        validateFile(file);
+        showInventoryStatus('Processing inventory file...', 'info');
+        extendInventorySession(); // Extend session on activity
+        
+        const arrayBuffer = await file.arrayBuffer();
+        let data = [];
+        
+        if (file.name.toLowerCase().endsWith('.csv')) {
+            const text = new TextDecoder().decode(arrayBuffer);
+            const parsed = Papa.parse(text, {
+                header: true,
+                dynamicTyping: true,
+                skipEmptyLines: true,
+                delimitersToGuess: [',', '\t', '|', ';']
+            });
+            data = parsed.data;
+        } else {
+            const workbook = XLSX.read(arrayBuffer);
+            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+            data = XLSX.utils.sheet_to_json(worksheet);
+        }
+
+        secureLog('Inventory data loaded:', data);
+        
+        const processedTitles = data.map((row, index) => {
+            let isbn = String(row.ISBN || row.isbn || '').trim();
+            
+            if (isbn.includes('e') || isbn.includes('E')) {
+                isbn = Number(isbn).toFixed(0);
+            }
+            
+            if (!validateISBN(isbn)) {
+                return {
+                    originalISBN: isbn,
+                    normalizedISBN: '',
+                    description: '',
+                    status: 'invalid',
+                    error: 'Invalid ISBN format'
+                };
+            }
+            
+            const normalizedISBN = isbn.replace(/\D/g, '').padStart(13, '0');
+            const description = sanitizeText(row.Description || row.description || '');
+            
+            if (!description) {
+                return {
+                    originalISBN: isbn,
+                    normalizedISBN,
+                    description: '',
+                    status: 'invalid',
+                    error: 'Missing description'
+                };
+            }
+            
+            const isDuplicate = booksData.some(book => book.code === normalizedISBN);
+            const isNewDuplicate = newTitles.some(title => title.normalizedISBN === normalizedISBN);
+            
+            return {
+                originalISBN: isbn,
+                normalizedISBN,
+                description,
+                status: isDuplicate ? 'duplicate' : (isNewDuplicate ? 'duplicate-new' : 'new'),
+                error: null
+            };
+        });
+
+        newTitles = [...newTitles, ...processedTitles];
+        updateNewTitlesTable();
+        updateInventoryStats();
+        
+        const validCount = processedTitles.filter(t => t.status === 'new').length;
+        const duplicateCount = processedTitles.filter(t => t.status.includes('duplicate')).length;
+        const invalidCount = processedTitles.filter(t => t.status === 'invalid').length;
+        
+        showInventoryStatus(
+            `Processed ${processedTitles.length} titles: ${validCount} new, ${duplicateCount} duplicates, ${invalidCount} invalid`,
+            'success'
+        );
+        
+        document.getElementById('downloadInventoryBtn').disabled = newTitles.filter(t => t.status === 'new').length === 0 && titlesToRemove.length === 0;
+        document.getElementById('clearNewTitlesBtn').disabled = false;
+        
+    } catch (error) {
+        console.error('Inventory processing error:', error);
+        showInventoryStatus('Error processing inventory file: ' + error.message, 'danger');
+    }
+}
+
+function updateNewTitlesTable() {
+    const tbody = document.getElementById('newTitlesBody');
+    tbody.innerHTML = '';
+
+    if (newTitles.length === 0) {
+        const row = document.createElement('tr');
+        const cell = document.createElement('td');
+        cell.colSpan = 4;
+        cell.className = 'text-center text-muted';
+        cell.textContent = 'No new titles uploaded yet';
+        row.appendChild(cell);
+        tbody.appendChild(row);
+        return;
+    }
+
+    newTitles.forEach((title, index) => {
+        const tr = document.createElement('tr');
+        
+        const statusCell = document.createElement('td');
+        const badge = document.createElement('span');
+        
+        switch (title.status) {
+            case 'new':
+                badge.className = 'badge bg-success';
+                badge.textContent = 'New';
+                break;
+            case 'duplicate':
+                badge.className = 'badge bg-warning';
+                badge.textContent = 'Duplicate (Existing)';
+                break;
+            case 'duplicate-new':
+                badge.className = 'badge bg-warning';
+                badge.textContent = 'Duplicate (In Upload)';
+                break;
+            case 'invalid':
+                badge.className = 'badge bg-danger';
+                badge.textContent = 'Invalid';
+                break;
+        }
+        statusCell.appendChild(badge);
+        
+        if (title.error) {
+            statusCell.appendChild(document.createElement('br'));
+            const errorSpan = document.createElement('small');
+            errorSpan.className = 'text-danger';
+            errorSpan.textContent = title.error;
+            statusCell.appendChild(errorSpan);
+        }
+        
+        const isbnCell = document.createElement('td');
+        isbnCell.textContent = title.normalizedISBN || title.originalISBN;
+        
+        const descCell = document.createElement('td');
+        descCell.textContent = title.description || 'N/A';
+        
+        const actionCell = document.createElement('td');
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'btn btn-danger btn-sm';
+        deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+        deleteBtn.onclick = () => removeNewTitle(index);
+        actionCell.appendChild(deleteBtn);
+        
+        tr.appendChild(statusCell);
+        tr.appendChild(isbnCell);
+        tr.appendChild(descCell);
+        tr.appendChild(actionCell);
+        
+        tbody.appendChild(tr);
+    });
+}
+
+function removeNewTitle(index) {
+    newTitles.splice(index, 1);
+    updateNewTitlesTable();
+    updateInventoryStats();
+    
+    if (newTitles.length === 0) {
+        document.getElementById('downloadInventoryBtn').disabled = true;
+        document.getElementById('clearNewTitlesBtn').disabled = true;
+        document.getElementById('inventoryFile').value = '';
+        document.getElementById('processInventoryBtn').disabled = true;
+    }
+}
+
+function clearNewTitles() {
+    newTitles = [];
+    updateNewTitlesTable();
+    updateInventoryStats();
+    document.getElementById('downloadInventoryBtn').disabled = (newTitles.length === 0 && titlesToRemove.length === 0);
+    document.getElementById('clearNewTitlesBtn').disabled = true;
+    document.getElementById('inventoryFile').value = '';
+    document.getElementById('processInventoryBtn').disabled = true;
+    showInventoryStatus('All new titles cleared', 'info');
+}
+
+function searchAndMarkForRemoval() {
+    if (!requireInventoryAccess('title removal')) return;
+    
+    const isbnInput = document.getElementById('removeIsbn');
+    const rawISBN = sanitizeText(isbnInput.value);
+    
+    if (!rawISBN) {
+        showInventoryStatus('Please enter an ISBN to search for removal', 'warning');
+        return;
+    }
+    
+    if (!validateISBN(rawISBN)) {
+        showInventoryStatus('Invalid ISBN format. Please enter a valid 10 or 13 digit ISBN.', 'danger');
+        return;
+    }
+    
+    const normalizedISBN = rawISBN.replace(/\D/g, '').padStart(13, '0');
+    
+    // Check if already marked for removal
+    if (titlesToRemove.some(title => title.code === normalizedISBN)) {
+        showInventoryStatus('This title is already marked for removal', 'warning');
+        return;
+    }
+    
+    // Find in current inventory
+    const foundBook = booksData.find(book => book.code === normalizedISBN);
+    
+    if (foundBook) {
+        titlesToRemove.push({
+            code: normalizedISBN,
+            description: foundBook.description
+        });
+        
+        updateRemoveTitlesTable();
+        updateInventoryStats();
+        isbnInput.value = '';
+        extendInventorySession(); // Extend session on activity
+        
+        document.getElementById('downloadInventoryBtn').disabled = false;
+        document.getElementById('clearRemovalsBtn').disabled = false;
+        
+        showInventoryStatus(`Title marked for removal: ${foundBook.description}`, 'success');
+    } else {
+        showInventoryStatus(`ISBN ${normalizedISBN} not found in current inventory`, 'danger');
+    }
+}
+
+async function processBulkRemoval() {
+    if (!requireInventoryAccess('bulk removal')) return;
+    
+    const file = document.getElementById('removeFile').files[0];
+    if (!file) return;
+
+    try {
+        validateFile(file);
+        showInventoryStatus('Processing bulk removal file...', 'info');
+        extendInventorySession(); // Extend session on activity
+        
+        const arrayBuffer = await file.arrayBuffer();
+        let data = [];
+        
+        if (file.name.toLowerCase().endsWith('.txt')) {
+            const text = new TextDecoder().decode(arrayBuffer);
+            // Split by lines and filter out empty lines
+            const lines = text.split(/\r?\n/).filter(line => line.trim());
+            data = lines.map(line => ({ ISBN: line.trim() }));
+        } else if (file.name.toLowerCase().endsWith('.csv')) {
+            const text = new TextDecoder().decode(arrayBuffer);
+            const parsed = Papa.parse(text, {
+                header: true,
+                dynamicTyping: true,
+                skipEmptyLines: true,
+                delimitersToGuess: [',', '\t', '|', ';']
+            });
+            data = parsed.data;
+        } else {
+            const workbook = XLSX.read(arrayBuffer);
+            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+            data = XLSX.utils.sheet_to_json(worksheet);
+        }
+
+        let addedCount = 0;
+        let notFoundCount = 0;
+        let duplicateCount = 0;
+
+        data.forEach(row => {
+            let isbn = String(row.ISBN || row.isbn || '').trim();
+            
+            if (isbn.includes('e') || isbn.includes('E')) {
+                isbn = Number(isbn).toFixed(0);
+            }
+            
+            if (!validateISBN(isbn)) {
+                return;
+            }
+            
+            const normalizedISBN = isbn.replace(/\D/g, '').padStart(13, '0');
+            
+            // Check if already marked for removal
+            if (titlesToRemove.some(title => title.code === normalizedISBN)) {
+                duplicateCount++;
+                return;
+            }
+            
+            // Find in current inventory
+            const foundBook = booksData.find(book => book.code === normalizedISBN);
+            
+            if (foundBook) {
+                titlesToRemove.push({
+                    code: normalizedISBN,
+                    description: foundBook.description
+                });
+                addedCount++;
+            } else {
+                notFoundCount++;
+            }
+        });
+
+        updateRemoveTitlesTable();
+        updateInventoryStats();
+        
+        if (addedCount > 0) {
+            document.getElementById('downloadInventoryBtn').disabled = false;
+            document.getElementById('clearRemovalsBtn').disabled = false;
+        }
+        
+        showInventoryStatus(
+            `Bulk removal processed: ${addedCount} marked for removal, ${notFoundCount} not found, ${duplicateCount} duplicates`,
+            'success'
+        );
+        
+    } catch (error) {
+        console.error('Bulk removal error:', error);
+        showInventoryStatus('Error processing bulk removal file: ' + error.message, 'danger');
+    }
+}
+
+function updateRemoveTitlesTable() {
+    const tbody = document.getElementById('removeTitlesBody');
+    tbody.innerHTML = '';
+
+    if (titlesToRemove.length === 0) {
+        const row = document.createElement('tr');
+        const cell = document.createElement('td');
+        cell.colSpan = 3;
+        cell.className = 'text-center text-muted';
+        cell.textContent = 'No titles marked for removal';
+        row.appendChild(cell);
+        tbody.appendChild(row);
+        return;
+    }
+
+    titlesToRemove.forEach((title, index) => {
+        const tr = document.createElement('tr');
+        
+        const isbnCell = document.createElement('td');
+        isbnCell.textContent = title.code;
+        
+        const descCell = document.createElement('td');
+        descCell.textContent = title.description;
+        
+        const actionCell = document.createElement('td');
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'btn btn-outline-success btn-sm';
+        removeBtn.innerHTML = '<i class="fas fa-undo"></i> Restore';
+        removeBtn.onclick = () => restoreTitle(index);
+        actionCell.appendChild(removeBtn);
+        
+        tr.appendChild(isbnCell);
+        tr.appendChild(descCell);
+        tr.appendChild(actionCell);
+        
+        tbody.appendChild(tr);
+    });
+}
+
+function restoreTitle(index) {
+    const restoredTitle = titlesToRemove[index];
+    titlesToRemove.splice(index, 1);
+    updateRemoveTitlesTable();
+    updateInventoryStats();
+    
+    showInventoryStatus(`Restored: ${restoredTitle.description}`, 'info');
+    
+    if (titlesToRemove.length === 0 && newTitles.filter(t => t.status === 'new').length === 0) {
+        document.getElementById('downloadInventoryBtn').disabled = true;
+        document.getElementById('clearRemovalsBtn').disabled = true;
+    }
+}
+
+function clearRemovals() {
+    titlesToRemove = [];
+    updateRemoveTitlesTable();
+    updateInventoryStats();
+    document.getElementById('removeFile').value = '';
+    document.getElementById('processBulkRemovalBtn').disabled = true;
+    document.getElementById('clearRemovalsBtn').disabled = true;
+    
+    if (newTitles.filter(t => t.status === 'new').length === 0) {
+        document.getElementById('downloadInventoryBtn').disabled = true;
+    }
+    
+    showInventoryStatus('All removals cleared', 'info');
+}
+
+function downloadUpdatedInventory() {
+    if (!requireInventoryAccess('inventory download')) return;
+    
+    try {
+        const validNewTitles = newTitles.filter(title => title.status === 'new');
+        
+        if (validNewTitles.length === 0 && titlesToRemove.length === 0) {
+            showInventoryStatus('No changes to apply to inventory', 'warning');
+            return;
+        }
+        
+        extendInventorySession(); // Extend session on activity
+        
+        // Start with current inventory
+        let mergedInventory = [...booksData];
+        
+        // Remove titles marked for removal
+        if (titlesToRemove.length > 0) {
+            const removeISBNs = new Set(titlesToRemove.map(title => title.code));
+            mergedInventory = mergedInventory.filter(book => !removeISBNs.has(book.code));
+        }
+        
+        // Add new titles
+        validNewTitles.forEach(title => {
+            mergedInventory.push({
+                code: parseInt(title.normalizedISBN),
+                description: title.description
+            });
+        });
+        
+        // Sort by ISBN
+        mergedInventory.sort((a, b) => a.code - b.code);
+        
+        const jsonContent = JSON.stringify(mergedInventory, null, 2);
+        const blob = new Blob([jsonContent], { type: 'application/json' });
+        const url = window.URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        const now = new Date();
+        const filename = `data_updated_${now.getFullYear()}_${
+            String(now.getMonth() + 1).padStart(2, '0')}_${
+            String(now.getDate()).padStart(2, '0')}_${
+            String(now.getHours()).padStart(2, '0')}_${
+            String(now.getMinutes()).padStart(2, '0')}.json`;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        
+        const changesSummary = [];
+        if (validNewTitles.length > 0) changesSummary.push(`${validNewTitles.length} titles added`);
+        if (titlesToRemove.length > 0) changesSummary.push(`${titlesToRemove.length} titles removed`);
+        
+        showInventoryStatus(`📥 Updated inventory downloaded with ${changesSummary.join(', ')}!`, 'success');
+        
+        secureLog('Inventory update downloaded:', {
+            added: validNewTitles.length,
+            removed: titlesToRemove.length,
+            total: mergedInventory.length
+        });
+        
+    } catch (error) {
+        console.error('Download error:', error);
+        showInventoryStatus('Error creating updated inventory file: ' + error.message, 'danger');
+    }
+}
+
+function downloadCurrentInventory() {
+    try {
+        const jsonContent = JSON.stringify(booksData, null, 2);
+        const blob = new Blob([jsonContent], { type: 'application/json' });
+        const url = window.URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        const now = new Date();
+        const filename = `data_backup_${now.getFullYear()}_${
+            String(now.getMonth() + 1).padStart(2, '0')}_${
+            String(now.getDate()).padStart(2, '0')}_${
+            String(now.getHours()).padStart(2, '0')}_${
+            String(now.getMinutes()).padStart(2, '0')}.json`;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        
+        showInventoryStatus('Current inventory backup downloaded!', 'success');
+        
+    } catch (error) {
+        console.error('Backup error:', error);
+        showInventoryStatus('Error creating backup file: ' + error.message, 'danger');
+    }
+}
+
+function showInventoryStatus(message, type) {
+    const statusDiv = document.getElementById('inventoryStatus');
+    statusDiv.className = `alert alert-${type}`;
+    statusDiv.textContent = message;
+    statusDiv.style.display = 'block';
+    
+    if (type === 'success' || type === 'info') {
+        setTimeout(() => {
+            statusDiv.style.display = 'none';
+        }, 5000);
+    }
+}// Global variables
 let booksData = [];
 let processedOrders = [];
+let newTitles = [];
+let titlesToRemove = [];
+let mergedInventory = [];
+
+// Password protection configuration
+const INVENTORY_ACCESS = {
+    enabled: true,
+    // SHA-256 hash of "admin123" - change this password by generating a new hash
+    passwordHash: "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
+    sessionKey: "clays_inventory_access",
+    sessionDuration: 1 * 60 * 60 * 1000 // 1 hour in milliseconds
+};
 
 // Security configuration
 const SECURITY_CONFIG = {
@@ -118,6 +866,7 @@ async function fetchData() {
         
         secureLog('Processed books data:', booksData);
         showStatus(`Successfully loaded ${booksData.length} books from inventory`, 'success');
+        updateInventoryStats();
         
     } catch (error) {
         console.error('Error fetching data:', error);
@@ -127,6 +876,17 @@ async function fetchData() {
 }
 
 document.getElementById('excelFile').addEventListener('change', handleFileSelect);
+document.getElementById('inventoryFile').addEventListener('change', function() {
+    document.getElementById('processInventoryBtn').disabled = !this.files[0];
+});
+document.getElementById('removeFile').addEventListener('change', function() {
+    document.getElementById('processBulkRemovalBtn').disabled = !this.files[0];
+});
+document.getElementById('removeIsbn').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        searchAndMarkForRemoval();
+    }
+});
 document.getElementById('isbnSearch').addEventListener('keypress', function(e) {
     if (e.key === 'Enter') {
         searchISBN();
