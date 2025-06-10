@@ -42,8 +42,7 @@ project-root/
    [
      {
        "code": "9781234567890",
-       "description": "Book Title",
-       "setupdate": "2024-01-01"
+       "description": "Book Title"
      }
    ]
    ```
