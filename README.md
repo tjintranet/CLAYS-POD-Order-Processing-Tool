@@ -12,12 +12,14 @@ This tool allows users to upload Excel files containing book orders, validate th
 
 - **Excel File Processing**: Upload and process `.xlsx` and `.xls` order files
 - **Real-time Validation**: Check ISBNs against available inventory database
+- **ISBN Search**: Quick lookup tool to check individual title availability
 - **Order Management**: View, edit, and delete individual order lines
 - **Batch Operations**: Select and delete multiple rows at once
 - **CSV Export**: Generate properly formatted CSV files for Clays POD
 - **Template Download**: Get a pre-formatted Excel template for orders
 - **Copy to Clipboard**: Copy order data as formatted HTML table
 - **Filtering Options**: Toggle to show only unavailable items for quick issue identification
+- **Security Enhanced**: Input validation, XSS protection, and file security checks
 
 ## File Structure
 
@@ -73,16 +75,32 @@ project-root/
    - Click "Download Template" to get the Excel order format
    - Use this template for creating your orders
 
+### Quick ISBN Lookup
+
+1. **Check Individual Titles**
+   - Use the "ISBN Lookup" panel on the right side
+   - Enter any ISBN (10 or 13 digits, with or without dashes)
+   - Click "Search" or press Enter
+   - View availability status with book details
+
+2. **Search Results**
+   - **Green (Available)**: Shows ISBN, title, and setup date
+   - **Red (Not Available)**: Shows ISBN and unavailable message
+   - Results auto-hide after 10 seconds for available items
+
+### Processing Orders
+
 ### Processing Orders
 
 1. **Enter Order Reference**
-   - Input a unique order reference in the "Order Reference" field
+   - Input a unique order reference in the "Order Reference" field (left panel)
    - This field is required before uploading files
 
 2. **Upload Excel File**
    - Click "Choose File" and select your Excel order file
    - Supported formats: `.xlsx`, `.xls`
    - The file should contain columns: `ISBN` and `Qty`
+   - Maximum file size: 10MB
 
 3. **Review Processed Data**
    - Orders appear in the preview table with validation status
@@ -106,6 +124,12 @@ project-root/
 - **Quick Problem Identification**: When filtered, easily see which ISBNs need attention
 - **Status Messages**: Get feedback on how many items are being displayed
 - **All Items View**: Toggle off to return to showing all processed orders
+
+**ISBN Search:**
+- **Individual Lookup**: Use the right panel to check single ISBNs instantly
+- **Format Flexibility**: Accepts ISBNs with or without dashes/spaces
+- **Detailed Results**: Shows title, availability, and setup date information
+- **Keyboard Shortcut**: Press Enter in search field to trigger lookup
 
 **Data Export:**
 - **Download CSV**: Generate Clays POD-formatted CSV file
@@ -158,11 +182,20 @@ DTL,ORDER123,002,9780987654321,3,,,,,,,,,,
 - Ensure Excel file has ISBN and Qty columns
 - Check that ISBNs are in a recognizable format
 - Verify quantities are numeric values
+- Check file size is under 10MB limit
+- Ensure file type is .xlsx or .xls
 
 **Books showing "Not Found" status**
 - Check that ISBNs match exactly with codes in `data.json`
 - Verify the inventory database is up to date
 - Use the "Show only unavailable items" toggle to quickly identify problem ISBNs
+- Use the ISBN Search feature to double-check individual titles
+
+**ISBN Search not working**
+- Ensure ISBN format is valid (10 or 13 digits)
+- Check that `data.json` has loaded successfully
+- Try removing dashes or spaces from the ISBN
+- Verify the ISBN exists in your inventory database
 
 **Filter not working properly**
 - Refresh the page and try again
@@ -193,10 +226,20 @@ External libraries loaded via CDN:
 
 ### Data Processing
 
-1. **Excel Parsing**: Uses SheetJS to read Excel files
+1. **Excel Parsing**: Uses SheetJS to read Excel files (max 10MB)
 2. **ISBN Normalization**: Removes non-digits and pads to 13 digits
 3. **Inventory Matching**: Compares against loaded JSON database
 4. **CSV Generation**: Creates Clays POD-compliant format
+5. **Input Validation**: Validates file types, ISBNs, and quantities
+6. **XSS Protection**: Sanitizes all user inputs and prevents script injection
+
+### Security Features
+
+- **Content Security Policy**: Prevents XSS attacks and unauthorized resource loading
+- **File Validation**: Checks file types, sizes, and content before processing
+- **Input Sanitization**: Cleans all user inputs to prevent injection attacks
+- **Secure Headers**: Implements multiple security headers for enhanced protection
+- **Error Handling**: Provides safe error messages without information disclosure
 
 ### Security Considerations
 
@@ -247,6 +290,11 @@ For technical issues:
 
 ## Version History
 
+- **v2.0**: Enhanced security and ISBN search features
+  - Added individual ISBN lookup functionality
+  - Implemented comprehensive security enhancements (CSP, input validation, XSS protection)
+  - Added file size limits and enhanced error handling
+  - Improved user interface with responsive design
 - **v1.0**: Initial release with core functionality
-- Supports Excel upload, validation, and CSV export
-- Includes batch operations and clipboard integration
+  - Supports Excel upload, validation, and CSV export
+  - Includes batch operations and clipboard integration

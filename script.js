@@ -127,6 +127,69 @@ async function fetchData() {
 }
 
 document.getElementById('excelFile').addEventListener('change', handleFileSelect);
+document.getElementById('isbnSearch').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        searchISBN();
+    }
+});
+
+function searchISBN() {
+    const isbnInput = document.getElementById('isbnSearch');
+    const resultDiv = document.getElementById('isbnResult');
+    const alertDiv = document.getElementById('isbnResultAlert');
+    const contentDiv = document.getElementById('isbnResultContent');
+    
+    const rawISBN = sanitizeText(isbnInput.value);
+    
+    if (!rawISBN) {
+        showISBNResult('Please enter an ISBN to search', 'warning');
+        return;
+    }
+    
+    // Validate and normalize ISBN
+    if (!validateISBN(rawISBN)) {
+        showISBNResult('Invalid ISBN format. Please enter a valid 10 or 13 digit ISBN.', 'danger');
+        return;
+    }
+    
+    // Normalize ISBN (remove non-digits and pad)
+    let normalizedISBN = rawISBN.replace(/\D/g, '').padStart(13, '0');
+    
+    // Search in the books database
+    const foundBook = booksData.find(book => book.code === normalizedISBN);
+    
+    if (foundBook) {
+        showISBNResult(`
+            <strong>✓ Available</strong><br>
+            <strong>ISBN:</strong> ${normalizedISBN}<br>
+            <strong>Title:</strong> ${foundBook.description}<br>
+            ${foundBook.setupdate ? `<strong>Setup Date:</strong> ${foundBook.setupdate}` : ''}
+        `, 'success');
+    } else {
+        showISBNResult(`
+            <strong>✗ Not Available</strong><br>
+            <strong>ISBN:</strong> ${normalizedISBN}<br>
+            This title is not available in the current inventory.
+        `, 'danger');
+    }
+}
+
+function showISBNResult(content, type) {
+    const resultDiv = document.getElementById('isbnResult');
+    const alertDiv = document.getElementById('isbnResultAlert');
+    const contentDiv = document.getElementById('isbnResultContent');
+    
+    alertDiv.className = `alert alert-${type}`;
+    contentDiv.innerHTML = content;
+    resultDiv.style.display = 'block';
+    
+    // Auto-hide success/info results after 10 seconds
+    if (type === 'success' || type === 'info') {
+        setTimeout(() => {
+            resultDiv.style.display = 'none';
+        }, 10000);
+    }
+}
 
 async function handleFileSelect(e) {
     const file = e.target.files[0];
