@@ -47,7 +47,8 @@ project-root/
 ├── index.html              # Main application interface
 ├── script.js               # Enhanced application logic
 ├── data.json               # Inventory database (required)
-├── order_template.xlsx     # Excel template for orders (optional)
+├── order_template.xlsx     # Excel template for orders
+├── new_titles.xlsx         # For inventory additions
 ├── favicon-32x32.png       # Favicon (optional)
 └── apple-touch-icon.png    # Apple touch icon (optional)
 ```
