@@ -1,33 +1,40 @@
-# CLAYS POD Order Processing & Inventory Management Tool
+# CLAYS POD Order Processing & Repo Management Tool
 
-A comprehensive web-based application for processing print-on-demand orders and managing inventory for Clays Ltd. Features complete order processing, real-time inventory validation, ISBN lookup, and secure inventory management with password protection.
+A comprehensive web-based application for processing print-on-demand orders and managing inventory for Clays Ltd. Features complete order processing, real-time repo validation, ISBN/Master Order ID lookup, and secure repo management with password protection.
 
 ## 🚀 Features
 
 ### **Order Processing**
-- **Excel/CSV Upload**: Process `.xlsx`, `.xls` order files up to 10MB
-- **Real-time Validation**: Check ISBNs against live inventory database
-- **Smart Filtering**: Toggle to show only unavailable items
+- **Excel/CSV Upload**: Process `.xlsx`, `.xls`, `.csv` order files up to 10MB
+- **Real-time Validation**: Check ISBNs against live repo database with status information
+- **Smart Filtering**: 
+  - **Print as Miscellaneous Items (MPI)**: Show only MPI status items
+  - **Show Not Available Items**: Display items not found in repo
 - **Bulk Operations**: Select and delete multiple rows, copy to clipboard
 - **CSV Export**: Generate Clays POD-compliant CSV files
 - **Template Download**: Get pre-formatted Excel template for orders
 
-### **ISBN Management**
-- **Individual Lookup**: Quick search for single ISBN availability
+### **ISBN/Master Order ID Management**
+- **Dual Search**: Search by ISBN or Master Order ID
+- **Comprehensive Results**: Shows ISBN, title, Master Order ID, and status
+- **Status Indicators**: 
+  - 🟢 **POD Ready**: Available for print-on-demand
+  - 🟡 **MPI**: Miscellaneous Print Item
+  - 🔴 **Not Available**: Item not in repo catalog
 - **Format Flexibility**: Accepts ISBNs with or without dashes/spaces
-- **Detailed Results**: Shows title, availability status, and setup dates
 - **Keyboard Shortcuts**: Press Enter to trigger searches
 
-### **Complete Inventory Management** 🔒
-- **Add New Titles**: Upload Excel/CSV files to expand inventory
+### **Complete Repo Management** 🔒
+- **JSON-Only Upload**: Upload complete data.json format files
+- **Add New Titles**: Expand repo with full data structure preservation
 - **Remove Titles**: Individual or bulk removal of existing titles
 - **Dual Preview**: Separate tables for additions and removals
-- **Statistics Dashboard**: 6-metric real-time inventory overview
+- **Statistics Dashboard**: 6-metric real-time repo overview
 - **Change Management**: Preview all modifications before applying
-- **Export Options**: Download updated inventory + backup current database
+- **Export Options**: Download updated repo + backup current database
 
 ### **Security & Access Control** 🛡️
-- **Password Protection**: Secure access to inventory management functions
+- **Password Protection**: Secure masked password input for repo management
 - **Session Management**: 1-hour sessions with automatic extension
 - **Visual Session Timer**: Real-time countdown with expiration warnings
 - **Secure Logout**: One-click session termination
@@ -46,24 +53,43 @@ A comprehensive web-based application for processing print-on-demand orders and 
 project-root/
 ├── index.html              # Main application interface
 ├── script.js               # Enhanced application logic
-├── data.json               # Inventory database (required)
+├── data.json               # Repo database (required)
 ├── order_template.xlsx     # Excel template for orders
-├── new_titles.xlsx         # For inventory additions
 ├── favicon-32x32.png       # Favicon (optional)
 └── apple-touch-icon.png    # Apple touch icon (optional)
 ```
 
-### **Inventory Database Format**
-The `data.json` file must contain an array of book objects:
+### **Repo Database Format**
+The `data.json` file must contain an array of book objects with the complete structure:
 ```json
 [
   {
-    "code": 9781860000000,
-    "description": "JACK STALWART: THE SECRET OF THE SACRED"
+    "ISBN": 9780140175936,
+    "Master Order ID": "SA1657",
+    "TITLE": "CLEOPATRA'S SISTER   (11)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU/2",
+    "Extent": 288,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 18,
+    "Packing": "Pack (64) (8) Base.",
+    "Status": "POD Ready"
   },
   {
-    "code": 9780099175421,
-    "description": "DARK LADY (014)"
+    "ISBN": 9780140256932,
+    "Master Order ID": "SA1659",
+    "TITLE": "BEYOND THE BLUE MOUNTAINS (07)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU/2",
+    "Extent": 160,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 11,
+    "Packing": "Pack (104) (8) Base.",
+    "Status": "MPI"
   }
 ]
 ```
@@ -72,7 +98,7 @@ The `data.json` file must contain an array of book objects:
 
 ### **Basic Setup**
 1. **Download** all project files to a local directory
-2. **Create** `data.json` with your book inventory (see format above)
+2. **Create** `data.json` with your book repo (see format above)
 3. **Place** `order_template.xlsx` in the same directory (optional)
 4. **Open** `index.html` in a web browser
 
@@ -101,24 +127,26 @@ php -S localhost:8000
 
 #### **Initial Setup**
 1. Open the application in your web browser
-2. The tool automatically loads inventory from `data.json`
+2. The tool automatically loads repo from `data.json`
 3. Download the order template for standardized Excel format
 
 #### **Default Credentials**
-- **Inventory Management Password**: `admin123`
-- **Session Duration**: 4 hours with automatic extension
-- **Access Level**: All inventory modification functions
+- **Repo Management Password**: `admin123`
+- **Session Duration**: 1 hour with automatic extension
+- **Access Level**: All repo modification functions
 
 ### **Order Processing Workflow**
 
 #### **1. Basic Order Processing**
 1. **Enter Order Reference** (required field)
-2. **Upload Excel File** with ISBN and Qty columns
-3. **Review Results** in the preview table
-4. **Filter Issues** using "Show only unavailable items"
+2. **Upload File** with ISBN and Qty columns (Excel/CSV supported)
+3. **Review Results** in the preview table with status indicators
+4. **Filter Items** using available filter options:
+   - **Print as Miscellaneous Items (MPI)**: Shows only MPI status items
+   - **Show Not Available Items**: Shows items not in repo catalog
 5. **Export CSV** for Clays POD processing
 
-#### **2. Excel File Format**
+#### **2. Supported File Formats**
 Your order files should contain:
 | Column | Description | Example |
 |--------|-------------|---------|
@@ -128,53 +156,71 @@ Your order files should contain:
 **Supported variations:**
 - Column names: `ISBN`, `isbn`, `Qty`, `qty`, `Quantity`, `quantity`
 - ISBN formats: With/without dashes, scientific notation
-- File types: `.xlsx`, `.xls` (max 10MB)
+- File types: `.xlsx`, `.xls`, `.csv` (max 10MB)
 
-#### **3. Managing Orders**
+#### **3. Status Understanding**
+- 🟢 **POD Ready**: Items available for print-on-demand production
+- 🟡 **MPI**: Miscellaneous Print Items requiring special handling
+- 🔴 **Not Available**: Items not found in current repo catalog
+
+#### **4. Managing Orders**
 - **Individual Deletion**: Click trash icon in Action column
 - **Bulk Selection**: Use checkboxes to select multiple rows
 - **Copy to Clipboard**: Export table as HTML for external use
-- **Filter View**: Toggle to focus on problematic orders
+- **Smart Filtering**: Focus on specific item types or statuses
 
-### **ISBN Lookup**
+### **ISBN/Master Order ID Lookup**
 
-#### **Quick Search**
-1. Enter any ISBN in the search field
-2. Click "Search Inventory" or press Enter
-3. View immediate availability results
+#### **Dual Search Capability**
+1. Enter ISBN (e.g., `9780140175936`) or Master Order ID (e.g., `SA1657`)
+2. Click "Search Repo" or press Enter
+3. View comprehensive results including status
 
-#### **Search Results**
-- **Available Items**: Green badge with title and setup date
-- **Unavailable Items**: Red badge with ISBN and not found message
+#### **Search Results Display**
+- **Available Items**: Shows ISBN, title, Master Order ID, and status badge
+- **Not Available Items**: Clear indication that item is not in repo
 - **Auto-hide**: Success results disappear after 10 seconds
 
-### **Inventory Management** 🔒
+### **Repo Management** 🔒
 
 #### **Access Control**
-1. Click "Manage Inventory" in the top navigation
-2. Enter password when prompted (default: `admin123`)
-3. Access granted for 4 hours with activity extension
+1. Click "Manage Repo" in the top navigation
+2. Enter password when prompted (default: `admin123`) - characters are masked
+3. Access granted for 1 hour with activity extension
 4. Visual session timer shows remaining time
 
-#### **Adding New Titles**
+#### **Adding New Titles - JSON Format Only**
 
-**File Upload Method:**
-1. Prepare Excel/CSV with ISBN and Description columns
+**JSON File Upload:**
+1. Prepare JSON file with complete data.json structure
 2. Upload via "Add New Titles" panel
-3. Click "Process New Titles"
+3. Click "Process JSON File"
 4. Review in preview table with status indicators
 
-**Expected File Format:**
-```
-ISBN          | Description
-9781860000000 | JACK STALWART: THE SECRET OF THE SACRED
-9781860000001 | ANOTHER BOOK TITLE
+**Required JSON Format:**
+```json
+[
+  {
+    "ISBN": 9780140175936,
+    "Master Order ID": "SA1657",
+    "TITLE": "CLEOPATRA'S SISTER   (11)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU/2",
+    "Extent": 288,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 18,
+    "Packing": "Pack (64) (8) Base.",
+    "Status": "POD Ready"
+  }
+]
 ```
 
-**Status Indicators:**
-- 🟢 **New**: Valid title to be added
-- 🟡 **Duplicate**: Already exists in inventory
-- 🔴 **Invalid**: Missing description or malformed ISBN
+**Status Indicators in Upload:**
+- 🟢 **New (JSON)**: Valid title with complete data structure
+- 🟡 **Duplicate**: Already exists in repo
+- 🔴 **Invalid**: Missing required fields or malformed data
 
 #### **Removing Titles**
 
@@ -186,16 +232,17 @@ ISBN          | Description
 **Bulk Removal:**
 1. Create file with ISBNs to remove:
    - **Text file**: One ISBN per line
-   - **Excel/CSV**: Column named "ISBN"
+   - **JSON file**: Array of objects with ISBN field
 2. Upload via "Upload ISBNs to Remove"
 3. Click "Process Bulk Removal"
 
 **Removal File Formats:**
 ```
-Text file:          Excel/CSV:
-9781860000000      ISBN
-9781860000001      9781860000000
-9781860000002      9781860000001
+Text file:          JSON file:
+9780140175936      [
+9780140256932        {"ISBN": 9780140175936},
+                     {"ISBN": 9780140256932}
+                   ]
 ```
 
 #### **Preview & Management**
@@ -204,21 +251,21 @@ Text file:          Excel/CSV:
 - **Statistics Dashboard**: Real-time metrics of all changes
 - **Change Reversal**: Click "Restore" to undo individual removals
 
-#### **Exporting Updated Inventory**
+#### **Exporting Updated Repo**
 1. **Review Changes**: Check both preview tables and statistics
-2. **Backup Current**: Download current inventory (recommended)
-3. **Download Updated**: Get merged inventory with all changes
+2. **Backup Current**: Download current repo (recommended)
+3. **Download Updated**: Get merged repo with all changes preserved
 4. **Deploy**: Replace `data.json` in your GitHub repository
-5. **Refresh**: Reload application to use new inventory
+5. **Refresh**: Reload application to use new repo
 
 ### **Statistics Dashboard**
 
-The inventory management interface provides six key metrics:
-- **Current Titles**: Existing inventory count
+The repo management interface provides six key metrics:
+- **Current Titles**: Existing repo count
 - **To Add**: Valid new titles pending addition
 - **To Remove**: Titles marked for deletion
 - **Duplicates**: Duplicate entries found in uploads
-- **Final Total**: Projected inventory size after changes
+- **Final Total**: Projected repo size after changes
 - **Net Change**: Overall change (+/- titles)
 
 ## 🔧 Configuration
@@ -243,7 +290,7 @@ In `script.js`, find the `INVENTORY_ACCESS` object and replace:
 const INVENTORY_ACCESS = {
     enabled: true,
     passwordHash: "your_new_hash_here",
-    sessionDuration: 4 * 60 * 60 * 1000 // 4 hours
+    sessionDuration: 1 * 60 * 60 * 1000 // 1 hour
 };
 ```
 
@@ -290,9 +337,11 @@ DTL,ORDER123,002,9780987654321,3,,,,,,,,,,
 - **File Type Checking**: Only allows specified file extensions
 - **Size Limits**: 10MB maximum for all file uploads
 - **ISBN Validation**: Ensures proper format before processing
+- **JSON Structure**: Validates complete data.json format
 - **Text Sanitization**: Removes potentially dangerous characters
 
-### **Session Security**
+### **Enhanced Session Security**
+- **Masked Password Input**: Custom dialog with hidden character input
 - **Encrypted Storage**: Password hashes stored securely
 - **Time-based Expiration**: Automatic logout after inactivity
 - **Activity Extension**: Sessions extend with user interaction
@@ -315,25 +364,32 @@ DTL,ORDER123,002,9780987654321,3,,,,,,,,,,
 #### **"Error loading book data"**
 - **File Exists**: Confirm `data.json` is present
 - **Valid JSON**: Check syntax with JSON validator
-- **Proper Format**: Ensure array structure with code/description objects
+- **Proper Format**: Ensure array structure with complete book objects including Status field
 
 #### **File Upload Problems**
 - **File Size**: Maximum 10MB limit for all uploads
-- **File Type**: Only `.xlsx`, `.xls`, `.csv`, `.txt` supported
-- **Column Names**: Use `ISBN`/`isbn` and `Description`/`description`
+- **File Type**: For orders: `.xlsx`, `.xls`, `.csv`; For repo: `.json` only
+- **Column Names**: Use `ISBN`/`isbn` and `Qty`/`quantity` for orders
+- **JSON Structure**: Ensure complete data.json format for repo uploads
 - **Order Reference**: Must be entered before file upload
 
 #### **Password/Access Issues**
 - **Correct Password**: Default is `admin123` (case-sensitive)
+- **Masked Input**: Password characters are hidden as you type
 - **Session Expired**: Re-authenticate if session timeout occurred
 - **Browser Storage**: Ensure localStorage is enabled
 - **Clear Cache**: Try clearing browser cache/data
 
-#### **Books Showing "Not Found"**
-- **ISBN Matching**: Ensure exact match with inventory codes
+#### **Books Showing "Not Available"**
+- **ISBN Matching**: Ensure exact match with repo ISBNs
 - **Format Consistency**: Check for leading zeros or formatting
 - **Database Update**: Verify `data.json` contains expected entries
-- **Case Sensitivity**: Descriptions are case-sensitive
+- **Master Order ID**: Try searching by Master Order ID if ISBN fails
+
+#### **Status Display Issues**
+- **Missing Status**: Items without Status field default to "POD Ready"
+- **Status Values**: Valid values are "POD Ready", "MPI", or custom statuses
+- **Badge Colors**: Green=POD Ready, Yellow=MPI, Red=Not Available
 
 #### **Download Problems**
 - **Pop-up Blockers**: Disable for the application domain
@@ -344,7 +400,7 @@ DTL,ORDER123,002,9780987654321,3,,,,,,,,,,
 
 #### **Performance Issues**
 - **Large Files**: Break large uploads into smaller batches
-- **Browser Memory**: Close other tabs if processing large inventories
+- **Browser Memory**: Close other tabs if processing large repos
 - **Network**: Ensure stable internet for CDN resource loading
 
 #### **Browser Compatibility**
@@ -360,20 +416,22 @@ DTL,ORDER123,002,9780987654321,3,,,,,,,,,,
 ## 🔄 Maintenance
 
 ### **Regular Tasks**
-- **Inventory Updates**: Keep `data.json` current with new titles
+- **Repo Updates**: Keep `data.json` current with new titles and status changes
 - **Password Rotation**: Change passwords periodically for security
-- **Backup Data**: Regular backups of inventory database
+- **Backup Data**: Regular backups of repo database
 - **Library Updates**: Monitor CDN dependencies for updates
 
 ### **Monitoring**
 - **Error Logs**: Check browser console for recurring issues
 - **Usage Patterns**: Monitor which features are most used
 - **Performance**: Watch for slow uploads or processing times
+- **Status Accuracy**: Verify status indicators match actual production capabilities
 
 ### **Updates**
 - **Dependencies**: Keep external libraries updated for security
 - **Feature Requests**: Document user feedback for improvements
 - **Version Control**: Use Git for tracking changes
+- **Status Management**: Update status values as business requirements change
 
 ## 📊 Technical Specifications
 
@@ -391,9 +449,15 @@ DTL,ORDER123,002,9780987654321,3,,,,,,,,,,
 
 ### **Performance Characteristics**
 - **File Processing**: Up to 10MB files supported
-- **Inventory Size**: Tested with 10,000+ book entries
+- **Repo Size**: Tested with 10,000+ book entries
 - **Session Duration**: 1-hour default with extension
 - **Response Time**: Near-instantaneous for local operations
+
+### **Data Structure Requirements**
+- **Complete JSON**: All repo uploads must include full data.json structure
+- **Required Fields**: ISBN, Master Order ID, TITLE, Status minimum
+- **Status Values**: "POD Ready", "MPI", or custom status strings
+- **ISBN Format**: 10-13 digit numbers, automatically normalized
 
 ## 🤝 Support
 
@@ -409,18 +473,32 @@ When reporting problems, include:
 - Error messages from console
 - File types and sizes being processed
 - Steps to reproduce the issue
+- Status values and expected behavior
 
 ### **Feature Requests**
 The application is designed for extensibility. Common enhancement areas:
-- Additional file format support
+- Additional status types and workflows
 - Enhanced security features
 - Advanced reporting capabilities
 - Integration with external systems
+- Batch processing optimizations
 
 ## 📝 Version History
 
-### **v3.0** - Complete Security & Inventory Management
-- **Added**: Password protection for inventory management
+### **v4.0** - Status Field & JSON-Only Repo Management
+- **Added**: Status field support with POD Ready/MPI/Not Available indicators
+- **Added**: Dual search capability (ISBN and Master Order ID)
+- **Added**: Enhanced filtering for MPI and Not Available items
+- **Added**: JSON-only repo management with complete data structure preservation
+- **Added**: Masked password input with professional dialog
+- **Added**: Collapsible format documentation
+- **Enhanced**: Status-aware processing and display throughout application
+- **Enhanced**: Comprehensive status breakdown in loading messages
+- **Simplified**: Removed Excel/CSV support from repo management
+- **Improved**: Template examples with current data structure
+
+### **v3.0** - Complete Security & Repo Management
+- **Added**: Password protection for repo management
 - **Added**: Session management with visual timer
 - **Added**: Complete title removal functionality (individual and bulk)
 - **Added**: Enhanced statistics dashboard with 6 metrics
@@ -434,7 +512,7 @@ The application is designed for extensibility. Common enhancement areas:
 - **Added**: Comprehensive security enhancements (CSP, input validation, XSS protection)
 - **Added**: File size limits and enhanced error handling
 - **Enhanced**: User interface with responsive design
-- **Enhanced**: Inventory addition workflow with preview tables
+- **Enhanced**: Repo addition workflow with preview tables
 
 ### **v1.0** - Initial Release
 - **Core**: Excel upload, validation, and CSV export
@@ -443,7 +521,7 @@ The application is designed for extensibility. Common enhancement areas:
 
 ## 📄 License
 
-This application is designed specifically for Clays Ltd print-on-demand operations. All configuration and branding elements are customized for Clays POD workflow requirements.
+This application is designed specifically for Clays Ltd print-on-demand operations. All configuration and branding elements are customized for Clays POD workflow requirements with status-aware processing capabilities.
 
 ---
 

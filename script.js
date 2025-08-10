@@ -1,4 +1,49 @@
-// Global variables
+function downloadJsonTemplate() {
+    const templateData = [
+        {
+            "ISBN": 9780140175936,
+            "Master Order ID": "SA1657",
+            "TITLE": "CLEOPATRA'S SISTER   (11)",
+            "Trim Height": 198,
+            "Trim Width": 129,
+            "Bind Style": "PU/2",
+            "Extent": 288,
+            "Paper Desc": "Holmen Bulky 52 gsm",
+            "Cover Spec Code 1": "C400P2",
+            "Cover Spine": 18,
+            "Packing": "Pack (64) (8) Base.",
+            "Status": "POD Ready"
+        },
+        {
+            "ISBN": 9780140256932,
+            "Master Order ID": "SA1659",
+            "TITLE": "BEYOND THE BLUE MOUNTAINS (07)",
+            "Trim Height": 198,
+            "Trim Width": 129,
+            "Bind Style": "PU/2",
+            "Extent": 160,
+            "Paper Desc": "Holmen Bulky 52 gsm",
+            "Cover Spec Code 1": "C400P2",
+            "Cover Spine": 11,
+            "Packing": "Pack (104) (8) Base.",
+            "Status": "MPI"
+        }
+    ];
+    
+    const jsonContent = JSON.stringify(templateData, null, 2);
+    const blob = new Blob([jsonContent], { type: 'application/json' });
+    const url = window.URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'new_titles_template.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+    
+    showInventoryStatus('JSON template downloaded!', 'success');
+}// Global variables
 let booksData = [];
 let processedOrders = [];
 let newTitles = [];
@@ -10,7 +55,7 @@ const INVENTORY_ACCESS = {
     enabled: true,
     // SHA-256 hash of "admin123" - change this password by generating a new hash
     passwordHash: "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
-    sessionKey: "clays_inventory_access",
+    sessionKey: "clays_repo_access",
     sessionDuration: 1 * 60 * 60 * 1000 // 1 hour in milliseconds
 };
 
@@ -42,7 +87,12 @@ const SECURITY_CONFIG = {
     maxFileSize: 10 * 1024 * 1024, // 10MB
     allowedMimeTypes: [
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'application/vnd.ms-excel'
+        'application/vnd.ms-excel',
+        'text/csv',
+        'application/csv',
+        'application/json',
+        'text/json',
+        'text/plain' // For .txt files in removal
     ],
     maxDescriptionLength: 200,
     enableDebugLogging: false // PRODUCTION: Set to false for production deployment
@@ -70,13 +120,13 @@ function validateFile(file) {
     
     // Check file type
     if (!SECURITY_CONFIG.allowedMimeTypes.includes(file.type)) {
-        throw new Error('Invalid file type. Only Excel files (.xlsx, .xls) are allowed');
+        throw new Error('Invalid file type. Only Excel (.xlsx, .xls), CSV (.csv), and JSON (.json) files are allowed');
     }
     
     // Check file extension as additional validation
     const fileName = file.name.toLowerCase();
-    if (!fileName.endsWith('.xlsx') && !fileName.endsWith('.xls')) {
-        throw new Error('Invalid file extension. Only .xlsx and .xls files are allowed');
+    if (!fileName.endsWith('.xlsx') && !fileName.endsWith('.xls') && !fileName.endsWith('.csv') && !fileName.endsWith('.json')) {
+        throw new Error('Invalid file extension. Only .xlsx, .xls, .csv, and .json files are allowed');
     }
     
     return true;
@@ -115,21 +165,37 @@ async function fetchData() {
         
         // Process and normalize the data with security checks
         booksData = rawData.map(item => {
-            // Convert numeric codes to strings and pad to 13 digits
-            const code = String(item.code).padStart(13, '0');
+            // Convert numeric ISBNs to strings and pad to 13 digits
+            const isbn = String(item.ISBN).padStart(13, '0');
             
-            // Sanitize description
-            const description = sanitizeText(item.description || 'No description available');
+            // Sanitize title and master order ID
+            const title = sanitizeText(item.TITLE || 'No title available');
+            const masterOrderId = sanitizeText(item['Master Order ID'] || '');
+            const status = sanitizeText(item.Status || 'POD Ready'); // Default to POD Ready if missing
             
             return {
-                code: code,
-                description: description,
+                isbn: isbn,
+                title: title,
+                masterOrderId: masterOrderId,
+                status: status,
+                // Keep original structure for future development
+                trimHeight: item['Trim Height'],
+                trimWidth: item['Trim Width'],
+                bindStyle: sanitizeText(item['Bind Style'] || ''),
+                extent: item.Extent,
+                paperDesc: sanitizeText(item['Paper Desc'] || ''),
+                coverSpecCode1: sanitizeText(item['Cover Spec Code 1'] || ''),
+                coverSpine: item['Cover Spine'],
+                packing: sanitizeText(item.Packing || ''),
+                // Legacy compatibility
+                code: isbn,
+                description: title,
                 setupdate: sanitizeText(item.setupdate || '')
             };
         });
         
         secureLog('Processed books data:', booksData);
-        showStatus(`Successfully loaded ${booksData.length} books from inventory`, 'success');
+        showStatus(`Successfully loaded ${booksData.length} books from repo`, 'success');
         updateInventoryStats();
         
     } catch (error) {
@@ -161,22 +227,41 @@ async function handleFileSelect(e) {
         
         showStatus('Processing file...', 'info');
         const arrayBuffer = await file.arrayBuffer();
-        const workbook = XLSX.read(arrayBuffer);
-        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-        const excelData = XLSX.utils.sheet_to_json(worksheet);
+        let excelData = [];
+        
+        // Handle different file types
+        if (file.name.toLowerCase().endsWith('.csv')) {
+            const text = new TextDecoder().decode(arrayBuffer);
+            const parsed = Papa.parse(text, {
+                header: true,
+                dynamicTyping: true,
+                skipEmptyLines: true,
+                delimitersToGuess: [',', '\t', '|', ';']
+            });
+            excelData = parsed.data;
+        } else {
+            // Handle Excel files
+            const workbook = XLSX.read(arrayBuffer);
+            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+            excelData = XLSX.utils.sheet_to_json(worksheet);
+        }
 
-        secureLog('Excel data loaded:', excelData);
+        secureLog('File data loaded:', excelData);
 
-        // Create a map for faster lookup
+        // Create a map for faster lookup (supporting both ISBN and Master Order ID)
         const booksMap = new Map();
+        const masterOrderMap = new Map();
         booksData.forEach(item => {
-            booksMap.set(item.code, item);
+            booksMap.set(item.isbn, item);
+            if (item.masterOrderId) {
+                masterOrderMap.set(item.masterOrderId.toLowerCase(), item);
+            }
         });
 
         secureLog('Books map created:', booksMap);
 
         processedOrders = excelData.map((row, index) => {
-            secureLog('Processing Excel row:', row);
+            secureLog('Processing row:', row);
             
             // Handle ISBN with security validation
             let isbn = String(row.ISBN || row.isbn || '').trim();
@@ -200,7 +285,7 @@ async function handleFileSelect(e) {
             
             secureLog('Normalized ISBN:', isbn, 'Quantity:', quantity);
             
-            // Look up book in inventory
+            // Look up book in repo
             const stockItem = booksMap.get(isbn);
             secureLog('Stock item found:', stockItem);
             
@@ -208,19 +293,24 @@ async function handleFileSelect(e) {
                 lineNumber: String(index + 1).padStart(3, '0'),
                 orderRef: sanitizeText(orderRef),
                 isbn,
-                description: stockItem?.description || 'Not Found',
+                description: stockItem?.title || 'Not Found',
                 quantity,
                 available: !!stockItem,
-                setupDate: stockItem?.setupdate || ''
+                status: stockItem?.status || 'Not Available',
+                masterOrderId: stockItem?.masterOrderId || ''
             };
         });
 
         secureLog('Processed orders:', processedOrders);
         updatePreviewTable();
         
-        const availableCount = processedOrders.filter(order => order.available).length;
+        const validCount = processedOrders.filter(order => order.available).length;
         const totalCount = processedOrders.length;
-        showStatus(`Data loaded successfully! ${availableCount}/${totalCount} items found in inventory.`, 'success');
+        const podReadyCount = processedOrders.filter(order => order.available && order.status === 'POD Ready').length;
+        const mpiCount = processedOrders.filter(order => order.available && order.status === 'MPI').length;
+        const notAvailableCount = processedOrders.filter(order => !order.available).length;
+        
+        showStatus(`Data loaded successfully! ${validCount}/${totalCount} items found in repo (${podReadyCount} POD Ready, ${mpiCount} MPI, ${notAvailableCount} Not Available).`, 'success');
         enableButtons(true);
         
     } catch (error) {
@@ -247,19 +337,32 @@ function updatePreviewTable() {
         return;
     }
 
-    const showOnlyUnavailable = document.getElementById('showOnlyUnavailable').checked;
+    const printAsMiscellaneous = document.getElementById('showOnlyUnavailable').checked;
+    const showNotAvailable = document.getElementById('showNotAvailable') ? document.getElementById('showNotAvailable').checked : false;
     let filteredOrders = processedOrders;
 
-    if (showOnlyUnavailable) {
+    if (printAsMiscellaneous) {
+        // Show only MPI items
+        filteredOrders = processedOrders.filter(order => order.available && order.status === 'MPI');
+    } else if (showNotAvailable) {
+        // Show only items not in repo
         filteredOrders = processedOrders.filter(order => !order.available);
     }
 
-    if (filteredOrders.length === 0 && showOnlyUnavailable) {
+    if (filteredOrders.length === 0) {
         const row = document.createElement('tr');
         const cell = document.createElement('td');
         cell.colSpan = 7;
         cell.className = 'text-center text-success';
-        cell.textContent = 'All items are available in inventory!';
+        
+        if (printAsMiscellaneous) {
+            cell.textContent = 'No MPI items found!';
+        } else if (showNotAvailable) {
+            cell.textContent = 'All items are available in repo!';
+        } else {
+            cell.textContent = 'No data to display';
+        }
+        
         row.appendChild(cell);
         tbody.appendChild(row);
         return;
@@ -299,8 +402,28 @@ function updatePreviewTable() {
         
         const statusCell = document.createElement('td');
         const badge = document.createElement('span');
-        badge.className = `badge ${order.available ? 'bg-success' : 'bg-danger'}`;
-        badge.textContent = order.available ? 'Available' : 'Not Found';
+        
+        // Updated status logic based on new Status field
+        if (!order.available) {
+            badge.className = 'badge bg-danger';
+            badge.textContent = 'Not Available';
+        } else {
+            switch (order.status) {
+                case 'POD Ready':
+                    badge.className = 'badge bg-success';
+                    badge.textContent = 'POD Ready';
+                    break;
+                case 'MPI':
+                    badge.className = 'badge bg-warning text-dark';
+                    badge.textContent = 'MPI';
+                    break;
+                default:
+                    badge.className = 'badge bg-info';
+                    badge.textContent = order.status;
+                    break;
+            }
+        }
+        
         statusCell.appendChild(badge);
         
         tr.appendChild(checkboxCell);
@@ -321,38 +444,59 @@ function searchISBN() {
     const alertDiv = document.getElementById('isbnResultAlert');
     const contentDiv = document.getElementById('isbnResultContent');
     
-    const rawISBN = sanitizeText(isbnInput.value);
+    const rawInput = sanitizeText(isbnInput.value);
     
-    if (!rawISBN) {
-        showISBNResult('Please enter an ISBN to search', 'warning');
+    if (!rawInput) {
+        showISBNResult('Please enter an ISBN or Master Order ID to search', 'warning');
         return;
     }
     
-    // Validate and normalize ISBN
-    if (!validateISBN(rawISBN)) {
-        showISBNResult('Invalid ISBN format. Please enter a valid 10 or 13 digit ISBN.', 'danger');
-        return;
+    let foundBook = null;
+    let searchType = '';
+    
+    // First try to search as ISBN
+    if (validateISBN(rawInput)) {
+        const normalizedISBN = rawInput.replace(/\D/g, '').padStart(13, '0');
+        foundBook = booksData.find(book => book.isbn === normalizedISBN);
+        searchType = 'ISBN';
     }
     
-    // Normalize ISBN (remove non-digits and pad)
-    let normalizedISBN = rawISBN.replace(/\D/g, '').padStart(13, '0');
-    
-    // Search in the books database
-    const foundBook = booksData.find(book => book.code === normalizedISBN);
+    // If not found and doesn't look like ISBN, try Master Order ID
+    if (!foundBook) {
+        foundBook = booksData.find(book => 
+            book.masterOrderId && book.masterOrderId.toLowerCase() === rawInput.toLowerCase()
+        );
+        searchType = 'Master Order ID';
+    }
     
     if (foundBook) {
         showISBNResult(`
             <strong>✓ Available</strong><br>
-            <strong>ISBN:</strong> ${normalizedISBN}<br>
-            <strong>Title:</strong> ${foundBook.description}<br>
-            ${foundBook.setupdate ? `<strong>Setup Date:</strong> ${foundBook.setupdate}` : ''}
+            <strong>ISBN:</strong> ${foundBook.isbn}<br>
+            <strong>Title:</strong> ${foundBook.title}<br>
+            <strong>Master Order ID:</strong> ${foundBook.masterOrderId || 'N/A'}<br>
+            <strong>Status:</strong> <span class="badge ${getStatusBadgeClass(foundBook.status)}">${foundBook.status}</span><br>
+            <small class="text-muted">Found by ${searchType}</small>
         `, 'success');
     } else {
+        // Determine what we were searching for in the error message
+        const searchTypeMsg = validateISBN(rawInput) ? 'ISBN' : 'Master Order ID';
         showISBNResult(`
             <strong>✗ Not Available</strong><br>
-            <strong>ISBN:</strong> ${normalizedISBN}<br>
-            This title is not available in the current inventory.
+            <strong>${searchTypeMsg}:</strong> ${rawInput}<br>
+            This title is not available in the current repo.
         `, 'danger');
+    }
+}
+
+function getStatusBadgeClass(status) {
+    switch (status) {
+        case 'POD Ready':
+            return 'bg-success';
+        case 'MPI':
+            return 'bg-warning text-dark';
+        default:
+            return 'bg-info';
     }
 }
 
@@ -419,7 +563,7 @@ function downloadTemplate() {
 }
 
 function downloadNewTitlesTemplate() {
-    // Create a link element
+    // Create a link element for Excel template
     const link = document.createElement('a');
     
     // Set the href to the new titles template file path
@@ -436,6 +580,51 @@ function downloadNewTitlesTemplate() {
     
     // Remove the link from the document
     document.body.removeChild(link);
+}
+
+function downloadJsonTemplate() {
+    const templateData = [
+        {
+            "ISBN": 9780140064810,
+            "Master Order ID": "SA1693",
+            "TITLE": "NEXT TO NATURE, ART (10)",
+            "Trim Height": 198,
+            "Trim Width": 129,
+            "Bind Style": "PU/2",
+            "Extent": 192,
+            "Paper Desc": "Holmen Bulky 52 gsm",
+            "Cover Spec Code 1": "C400P2",
+            "Cover Spine": 13,
+            "Packing": "Pack (88) (8) Base."
+        },
+        {
+            "ISBN": 9780140119329,
+            "Master Order ID": "SA2055",
+            "TITLE": "PASSING ON (14)",
+            "Trim Height": 198,
+            "Trim Width": 129,
+            "Bind Style": "PU/2",
+            "Extent": 224,
+            "Paper Desc": "Holmen Bulky 52 gsm",
+            "Cover Spec Code 1": "C400P2",
+            "Cover Spine": 14,
+            "Packing": "Pack (80) (8) Base."
+        }
+    ];
+    
+    const jsonContent = JSON.stringify(templateData, null, 2);
+    const blob = new Blob([jsonContent], { type: 'application/json' });
+    const url = window.URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'new_titles_template.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+    
+    showInventoryStatus('JSON template downloaded!', 'success');
 }
 
 function downloadCsv() {
@@ -602,11 +791,29 @@ function toggleTableFilter() {
     updatePreviewTable();
     document.getElementById('selectAll').checked = false;
     
-    const showOnlyUnavailable = document.getElementById('showOnlyUnavailable').checked;
-    const unavailableCount = processedOrders.filter(order => !order.available).length;
+    const printAsMiscellaneous = document.getElementById('showOnlyUnavailable').checked;
+    const showNotAvailable = document.getElementById('showNotAvailable') ? document.getElementById('showNotAvailable').checked : false;
     
-    if (showOnlyUnavailable) {
-        showStatus(`Showing ${unavailableCount} unavailable items`, 'info');
+    // Ensure only one filter is active at a time
+    if (printAsMiscellaneous && showNotAvailable) {
+        // If both are checked, uncheck the other one
+        if (event.target.id === 'showOnlyUnavailable') {
+            document.getElementById('showNotAvailable').checked = false;
+        } else {
+            document.getElementById('showOnlyUnavailable').checked = false;
+        }
+        // Re-run the function with updated state
+        setTimeout(toggleTableFilter, 10);
+        return;
+    }
+    
+    const mpiCount = processedOrders.filter(order => order.available && order.status === 'MPI').length;
+    const notAvailableCount = processedOrders.filter(order => !order.available).length;
+    
+    if (printAsMiscellaneous) {
+        showStatus(`Showing ${mpiCount} MPI items`, 'info');
+    } else if (showNotAvailable) {
+        showStatus(`Showing ${notAvailableCount} not available items`, 'info');
     } else {
         showStatus(`Showing all ${processedOrders.length} items`, 'info');
     }
@@ -627,7 +834,7 @@ function showStatus(message, type) {
 
 // Password protection functions
 function showInventoryTab() {
-    // Check if inventory access is required and granted
+    // Check if repo access is required and granted
     if (INVENTORY_ACCESS.enabled && !hasInventoryAccess()) {
         if (!requestInventoryAccess()) {
             return; // Stay on current tab if access denied
@@ -642,7 +849,7 @@ function showInventoryTab() {
         // Show access status bar if protection is enabled
         if (INVENTORY_ACCESS.enabled) {
             showAccessStatusBar();
-            showInventoryStatus('✅ Inventory management access granted', 'success');
+            showInventoryStatus('✅ Repo management access granted', 'success');
         }
     } else {
         // Fallback if Bootstrap JS isn't loaded
@@ -664,7 +871,7 @@ function showInventoryTab() {
 function updateInventoryStats() {
     const validNewTitles = newTitles.filter(title => title.status === 'new').length;
     const duplicates = newTitles.filter(title => 
-        booksData.some(book => book.code === title.normalizedISBN)
+        booksData.some(book => book.isbn === title.normalizedISBN)
     ).length;
     
     document.getElementById('currentTitlesCount').textContent = booksData.length;
@@ -680,7 +887,7 @@ function updateInventoryStats() {
     document.getElementById('netChangeCount').className = netChange >= 0 ? 'text-success mb-1' : 'text-danger mb-1';
 }
 
-// Check if user has current inventory access
+// Check if user has current repo access
 function hasInventoryAccess() {
     if (!INVENTORY_ACCESS.enabled) return true;
     
@@ -698,15 +905,89 @@ function hasInventoryAccess() {
     }
 }
 
-// Request inventory access with password
+// Request repo access with password
 function requestInventoryAccess() {
-    const password = prompt("🔐 Enter inventory management password:");
-    if (!password) {
-        showInventoryStatus('Access cancelled', 'info');
-        return false;
-    }
+    // Create a proper password input dialog
+    const passwordDialog = document.createElement('div');
+    passwordDialog.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    `;
     
-    return validatePasswordAndGrantAccess(password);
+    passwordDialog.innerHTML = `
+        <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); min-width: 300px;">
+            <h5 style="margin-bottom: 20px; text-align: center;">🔐 Repo Management Access</h5>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Enter Password:</label>
+                <input type="password" id="passwordInput" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" placeholder="Password">
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button id="cancelBtn" style="padding: 8px 16px; border: 1px solid #ccc; background: #f8f9fa; border-radius: 4px; cursor: pointer;">Cancel</button>
+                <button id="submitBtn" style="padding: 8px 16px; border: none; background: #007bff; color: white; border-radius: 4px; cursor: pointer;">Submit</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(passwordDialog);
+    
+    const passwordInput = document.getElementById('passwordInput');
+    const submitBtn = document.getElementById('submitBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    
+    // Focus on password input
+    passwordInput.focus();
+    
+    return new Promise((resolve) => {
+        const cleanup = () => {
+            document.body.removeChild(passwordDialog);
+        };
+        
+        const handleSubmit = async () => {
+            const password = passwordInput.value;
+            cleanup();
+            
+            if (!password) {
+                showInventoryStatus('Access cancelled', 'info');
+                resolve(false);
+                return;
+            }
+            
+            const success = await validatePasswordAndGrantAccess(password);
+            resolve(success);
+        };
+        
+        const handleCancel = () => {
+            cleanup();
+            showInventoryStatus('Access cancelled', 'info');
+            resolve(false);
+        };
+        
+        // Event listeners
+        submitBtn.addEventListener('click', handleSubmit);
+        cancelBtn.addEventListener('click', handleCancel);
+        
+        // Allow Enter key to submit
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleSubmit();
+            }
+        });
+        
+        // Allow Escape key to cancel
+        passwordDialog.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                handleCancel();
+            }
+        });
+    });
 }
 
 // Validate password and grant access
@@ -728,11 +1009,11 @@ async function validatePasswordAndGrantAccess(password) {
             };
             localStorage.setItem(INVENTORY_ACCESS.sessionKey, JSON.stringify(sessionData));
             
-            secureLog('Inventory access granted');
+            secureLog('Repo access granted');
             return true;
         } else {
             alert("❌ Incorrect password. Access denied.");
-            secureLog('Inventory access denied - incorrect password');
+            secureLog('Repo access denied - incorrect password');
             return false;
         }
     } catch (error) {
@@ -742,7 +1023,7 @@ async function validatePasswordAndGrantAccess(password) {
     }
 }
 
-// Check if inventory functions should be protected
+// Check if repo functions should be protected
 function requireInventoryAccess(functionName) {
     if (INVENTORY_ACCESS.enabled && !hasInventoryAccess()) {
         showInventoryStatus(`🔒 Access required for ${functionName}. Please authenticate first.`, 'warning');
@@ -774,13 +1055,13 @@ function checkInventorySession() {
         
         // Show warning when 10 minutes or less remaining
         if (timeLeft <= 10 * 60 * 1000 && timeLeft > 0) {
-            showInventoryStatus(`⏰ Inventory access expires in ${minutesLeft} minutes`, 'warning');
+            showInventoryStatus(`⏰ Repo access expires in ${minutesLeft} minutes`, 'warning');
         } 
         // Session expired
         else if (timeLeft <= 0) {
             localStorage.removeItem(INVENTORY_ACCESS.sessionKey);
             hideAccessStatusBar();
-            showInventoryStatus('🔒 Inventory access expired. Please re-authenticate.', 'danger');
+            showInventoryStatus('🔒 Repo access expired. Please re-authenticate.', 'danger');
             
             // Switch back to orders tab
             const ordersTab = document.getElementById('orders-tab');
@@ -806,7 +1087,7 @@ function extendInventorySession() {
             const sessionData = JSON.parse(session);
             sessionData.expires = Date.now() + INVENTORY_ACCESS.sessionDuration;
             localStorage.setItem(INVENTORY_ACCESS.sessionKey, JSON.stringify(sessionData));
-            secureLog('Inventory session extended');
+            secureLog('Repo session extended');
         }
     } catch (error) {
         secureLog('Session extension error:', error);
@@ -845,11 +1126,11 @@ function hideAccessStatusBar() {
     }
 }
 
-// Logout from inventory management
+// Logout from repo management
 function logoutInventoryAccess() {
     localStorage.removeItem(INVENTORY_ACCESS.sessionKey);
     hideAccessStatusBar();
-    showInventoryStatus('🔓 Logged out of inventory management', 'info');
+    showInventoryStatus('🔓 Logged out of repo management', 'info');
     
     // Switch to orders tab
     const ordersTab = document.getElementById('orders-tab');
@@ -866,32 +1147,50 @@ async function processInventoryFile() {
     if (!file) return;
 
     try {
-        validateFile(file);
-        showInventoryStatus('Processing inventory file...', 'info');
+        // Only validate JSON files for repo management
+        if (!file.name.toLowerCase().endsWith('.json')) {
+            throw new Error('Only JSON files are supported for repo management');
+        }
+        
+        if (file.size > SECURITY_CONFIG.maxFileSize) {
+            throw new Error(`File size exceeds limit of ${SECURITY_CONFIG.maxFileSize / (1024 * 1024)}MB`);
+        }
+        
+        showInventoryStatus('Processing JSON repo file...', 'info');
         extendInventorySession(); // Extend session on activity
         
         const arrayBuffer = await file.arrayBuffer();
+        const text = new TextDecoder().decode(arrayBuffer);
         let data = [];
         
-        if (file.name.toLowerCase().endsWith('.csv')) {
-            const text = new TextDecoder().decode(arrayBuffer);
-            const parsed = Papa.parse(text, {
-                header: true,
-                dynamicTyping: true,
-                skipEmptyLines: true,
-                delimitersToGuess: [',', '\t', '|', ';']
-            });
-            data = parsed.data;
-        } else {
-            const workbook = XLSX.read(arrayBuffer);
-            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-            data = XLSX.utils.sheet_to_json(worksheet);
+        try {
+            const jsonData = JSON.parse(text);
+            if (Array.isArray(jsonData)) {
+                data = jsonData;
+            } else {
+                throw new Error('JSON file must contain an array of book objects');
+            }
+        } catch (jsonError) {
+            throw new Error('Invalid JSON format: ' + jsonError.message);
         }
 
-        secureLog('Inventory data loaded:', data);
+        secureLog('JSON repo data loaded:', data);
         
         const processedTitles = data.map((row, index) => {
-            let isbn = String(row.ISBN || row.isbn || '').trim();
+            // Validate JSON structure
+            if (!row.hasOwnProperty('ISBN') || !row.hasOwnProperty('TITLE')) {
+                return {
+                    originalISBN: row.ISBN || 'missing',
+                    normalizedISBN: '',
+                    title: '',
+                    status: 'invalid',
+                    error: 'Missing required fields (ISBN, TITLE)',
+                    isFullFormat: false,
+                    fullData: null
+                };
+            }
+            
+            let isbn = String(row.ISBN || '').trim();
             
             if (isbn.includes('e') || isbn.includes('E')) {
                 isbn = Number(isbn).toFixed(0);
@@ -901,34 +1200,40 @@ async function processInventoryFile() {
                 return {
                     originalISBN: isbn,
                     normalizedISBN: '',
-                    description: '',
+                    title: '',
                     status: 'invalid',
-                    error: 'Invalid ISBN format'
+                    error: 'Invalid ISBN format',
+                    isFullFormat: false,
+                    fullData: null
                 };
             }
             
             const normalizedISBN = isbn.replace(/\D/g, '').padStart(13, '0');
-            const description = sanitizeText(row.Description || row.description || '');
+            const title = sanitizeText(row.TITLE || '');
             
-            if (!description) {
+            if (!title) {
                 return {
                     originalISBN: isbn,
                     normalizedISBN,
-                    description: '',
+                    title: '',
                     status: 'invalid',
-                    error: 'Missing description'
+                    error: 'Missing title',
+                    isFullFormat: false,
+                    fullData: null
                 };
             }
             
-            const isDuplicate = booksData.some(book => book.code === normalizedISBN);
+            const isDuplicate = booksData.some(book => book.isbn === normalizedISBN);
             const isNewDuplicate = newTitles.some(title => title.normalizedISBN === normalizedISBN);
             
             return {
                 originalISBN: isbn,
                 normalizedISBN,
-                description,
+                title,
                 status: isDuplicate ? 'duplicate' : (isNewDuplicate ? 'duplicate-new' : 'new'),
-                error: null
+                error: null,
+                isFullFormat: true,
+                fullData: row
             };
         });
 
@@ -941,7 +1246,7 @@ async function processInventoryFile() {
         const invalidCount = processedTitles.filter(t => t.status === 'invalid').length;
         
         showInventoryStatus(
-            `Processed ${processedTitles.length} titles: ${validCount} new, ${duplicateCount} duplicates, ${invalidCount} invalid`,
+            `Processed ${processedTitles.length} JSON records: ${validCount} new, ${duplicateCount} duplicates, ${invalidCount} invalid`,
             'success'
         );
         
@@ -949,8 +1254,8 @@ async function processInventoryFile() {
         document.getElementById('clearNewTitlesBtn').disabled = false;
         
     } catch (error) {
-        console.error('Inventory processing error:', error);
-        showInventoryStatus('Error processing inventory file: ' + error.message, 'danger');
+        console.error('JSON processing error:', error);
+        showInventoryStatus('Error processing JSON file: ' + error.message, 'danger');
     }
 }
 
@@ -978,7 +1283,7 @@ function updateNewTitlesTable() {
         switch (title.status) {
             case 'new':
                 badge.className = 'badge bg-success';
-                badge.textContent = 'New';
+                badge.textContent = 'New (JSON)';
                 break;
             case 'duplicate':
                 badge.className = 'badge bg-warning';
@@ -1007,7 +1312,7 @@ function updateNewTitlesTable() {
         isbnCell.textContent = title.normalizedISBN || title.originalISBN;
         
         const descCell = document.createElement('td');
-        descCell.textContent = title.description || 'N/A';
+        descCell.textContent = title.title || 'N/A';
         
         const actionCell = document.createElement('td');
         const deleteBtn = document.createElement('button');
@@ -1068,18 +1373,18 @@ function searchAndMarkForRemoval() {
     const normalizedISBN = rawISBN.replace(/\D/g, '').padStart(13, '0');
     
     // Check if already marked for removal
-    if (titlesToRemove.some(title => title.code === normalizedISBN)) {
+    if (titlesToRemove.some(title => title.isbn === normalizedISBN)) {
         showInventoryStatus('This title is already marked for removal', 'warning');
         return;
     }
     
-    // Find in current inventory
-    const foundBook = booksData.find(book => book.code === normalizedISBN);
+    // Find in current repo
+    const foundBook = booksData.find(book => book.isbn === normalizedISBN);
     
     if (foundBook) {
         titlesToRemove.push({
-            code: normalizedISBN,
-            description: foundBook.description
+            isbn: normalizedISBN,
+            title: foundBook.title
         });
         
         updateRemoveTitlesTable();
@@ -1090,9 +1395,9 @@ function searchAndMarkForRemoval() {
         document.getElementById('downloadInventoryBtn').disabled = false;
         document.getElementById('clearRemovalsBtn').disabled = false;
         
-        showInventoryStatus(`Title marked for removal: ${foundBook.description}`, 'success');
+        showInventoryStatus(`Title marked for removal: ${foundBook.title}`, 'success');
     } else {
-        showInventoryStatus(`ISBN ${normalizedISBN} not found in current inventory`, 'danger');
+        showInventoryStatus(`ISBN ${normalizedISBN} not found in current repo`, 'danger');
     }
 }
 
@@ -1115,19 +1420,20 @@ async function processBulkRemoval() {
             // Split by lines and filter out empty lines
             const lines = text.split(/\r?\n/).filter(line => line.trim());
             data = lines.map(line => ({ ISBN: line.trim() }));
-        } else if (file.name.toLowerCase().endsWith('.csv')) {
+        } else if (file.name.toLowerCase().endsWith('.json')) {
             const text = new TextDecoder().decode(arrayBuffer);
-            const parsed = Papa.parse(text, {
-                header: true,
-                dynamicTyping: true,
-                skipEmptyLines: true,
-                delimitersToGuess: [',', '\t', '|', ';']
-            });
-            data = parsed.data;
+            try {
+                const jsonData = JSON.parse(text);
+                if (Array.isArray(jsonData)) {
+                    data = jsonData;
+                } else {
+                    throw new Error('JSON file must contain an array of objects with ISBN field');
+                }
+            } catch (jsonError) {
+                throw new Error('Invalid JSON format: ' + jsonError.message);
+            }
         } else {
-            const workbook = XLSX.read(arrayBuffer);
-            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-            data = XLSX.utils.sheet_to_json(worksheet);
+            throw new Error('Only JSON and TXT files are supported for bulk removal');
         }
 
         let addedCount = 0;
@@ -1148,18 +1454,18 @@ async function processBulkRemoval() {
             const normalizedISBN = isbn.replace(/\D/g, '').padStart(13, '0');
             
             // Check if already marked for removal
-            if (titlesToRemove.some(title => title.code === normalizedISBN)) {
+            if (titlesToRemove.some(title => title.isbn === normalizedISBN)) {
                 duplicateCount++;
                 return;
             }
             
-            // Find in current inventory
-            const foundBook = booksData.find(book => book.code === normalizedISBN);
+            // Find in current repo
+            const foundBook = booksData.find(book => book.isbn === normalizedISBN);
             
             if (foundBook) {
                 titlesToRemove.push({
-                    code: normalizedISBN,
-                    description: foundBook.description
+                    isbn: normalizedISBN,
+                    title: foundBook.title
                 });
                 addedCount++;
             } else {
@@ -1205,10 +1511,10 @@ function updateRemoveTitlesTable() {
         const tr = document.createElement('tr');
         
         const isbnCell = document.createElement('td');
-        isbnCell.textContent = title.code;
+        isbnCell.textContent = title.isbn;
         
         const descCell = document.createElement('td');
-        descCell.textContent = title.description;
+        descCell.textContent = title.title;
         
         const actionCell = document.createElement('td');
         const removeBtn = document.createElement('button');
@@ -1231,7 +1537,7 @@ function restoreTitle(index) {
     updateRemoveTitlesTable();
     updateInventoryStats();
     
-    showInventoryStatus(`Restored: ${restoredTitle.description}`, 'info');
+    showInventoryStatus(`Restored: ${restoredTitle.title}`, 'info');
     
     if (titlesToRemove.length === 0 && newTitles.filter(t => t.status === 'new').length === 0) {
         document.getElementById('downloadInventoryBtn').disabled = true;
@@ -1255,37 +1561,40 @@ function clearRemovals() {
 }
 
 function downloadUpdatedInventory() {
-    if (!requireInventoryAccess('inventory download')) return;
+    if (!requireInventoryAccess('repo download')) return;
     
     try {
         const validNewTitles = newTitles.filter(title => title.status === 'new');
         
         if (validNewTitles.length === 0 && titlesToRemove.length === 0) {
-            showInventoryStatus('No changes to apply to inventory', 'warning');
+            showInventoryStatus('No changes to apply to repo', 'warning');
             return;
         }
         
         extendInventorySession(); // Extend session on activity
         
-        // Start with current inventory
+        // Start with current repo
         let mergedInventory = [...booksData];
         
         // Remove titles marked for removal
         if (titlesToRemove.length > 0) {
-            const removeISBNs = new Set(titlesToRemove.map(title => title.code));
-            mergedInventory = mergedInventory.filter(book => !removeISBNs.has(book.code));
+            const removeISBNs = new Set(titlesToRemove.map(title => title.isbn));
+            mergedInventory = mergedInventory.filter(book => !removeISBNs.has(book.isbn));
         }
         
-        // Add new titles
+        // Add new titles - all are full JSON format now
         validNewTitles.forEach(title => {
-            mergedInventory.push({
-                code: parseInt(title.normalizedISBN),
-                description: title.description
-            });
+            if (title.fullData) {
+                // Use the complete JSON structure from the uploaded file
+                const fullRecord = { ...title.fullData };
+                // Ensure ISBN is normalized
+                fullRecord.ISBN = parseInt(title.normalizedISBN);
+                mergedInventory.push(fullRecord);
+            }
         });
         
         // Sort by ISBN
-        mergedInventory.sort((a, b) => a.code - b.code);
+        mergedInventory.sort((a, b) => a.ISBN - b.ISBN);
         
         const jsonContent = JSON.stringify(mergedInventory, null, 2);
         const blob = new Blob([jsonContent], { type: 'application/json' });
@@ -1303,9 +1612,9 @@ function downloadUpdatedInventory() {
         if (validNewTitles.length > 0) changesSummary.push(`${validNewTitles.length} titles added`);
         if (titlesToRemove.length > 0) changesSummary.push(`${titlesToRemove.length} titles removed`);
         
-        showInventoryStatus(`📥 Updated inventory downloaded as data.json with ${changesSummary.join(', ')}!`, 'success');
+        showInventoryStatus(`📥 Updated repo downloaded as data.json with ${changesSummary.join(', ')}!`, 'success');
         
-        secureLog('Inventory update downloaded:', {
+        secureLog('Repo update downloaded:', {
             added: validNewTitles.length,
             removed: titlesToRemove.length,
             total: mergedInventory.length
@@ -1313,7 +1622,7 @@ function downloadUpdatedInventory() {
         
     } catch (error) {
         console.error('Download error:', error);
-        showInventoryStatus('Error creating updated inventory file: ' + error.message, 'danger');
+        showInventoryStatus('Error creating updated repo file: ' + error.message, 'danger');
     }
 }
 
@@ -1337,7 +1646,7 @@ function downloadCurrentInventory() {
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
         
-        showInventoryStatus('Current inventory backup downloaded!', 'success');
+        showInventoryStatus('Current repo backup downloaded!', 'success');
         
     } catch (error) {
         console.error('Backup error:', error);
