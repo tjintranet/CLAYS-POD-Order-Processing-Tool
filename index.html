@@ -116,11 +116,6 @@
                                                     <input type="file" class="form-control" id="excelFile" accept=".xlsx,.xls,.csv">
                                                     <div class="form-text">Excel or CSV files (max 10MB)</div>
                                                 </div>
-                                                <div class="mb-3">
-                                                    <button type="button" class="btn btn-secondary w-100" onclick="downloadTemplate()">
-                                                        <i class="fas fa-download"></i> Download Order Template
-                                                    </button>
-                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -167,7 +162,7 @@
                                     <div class="form-check form-switch ms-3">
                                         <input class="form-check-input" type="checkbox" id="showOnlyUnavailable" onchange="toggleTableFilter()">
                                         <label class="form-check-label" for="showOnlyUnavailable">
-                                            <i class="fas fa-filter"></i> Print as Miscellaneous Items (MPI)
+                                            <i class="fas fa-filter"></i> Miscellaneous Print Items (MPI)
                                         </label>
                                     </div>
                                     <div class="form-check form-switch ms-3">
@@ -373,6 +368,22 @@
                                                     </div>
                                                     <div class="col-md-2">
                                                         <div class="border rounded p-3 h-100">
+                                                            <h4 class="text-success mb-1" id="podReadyCount">0</h4>
+                                                            <small class="text-muted">
+                                                                <i class="fas fa-check-circle"></i><br>POD Ready
+                                                            </small>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <div class="border rounded p-3 h-100">
+                                                            <h4 class="text-warning mb-1" id="mpiCount">0</h4>
+                                                            <small class="text-muted">
+                                                                <i class="fas fa-exclamation-triangle"></i><br>MPI Items
+                                                            </small>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <div class="border rounded p-3 h-100">
                                                             <h4 class="text-success mb-1" id="newTitlesCount">0</h4>
                                                             <small class="text-muted">
                                                                 <i class="fas fa-plus"></i><br>To Add
@@ -392,22 +403,6 @@
                                                             <h4 class="text-warning mb-1" id="duplicatesCount">0</h4>
                                                             <small class="text-muted">
                                                                 <i class="fas fa-copy"></i><br>Duplicates
-                                                            </small>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <div class="border rounded p-3 h-100">
-                                                            <h4 class="text-info mb-1" id="totalAfterCount">0</h4>
-                                                            <small class="text-muted">
-                                                                <i class="fas fa-calculator"></i><br>Final Total
-                                                            </small>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <div class="border rounded p-3 h-100">
-                                                            <h4 class="text-secondary mb-1" id="netChangeCount">0</h4>
-                                                            <small class="text-muted">
-                                                                <i class="fas fa-chart-line"></i><br>Net Change
                                                             </small>
                                                         </div>
                                                     </div>

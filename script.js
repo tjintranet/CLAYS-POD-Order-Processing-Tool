@@ -874,17 +874,16 @@ function updateInventoryStats() {
         booksData.some(book => book.isbn === title.normalizedISBN)
     ).length;
     
+    // Count current repo titles by status
+    const podReadyTitles = booksData.filter(book => book.status === 'POD Ready').length;
+    const mpiTitles = booksData.filter(book => book.status === 'MPI').length;
+    
     document.getElementById('currentTitlesCount').textContent = booksData.length;
+    document.getElementById('podReadyCount').textContent = podReadyTitles;
+    document.getElementById('mpiCount').textContent = mpiTitles;
     document.getElementById('newTitlesCount').textContent = validNewTitles;
     document.getElementById('removeTitlesCount').textContent = titlesToRemove.length;
     document.getElementById('duplicatesCount').textContent = duplicates;
-    
-    const finalTotal = booksData.length + validNewTitles - titlesToRemove.length;
-    const netChange = validNewTitles - titlesToRemove.length;
-    
-    document.getElementById('totalAfterCount').textContent = Math.max(0, finalTotal);
-    document.getElementById('netChangeCount').textContent = netChange >= 0 ? `+${netChange}` : netChange;
-    document.getElementById('netChangeCount').className = netChange >= 0 ? 'text-success mb-1' : 'text-danger mb-1';
 }
 
 // Check if user has current repo access
