@@ -283,8 +283,8 @@
     "ISBN": 9780701187040,
     "Master Order ID": "SA4930",
     "TITLE": "QUEST FOR JUSTICE TO POD (00)",
-    "Trim Height": 233,
-    "Trim Width": 155,
+    "Trim Height": 234,
+    "Trim Width": 156,
     "Bind Style": "PU\/1",
     "Extent": 328,
     "Paper Desc": "Holmen Cream 65 gsm",
@@ -1319,7 +1319,7 @@
     "ISBN": 9780552771719,
     "Master Order ID": "SA6528",
     "TITLE": "FIRST HEROES THE (00)",
-    "Trim Height": 197,
+    "Trim Height": 198,
     "Trim Width": 126,
     "Bind Style": "PU\/1",
     "Extent": 592,
@@ -1327,7 +1327,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 33,
     "Packing": "Pack (32) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780552138451,
@@ -1711,7 +1711,7 @@
     "ISBN": 9780091935108,
     "Master Order ID": "SA6950",
     "TITLE": "HOME COURSE IN NUTRITION POD (00)",
-    "Trim Height": 215,
+    "Trim Height": 216,
     "Trim Width": 138,
     "Bind Style": "PU\/1",
     "Extent": 112,
@@ -1753,7 +1753,7 @@
     "ISBN": 9781846554193,
     "Master Order ID": "SA6970",
     "TITLE": "FATHERS AND FOREFATHERS POD (00)",
-    "Trim Height": 215,
+    "Trim Height": 216,
     "Trim Width": 134,
     "Bind Style": "PU\/1",
     "Extent": 296,
@@ -5015,7 +5015,7 @@
     "ISBN": 9780857501219,
     "Master Order ID": "SA9033",
     "TITLE": "WE'LL ALWAYS HAVE PARIS (00)",
-    "Trim Height": 197,
+    "Trim Height": 198,
     "Trim Width": 129,
     "Bind Style": "PU\/1",
     "Extent": 352,
@@ -5023,7 +5023,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 22,
     "Packing": "Pack (56) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9781849901765,
@@ -5239,8 +5239,8 @@
     "ISBN": 9781846042287,
     "Master Order ID": "SB3228",
     "TITLE": "RADIONICS INTERFACE WITH ETHER (00)",
-    "Trim Height": 217,
-    "Trim Width": 137,
+    "Trim Height": 216,
+    "Trim Width": 138,
     "Bind Style": "PU\/1",
     "Extent": 136,
     "Paper Desc": "Holmen Cream 65 gsm",
@@ -6065,7 +6065,7 @@
     "ISBN": 9780552567336,
     "Master Order ID": "SC9399",
     "TITLE": "FOOTBALL FEVER 3 (00)",
-    "Trim Height": 197,
+    "Trim Height": 198,
     "Trim Width": 126,
     "Bind Style": "PU\/1",
     "Extent": 192,
@@ -6073,7 +6073,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 13,
     "Packing": "Pack (104) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780141027135,
@@ -6289,7 +6289,7 @@
     "ISBN": 9780224091985,
     "Master Order ID": "SD4882",
     "TITLE": "EXTRA TIME (00)",
-    "Trim Height": 215,
+    "Trim Height": 216,
     "Trim Width": 135,
     "Bind Style": "PU\/1",
     "Extent": 304,
@@ -6905,7 +6905,7 @@
     "ISBN": 9781846554711,
     "Master Order ID": "SE0969",
     "TITLE": "THE DEATH OF THE BODY (00)",
-    "Trim Height": 215,
+    "Trim Height": 216,
     "Trim Width": 135,
     "Bind Style": "PU\/1",
     "Extent": 224,
@@ -6919,7 +6919,7 @@
     "ISBN": 9780099584339,
     "Master Order ID": "SE0972",
     "TITLE": "FOUR LAST THINGS (00)",
-    "Trim Height": 215,
+    "Trim Height": 216,
     "Trim Width": 135,
     "Bind Style": "PU\/1",
     "Extent": 224,
@@ -6933,7 +6933,7 @@
     "ISBN": 9781846557767,
     "Master Order ID": "SE0973",
     "TITLE": "LIVING'S THE STRANGE THING (00)",
-    "Trim Height": 215,
+    "Trim Height": 216,
     "Trim Width": 135,
     "Bind Style": "PU\/1",
     "Extent": 208,
@@ -6947,7 +6947,7 @@
     "ISBN": 9781846557774,
     "Master Order ID": "SE0974",
     "TITLE": "THE FARWELL ANGEL (00)",
-    "Trim Height": 215,
+    "Trim Height": 216,
     "Trim Width": 135,
     "Bind Style": "PU\/1",
     "Extent": 320,
@@ -6961,7 +6961,7 @@
     "ISBN": 9780224098052,
     "Master Order ID": "SE0975",
     "TITLE": "A CLEAR CALLING (00)",
-    "Trim Height": 215,
+    "Trim Height": 216,
     "Trim Width": 135,
     "Bind Style": "PU\/1",
     "Extent": 160,
@@ -7983,7 +7983,7 @@
     "ISBN": 9781846044090,
     "Master Order ID": "SG5455",
     "TITLE": "WOMAN AS HEALER (00)",
-    "Trim Height": 233,
+    "Trim Height": 234,
     "Trim Width": 153,
     "Bind Style": "PU\/1",
     "Extent": 240,
@@ -8921,7 +8921,7 @@
     "ISBN": 9780091954819,
     "Master Order ID": "SH5911",
     "TITLE": "CALLANETICS FOREVER FIT (00)",
-    "Trim Height": 235,
+    "Trim Height": 234,
     "Trim Width": 190,
     "Bind Style": "PU\/1",
     "Extent": 240,
@@ -10693,7 +10693,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 33,
     "Packing": "Pack (32) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780753510094,
@@ -12981,7 +12981,7 @@
     "ISBN": 9780099597735,
     "Master Order ID": "SK4177",
     "TITLE": "LONE MAN THE (00)",
-    "Trim Height": 197,
+    "Trim Height": 198,
     "Trim Width": 129,
     "Bind Style": "PU\/1",
     "Extent": 336,
@@ -12989,7 +12989,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 21,
     "Packing": "Pack (56) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9781845952174,
@@ -13066,7 +13066,7 @@
     "Master Order ID": "SK8514",
     "TITLE": "TRUE HALLUCINATIONS (00)",
     "Trim Height": 234,
-    "Trim Width": 139,
+    "Trim Width": 138,
     "Bind Style": "PU\/1",
     "Extent": 256,
     "Paper Desc": "Holmen Cream 65 gsm",
@@ -13205,7 +13205,7 @@
     "ISBN": 9780091889647,
     "Master Order ID": "SKD123",
     "TITLE": "THAT'S MY BOY (00)",
-    "Trim Height": 235,
+    "Trim Height": 234,
     "Trim Width": 153,
     "Bind Style": "PU\/1",
     "Extent": 224,
@@ -13261,7 +13261,7 @@
     "ISBN": 9780863698262,
     "Master Order ID": "SKD142",
     "TITLE": "YOUR VOICE AND HOW TO USE IT (00)",
-    "Trim Height": 235,
+    "Trim Height": 234,
     "Trim Width": 153,
     "Bind Style": "PU\/1",
     "Extent": 176,
@@ -13989,7 +13989,7 @@
     "ISBN": 9780712657150,
     "Master Order ID": "SKV046",
     "TITLE": "SILVER MOON (00)",
-    "Trim Height": 236,
+    "Trim Height": 234,
     "Trim Width": 189,
     "Bind Style": "PU\/1",
     "Extent": 256,
@@ -14725,7 +14725,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 16,
     "Packing": "Pack (72) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780753511794,
@@ -14809,7 +14809,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 16,
     "Packing": "Pack (80) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780091891640,
@@ -14955,7 +14955,7 @@
     "ISBN": 9780852073100,
     "Master Order ID": "SLD695",
     "TITLE": "READING TOES (00)",
-    "Trim Height": 236,
+    "Trim Height": 234,
     "Trim Width": 170,
     "Bind Style": "PU\/1",
     "Extent": 128,
@@ -18007,7 +18007,7 @@
     "ISBN": 9781846043642,
     "Master Order ID": "SN5553",
     "TITLE": "THE MIND AND THE WAY BUDDHIST REFELCTIONS ON LIFE (00)",
-    "Trim Height": 233,
+    "Trim Height": 234,
     "Trim Width": 152,
     "Bind Style": "PU\/1",
     "Extent": 256,
@@ -18813,7 +18813,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 16,
     "Packing": "Pack (64) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780141017518,
@@ -19463,7 +19463,7 @@
     "ISBN": 9781845952297,
     "Master Order ID": "SQ2695",
     "TITLE": "THE FAITH (00)",
-    "Trim Height": 236,
+    "Trim Height": 234,
     "Trim Width": 180,
     "Bind Style": "PU\/1",
     "Extent": 816,
@@ -21249,7 +21249,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 19,
     "Packing": "Pack (56) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780099552659,
@@ -21683,7 +21683,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 16,
     "Packing": "Pack (80) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780091912642,
@@ -22075,7 +22075,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 19,
     "Packing": "Pack (56) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9781849411875,
@@ -23173,7 +23173,7 @@
     "ISBN": 9780091906672,
     "Master Order ID": "TDG520",
     "TITLE": "THE DIRECTORY OF ESSENTIAL OILS (017)",
-    "Trim Height": 236,
+    "Trim Height": 234,
     "Trim Width": 170,
     "Bind Style": "PU\/2",
     "Extent": 192,
@@ -23391,7 +23391,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 15,
     "Packing": "Pack (72) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780552563215,
@@ -23405,7 +23405,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 29,
     "Packing": "Pack (40) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780552556019,
@@ -23419,7 +23419,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 24,
     "Packing": "Pack (48) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780552571319,
@@ -23433,7 +23433,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 25,
     "Packing": "Pack (48) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9781849415514,
@@ -23461,7 +23461,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 21,
     "Packing": "Pack (48) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9781405922456,
@@ -23475,7 +23475,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 24,
     "Packing": "Pack (48) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9781405928823,
@@ -23489,7 +23489,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 23,
     "Packing": "Pack (48) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780552156875,
@@ -23531,7 +23531,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 24,
     "Packing": "Pack (40) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780141037080,
@@ -23559,7 +23559,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 24,
     "Packing": "Pack (48) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9781529106008,
@@ -23573,7 +23573,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 20,
     "Packing": "Pack (56) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780091958251,
@@ -23601,7 +23601,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 28,
     "Packing": "Pack (40) (8) Base MUST",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780091957643,
@@ -23615,7 +23615,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 22,
     "Packing": "Pack (64) (8) Base. MUST",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780141385556,
@@ -23629,7 +23629,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 27,
     "Packing": "Pack (40) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780141339351,
@@ -23643,7 +23643,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 19,
     "Packing": "Pack (56) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780141367798,
@@ -23657,7 +23657,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 9,
     "Packing": "Pack (136) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780091929145,
@@ -23671,7 +23671,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 9,
     "Packing": "Pack (128) (8) Base MUST",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9781787462823,
@@ -23685,7 +23685,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 23,
     "Packing": "Pack (48) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780099472674,
@@ -23699,7 +23699,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 18,
     "Packing": "Pack (64) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780141339337,
@@ -23713,7 +23713,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 20,
     "Packing": "Pack (56) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780352325617,
@@ -23741,7 +23741,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 24,
     "Packing": "Pack (48) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780141323503,
@@ -23755,7 +23755,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 9,
     "Packing": "Pack (128) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780552574037,
@@ -23769,7 +23769,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 24,
     "Packing": "Pack (48) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780141324753,
@@ -23783,7 +23783,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 8,
     "Packing": "Pack (136) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9781785032721,
@@ -23811,7 +23811,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 17,
     "Packing": "Pack (72) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780091908492,
@@ -23825,7 +23825,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 30,
     "Packing": "Pack (40) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780241410929,
@@ -23853,7 +23853,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 10,
     "Packing": "Pack (120) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780552148535,
@@ -23881,7 +23881,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 20,
     "Packing": "Pack (64) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780091951436,
@@ -23909,7 +23909,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 21,
     "Packing": "Pack (56) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780241406786,
@@ -23937,7 +23937,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 18,
     "Packing": "Pack (56) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780670922284,
@@ -23951,7 +23951,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 21,
     "Packing": "Pack (40) (8) Base - MUST",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9781862301221,
@@ -23965,7 +23965,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 8,
     "Packing": "Pack (136) (8) Base - MUST",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780141316208,
@@ -23979,7 +23979,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 12,
     "Packing": "Pack (88) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780141044941,
@@ -23993,7 +23993,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 23,
     "Packing": "Pack (48) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780141046617,
@@ -24007,7 +24007,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 20,
     "Packing": "Pack (56) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780857501851,
@@ -24021,7 +24021,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 26,
     "Packing": "Pack (48) (8) Base - MUST",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780141024073,
@@ -24035,7 +24035,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 24,
     "Packing": "Pack (40) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780099592556,
@@ -24049,7 +24049,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 18,
     "Packing": "Pack (64) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780141044521,
@@ -24063,7 +24063,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 18,
     "Packing": "Pack (64) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9781785036576,
@@ -24077,7 +24077,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 22,
     "Packing": "Pack (48) (8) Base - MUST",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9781785032059,
@@ -24105,7 +24105,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 16,
     "Packing": "Pack (80) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9781849903257,
@@ -24133,7 +24133,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 22,
     "Packing": "Pack (56) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780091955625,
@@ -24147,7 +24147,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 22,
     "Packing": "Pack (56) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780091921491,
@@ -24161,7 +24161,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 24,
     "Packing": "Pack (48) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780753515723,
@@ -24175,7 +24175,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 24,
     "Packing": "Pack (40) (8) Base - MUST",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780753540503,
@@ -24189,7 +24189,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 36,
     "Packing": "Pack (32) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9781785041051,
@@ -24217,7 +24217,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 8,
     "Packing": "Pack (144) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780099269045,
@@ -24245,7 +24245,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 33,
     "Packing": "Pack (32) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780241961711,
@@ -24259,7 +24259,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 19,
     "Packing": "Pack (56) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780241966556,
@@ -24273,7 +24273,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 22,
     "Packing": "Pack (48) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780241977262,
@@ -24287,7 +24287,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 24,
     "Packing": "Pack (40) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780857503534,
@@ -24301,7 +24301,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 26,
     "Packing": "Pack (48) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9781846046346,
@@ -24329,7 +24329,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 20,
     "Packing": "Pack (64) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780352347817,
@@ -24343,7 +24343,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 20,
     "Packing": "Pack (64) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9781786090263,
@@ -24357,7 +24357,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 23,
     "Packing": "Pack (48) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780099474791,
@@ -24371,7 +24371,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 21,
     "Packing": "Pack (32) (8) Base. MUST",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780099492948,
@@ -24385,7 +24385,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 24,
     "Packing": "Pack (28) MUST",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780140185522,
@@ -24399,7 +24399,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 13,
     "Packing": "Pack (80) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780140435160,
@@ -24413,7 +24413,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 39,
     "Packing": "Pack (32) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780140443042,
@@ -24427,7 +24427,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 11,
     "Packing": "Pack (88) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780140420982,
@@ -24441,7 +24441,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 17,
     "Packing": "Pack (56) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780140185201,
@@ -24455,7 +24455,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 12,
     "Packing": "Pack (80) (8) Base",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780140446111,
@@ -24469,7 +24469,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 28,
     "Packing": "Pack (48) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780140450422,
@@ -24483,7 +24483,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 12,
     "Packing": "Pack (88) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780140186802,
@@ -24497,7 +24497,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 16,
     "Packing": "Pack (64) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780140443509,
@@ -24511,7 +24511,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 13,
     "Packing": "Pack (88) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780140443950,
@@ -24525,7 +24525,7 @@
     "Cover Spec Code 1": "C500P2S",
     "Cover Spine": 10,
     "Packing": "Pack (120) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780140184471,
@@ -24539,7 +24539,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 12,
     "Packing": "Pack (88) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780140430769,
@@ -24567,7 +24567,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 30,
     "Packing": "Pack (32) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780140445633,
@@ -24581,7 +24581,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 29,
     "Packing": "Pack (32) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780140433326,
@@ -24595,7 +24595,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 29,
     "Packing": "Pack (32) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780140440096,
@@ -24609,7 +24609,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 14,
     "Packing": "Pack (72) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780141184234,
@@ -24623,7 +24623,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 32,
     "Packing": "Pack (40) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780140184495,
@@ -24637,7 +24637,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 16,
     "Packing": "Pack (64) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780140189629,
@@ -24651,7 +24651,7 @@
     "Cover Spec Code 1": "C500P2",
     "Cover Spine": 29,
     "Packing": "Pack (40) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780141186122,
@@ -24665,7 +24665,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 15,
     "Packing": "Pack (80) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780141187648,
@@ -24679,7 +24679,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 22,
     "Packing": "Pack (40) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780141186283,
@@ -24693,7 +24693,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 22,
     "Packing": "Pack (40) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780141185194,
@@ -24707,7 +24707,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 26,
     "Packing": "Pack (40) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780140585704,
