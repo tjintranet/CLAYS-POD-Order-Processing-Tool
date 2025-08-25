@@ -910,6 +910,17 @@ function initializeApp() {
                 searchISBN();
             }
         });
+        
+        // Auto-capitalize Master Order IDs as user types
+        isbnSearch.addEventListener('input', function(e) {
+            const value = e.target.value;
+            
+            // Check if this looks like a Master Order ID (contains letters)
+            if (/[a-zA-Z]/.test(value) && !SecurityModule.validateISBN(value)) {
+                // Convert to uppercase for Master Order ID format
+                e.target.value = value.toUpperCase();
+            }
+        });
     }
     
     SecurityModule.secureLog('Initializing application...');
