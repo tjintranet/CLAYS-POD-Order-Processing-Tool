@@ -311,15 +311,15 @@
     "ISBN": 9780701178086,
     "Master Order ID": "SA4935",
     "Title": "SHORTER LIFE A POD (00)",
-    "Trim Height": 214,
-    "Trim Width": 134,
+    "Trim Height": 216,
+    "Trim Width": 135,
     "Bind Style": "PU\/1",
     "Extent": 64,
     "Paper Desc": "Holmen Cream 65 gsm",
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 6,
     "Packing": "Pack (152) (4) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780563487395,
@@ -1019,7 +1019,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 31,
     "Packing": "Pack (24) (4) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780712602129,
@@ -1103,7 +1103,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 27,
     "Packing": "Pack (24) (4) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780552144186,
@@ -1614,14 +1614,14 @@
     "Master Order ID": "SA6918",
     "Title": "KING OF THE VAGABONDS (00)",
     "Trim Height": 178,
-    "Trim Width": 156,
+    "Trim Width": 110,
     "Bind Style": "PU\/1",
     "Extent": 160,
     "Paper Desc": "Holmen Bulky 52 gsm",
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 11,
     "Packing": "Pack (26) (2) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780753539491,
@@ -1957,7 +1957,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 22,
     "Packing": "Pack (32) (4) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9781846553370,
@@ -2111,7 +2111,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 29,
     "Packing": "Pack (24) (4) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780753511305,
@@ -2139,7 +2139,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 26,
     "Packing": "Pack (32) (8) Base.",
-    "Status": "POD Ready"
+    "Status": "MPI"
   },
   {
     "ISBN": 9780552165501,
@@ -2429,9 +2429,9 @@
     "Trim Width": 156,
     "Bind Style": "PU\/1",
     "Extent": 480,
-    "Paper Desc": "Holmen Cream 65 gsm",
+    "Paper Desc": "Holmen Bulky 52 gsm",
     "Cover Spec Code 1": "C400P2",
-    "Cover Spine": 34,
+    "Cover Spine": 27,
     "Packing": "Pack (20) (4) Base.",
     "Status": "MPI"
   },
@@ -2709,7 +2709,7 @@
     "Trim Width": 150,
     "Bind Style": "PU\/1",
     "Extent": 480,
-    "Paper Desc": "Holmen Cream 65 gsm",
+    "Paper Desc": "Holmen Bulky 52 gsm",
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 34,
     "Packing": "Pack (20) (4) Base.",
@@ -3097,7 +3097,7 @@
     "ISBN": 9780712665810,
     "Master Order ID": "SA8101",
     "Title": "BARBARA BODICHON POD (00)",
-    "Trim Height": 240,
+    "Trim Height": 234,
     "Trim Width": 156,
     "Bind Style": "PU\/1",
     "Extent": 416,
@@ -3297,7 +3297,7 @@
     "Trim Width": 156,
     "Bind Style": "PU\/1",
     "Extent": 232,
-    "Paper Desc": "Holmen Cream 65 gsm",
+    "Paper Desc": "Holmen Bulky 52 gsm",
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 17,
     "Packing": "Pack (40) (4) Base.",
@@ -3307,7 +3307,7 @@
     "ISBN": 9780712664370,
     "Master Order ID": "SA8133",
     "Title": "OUT IN THE MIDDAY SUN (00)",
-    "Trim Height": 224,
+    "Trim Height": 216,
     "Trim Width": 138,
     "Bind Style": "PU\/1",
     "Extent": 272,
@@ -3553,7 +3553,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 29,
     "Packing": "Pack (24) (8) Base.",
-    "Status": "POD Ready"
+    "Status": "MPI"
   },
   {
     "ISBN": 9781849901789,
@@ -4239,7 +4239,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 26,
     "Packing": "Pack (32) (8) Base.",
-    "Status": "POD Ready"
+    "Status": "MPI"
   },
   {
     "ISBN": 9780552996860,
@@ -7781,7 +7781,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 33,
     "Packing": "Pack (20) (4) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780552168144,
@@ -7956,7 +7956,7 @@
     "Master Order ID": "SG5133",
     "Title": "HAUNTED (00)",
     "Trim Height": 176,
-    "Trim Width": 118,
+    "Trim Width": 108,
     "Bind Style": "PU\/1",
     "Extent": 272,
     "Paper Desc": "Holmen Bulky 52 gsm",
@@ -10721,7 +10721,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 36,
     "Packing": "Pack (24) (8) Base.",
-    "Status": "POD Ready"
+    "Status": "MPI"
   },
   {
     "ISBN": 9780852073001,
@@ -11085,7 +11085,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 38,
     "Packing": "Pack (16) (8) Base.",
-    "Status": "POD Ready"
+    "Status": "MPI"
   },
   {
     "ISBN": 9780753510308,
@@ -13009,8 +13009,8 @@
     "ISBN": 9780099594970,
     "Master Order ID": "SK5223",
     "Title": "101 USES OF A DEAD ROACH (00)",
-    "Trim Height": 148,
-    "Trim Width": 153,
+    "Trim Height": 153,
+    "Trim Width": 148,
     "Bind Style": "PU\/1",
     "Extent": 208,
     "Paper Desc": "Holmen Bulky 52 gsm",
@@ -13213,7 +13213,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 16,
     "Packing": "Pack (44) (4) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780753513156,
@@ -14571,7 +14571,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 40,
     "Packing": "Pack (16) (4) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780141192277,
@@ -15425,7 +15425,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 36,
     "Packing": "Pack (24) (8) Base.",
-    "Status": "POD Ready"
+    "Status": "MPI"
   },
   {
     "ISBN": 9780553819182,
@@ -17833,7 +17833,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 36,
     "Packing": "Pack (24) (8) Base.",
-    "Status": "POD Ready"
+    "Status": "MPI"
   },
   {
     "ISBN": 9780552156714,
@@ -18869,7 +18869,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 30,
     "Packing": "Pack (4) (4) Base.",
-    "Status": "POD Ready"
+    "Status": "MPI"
   },
   {
     "ISBN": 9781849908184,
@@ -18911,7 +18911,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 40,
     "Packing": "Pack (16) (8) Base.",
-    "Status": "POD Ready"
+    "Status": "MPI"
   },
   {
     "ISBN": 9780857503138,
@@ -18967,7 +18967,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 20,
     "Packing": "Pack (48) (8) Base.",
-    "Status": "POD Ready"
+    "Status": "MPI"
   },
   {
     "ISBN": 9781785039683,
@@ -19037,7 +19037,7 @@
     "Cover Spec Code 1": "C300P2",
     "Cover Spine": 17,
     "Packing": "Pack (40) (8) Base. MUST",
-    "Status": "POD Ready"
+    "Status": "MPI"
   },
   {
     "ISBN": 9781785037795,
@@ -19233,7 +19233,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 32,
     "Packing": "Pack (24) (8) Base.",
-    "Status": "POD Ready"
+    "Status": "MPI"
   },
   {
     "ISBN": 9780099536031,
@@ -19625,7 +19625,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 46,
     "Packing": "Pack (12) (4) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780099506393,
@@ -20283,7 +20283,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 31.5,
     "Packing": "Pack (24) (8) Base.",
-    "Status": "POD Ready"
+    "Status": "MPI"
   },
   {
     "ISBN": 9781849907699,
@@ -22453,7 +22453,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 22.5,
     "Packing": "Pack (40) (8) Base.",
-    "Status": "POD Ready"
+    "Status": "MPI"
   },
   {
     "ISBN": 9780352341068,
@@ -22579,7 +22579,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 21,
     "Packing": "Pack (32) (8) Base. MUST",
-    "Status": "POD Ready"
+    "Status": "MPI"
   },
   {
     "ISBN": 9780352341594,
@@ -23153,7 +23153,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 24.5,
     "Packing": "Pack (40) (8) Base MUST",
-    "Status": "POD Ready"
+    "Status": "MPI"
   },
   {
     "ISBN": 9780141044217,
@@ -23251,7 +23251,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 11,
     "Packing": "Pack (80) (8) Base.",
-    "Status": "POD Ready"
+    "Status": "MPI"
   },
   {
     "ISBN": 9780552135269,
@@ -23293,7 +23293,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 14,
     "Packing": "Pack (64) (8) Base.",
-    "Status": "POD Ready"
+    "Status": "MPI"
   },
   {
     "ISBN": 9781846045646,
@@ -23517,7 +23517,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 27,
     "Packing": "Pack (50) (10) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9781405920261,
@@ -23727,7 +23727,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 25,
     "Packing": "Pack (40) (10) Base. MUST",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780753522752,
@@ -24091,7 +24091,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 24,
     "Packing": "Pack (32) (4) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9781529104158,
@@ -24231,7 +24231,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 34,
     "Packing": "Pack (40) (10) Base - MUST",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9780141030791,
@@ -35095,7 +35095,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 33,
     "Packing": "Pack (40) (10) Base.",
-    "Status": "POD Ready"
+    "Status": "MPI"
   },
   {
     "ISBN": 9780857500991,
@@ -36495,7 +36495,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 33,
     "Packing": "Pack (40) (10) Base.",
-    "Status": "POD Ready"
+    "Status": "MPI"
   },
   {
     "ISBN": 9780099386414,
@@ -36551,7 +36551,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 33,
     "Packing": "Pack (40) (10) Base.",
-    "Status": "POD Ready"
+    "Status": "MPI"
   },
   {
     "ISBN": 9780099324218,
@@ -102267,7 +102267,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 26,
     "Packing": "Pack (28) (4) Base. MUST",
-    "Status": "POD Ready"
+    "Status": "MPI"
   },
   {
     "ISBN": 9780099564683,
@@ -105641,7 +105641,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 28,
     "Packing": "Pack (50) (10) Base - YES",
-    "Status": "POD Ready"
+    "Status": "MPI"
   },
   {
     "ISBN": 9780241541388,
@@ -127621,7 +127621,7 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 15,
     "Packing": "Pack (60) (10) Base.",
-    "Status": "POD Ready"
+    "Status": "MPI"
   },
   {
     "ISBN": 9781846042164,
@@ -137351,6 +137351,888 @@
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 20,
     "Packing": "Pack (64) (8) Base",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780241996065,
+    "Master Order ID": "TFQ214",
+    "Title": "MY FATHERS' DAUGHTER (002)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 288,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 17,
+    "Packing": "Pack (56) (8) Base. MUST",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780099582212,
+    "Master Order ID": "TFQ234",
+    "Title": "INVENTING IRELAND (029)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 736,
+    "Paper Desc": "Holmen Book 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 31,
+    "Packing": "Pack (14) MUST",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780099594918,
+    "Master Order ID": "TFQ238",
+    "Title": "EXCELLENT CADAVERS (027)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 480,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 29,
+    "Packing": "Pack (22) MUST",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780224075206,
+    "Master Order ID": "TFQ243",
+    "Title": "THE HOUR (019)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 288,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 17.5,
+    "Packing": "Pack (64) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780712677400,
+    "Master Order ID": "TFQ247",
+    "Title": "GLOBALISATION IN WORLD HISTORY (020)",
+    "Trim Height": 234,
+    "Trim Width": 153,
+    "Bind Style": "PU\/2",
+    "Extent": 288,
+    "Paper Desc": "Holmen Cream 65 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 20.5,
+    "Packing": "Pack (24) (4) Base. MUST",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780749394509,
+    "Master Order ID": "TFQ257",
+    "Title": "DOG YEARS (024)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 624,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 37.5,
+    "Packing": "Pack (32) (8) Base. MUST",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9781846044809,
+    "Master Order ID": "TFQ377",
+    "Title": "A SKY FULL OF BIRDS (003)",
+    "Trim Height": 198,
+    "Trim Width": 126,
+    "Bind Style": "PU\/2",
+    "Extent": 256,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 15.5,
+    "Packing": "Pack (80) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780241966129,
+    "Master Order ID": "TFQ773",
+    "Title": "HIDDEN CITY (005)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 272,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 17,
+    "Packing": "Pack (64) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780749394851,
+    "Master Order ID": "TFQ932",
+    "Title": "THE FLOUNDER (020)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 560,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 33,
+    "Packing": "Pack (32) (8) Base. MUST",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780749398941,
+    "Master Order ID": "TFQ936",
+    "Title": "THE ROAD FROM COORAIN (027)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 256,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 15.5,
+    "Packing": "Pack (40) (8) Base. MUST",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9781844134267,
+    "Master Order ID": "TFQ938",
+    "Title": "TRAVELLING WITH CHE GUEVARA (023)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 240,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 14.5,
+    "Packing": "Pack (72) (8) Base MUST",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9781860467882,
+    "Master Order ID": "TFQ968",
+    "Title": "AN AFRICAN TRILOGY (518)",
+    "Trim Height": 222,
+    "Trim Width": 148,
+    "Bind Style": "PU\/2",
+    "Extent": 384,
+    "Paper Desc": "Holmen Cream 65 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 27,
+    "Packing": "Pack (16) (4) Base - MUST",
+    "Status": "MPI"
+  },
+  {
+    "ISBN": 9780099552451,
+    "Master Order ID": "TFR327",
+    "Title": "THIS IS NOT THE END OF THE BOOK (013)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 352,
+    "Paper Desc": "Holmen Cream 65 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 25,
+    "Packing": "Pack (40) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780099549291,
+    "Master Order ID": "TFR335",
+    "Title": "BOB DYLAN IN AMERICA (012)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 400,
+    "Paper Desc": "Holmen Cream 65 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 28,
+    "Packing": "Pack (40) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780099471950,
+    "Master Order ID": "TFR344",
+    "Title": "BEING AN ACTOR (022)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 400,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 23.5,
+    "Packing": "Pack (48) (8) Base - MUST",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780712668477,
+    "Master Order ID": "TFR356",
+    "Title": "BY PERMISSION OF HEAVEN (021)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 368,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 21.5,
+    "Packing": "Pack (48) (8) Base MUST",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9781844137411,
+    "Master Order ID": "TFR358",
+    "Title": "THE ENEMY AT THE GATE (018)",
+    "Trim Height": 234,
+    "Trim Width": 153,
+    "Bind Style": "PU\/2",
+    "Extent": 384,
+    "Paper Desc": "Holmen Cream 65 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 27,
+    "Packing": "Pack (24) (4) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780099555650,
+    "Master Order ID": "TFR359",
+    "Title": "THE LAST QUARTER OF THE MOON (013)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 320,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 19.5,
+    "Packing": "Pack (56) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9781529176735,
+    "Master Order ID": "TFR376",
+    "Title": "DIVING FOR PEARLS (002)",
+    "Trim Height": 198,
+    "Trim Width": 126,
+    "Bind Style": "PU\/2",
+    "Extent": 352,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 21,
+    "Packing": "Pack (56) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780091926519,
+    "Master Order ID": "TFR390",
+    "Title": "ADVENTURES ON THE HIGH TEAS (018)",
+    "Trim Height": 198,
+    "Trim Width": 126,
+    "Bind Style": "PU\/2",
+    "Extent": 352,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 21,
+    "Packing": "Pack (56) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780099553960,
+    "Master Order ID": "TFR410",
+    "Title": "THE UNCOUPLING (007)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 288,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 17.5,
+    "Packing": "Pack (64) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780099572732,
+    "Master Order ID": "TFR486",
+    "Title": "THE DIARY OF A SOCIAL BUTTERFLY (011)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 336,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 20.5,
+    "Packing": "Pack (56) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780099575443,
+    "Master Order ID": "TFR491",
+    "Title": "BERTIE A LIFE OF EDWARD VII (013)",
+    "Trim Height": 216,
+    "Trim Width": 135,
+    "Bind Style": "PU\/2",
+    "Extent": 640,
+    "Paper Desc": "Holmen Cream 65 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 45,
+    "Packing": "Pack (8)  MUST.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780099578239,
+    "Master Order ID": "TFR495",
+    "Title": "THE DOUBLE-CROSS SYSTEM (013)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 256,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 15.5,
+    "Packing": "Pack (72) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780099498162,
+    "Master Order ID": "TFR678",
+    "Title": "MISSING KISSINGER (019)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 224,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 13.5,
+    "Packing": "Pack (80) (8) Base MUST",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780099523536,
+    "Master Order ID": "TFR684",
+    "Title": "THE FUTURE HISTORY OF THE ARCTIC (009)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 448,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 27,
+    "Packing": "Pack (40) (8) Base - MUST",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780712665544,
+    "Master Order ID": "TFR697",
+    "Title": "THE POWER OF IDEAS (024)",
+    "Trim Height": 234,
+    "Trim Width": 153,
+    "Bind Style": "PU\/2",
+    "Extent": 256,
+    "Paper Desc": "Holmen Cream 65 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 18,
+    "Packing": "Pack (48) (4) Base MUST",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9781784704681,
+    "Master Order ID": "TFR700",
+    "Title": "THE MAN WHO WOULDN'T GET UP AND OTHER STORIES (009)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 176,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 11,
+    "Packing": "Pack (96) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780099284673,
+    "Master Order ID": "TFR705",
+    "Title": "STONED (030)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 384,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 23.5,
+    "Packing": "Pack (48) (8) Base. MUST",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780099548874,
+    "Master Order ID": "TFR711",
+    "Title": "THE MAN WHO SOLD THE WORLD (007)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 432,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 26,
+    "Packing": "Pack (40) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780099591894,
+    "Master Order ID": "TFR786",
+    "Title": "THE FOUR-DIMENSIONAL HUMAN (002)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 272,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 16.5,
+    "Packing": "Pack (72) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780099581321,
+    "Master Order ID": "TFS126",
+    "Title": "DEATHS OF THE POETS (002)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 432,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 26,
+    "Packing": "Pack (40) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780099589891,
+    "Master Order ID": "TFS135",
+    "Title": "THIRST (010)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 336,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 20.5,
+    "Packing": "Pack (48) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780099597438,
+    "Master Order ID": "TFS160",
+    "Title": "THE LOW VOICES (002)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 176,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 11,
+    "Packing": "Pack (96) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780099597681,
+    "Master Order ID": "TFS171",
+    "Title": "ENOUGH SAID (003)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 432,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 26,
+    "Packing": "Pack (40) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780099476610,
+    "Master Order ID": "TFS172",
+    "Title": "THE ANATOMY LESSON (024)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 304,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 19,
+    "Packing": "Pack (36) - MUST",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780099389118,
+    "Master Order ID": "TFS181",
+    "Title": "OUR GANG (022)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 208,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 13,
+    "Packing": "Pack (80) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9781784701055,
+    "Master Order ID": "TFS254",
+    "Title": "DID YOU EVER HAVE A FAMILY (007)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 304,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 18.5,
+    "Packing": "Pack (64) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9781784701031,
+    "Master Order ID": "TFS256",
+    "Title": "OBLIVION (006)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 352,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 21.5,
+    "Packing": "Pack (56) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9781784701291,
+    "Master Order ID": "TFS280",
+    "Title": "WEST OF EDEN (005)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 352,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 21.5,
+    "Packing": "Pack (48) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9781784703035,
+    "Master Order ID": "TFS285",
+    "Title": "SO SAY THE FALLEN (006)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 368,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 22,
+    "Packing": "Pack (48) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9781784704810,
+    "Master Order ID": "TFS291",
+    "Title": "MURDER HAS A MOTIVE (003)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 256,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 15.5,
+    "Packing": "Pack (64) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9781784704988,
+    "Master Order ID": "TFS300",
+    "Title": "NOVEL 11, BOOK 18 (010)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 224,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 13.5,
+    "Packing": "Pack (72) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9781784705893,
+    "Master Order ID": "TFS303",
+    "Title": "LABELS AND OTHER STORIES (004)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 208,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 13,
+    "Packing": "Pack (80) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780749391621,
+    "Master Order ID": "TFS535",
+    "Title": "FOUR BARE LEGS IN A BED (018)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 192,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 12,
+    "Packing": "Pack (88) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9781787290136,
+    "Master Order ID": "TFS538",
+    "Title": "SPORT INC. (002)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 304,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 18,
+    "Packing": "Pack (64) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9781784708115,
+    "Master Order ID": "TFS540",
+    "Title": "MAC AND HIS PROBLEM (003)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 224,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 14,
+    "Packing": "Pack (72) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9781784708696,
+    "Master Order ID": "TFS542",
+    "Title": "CHINA DREAM (003)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 192,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 12,
+    "Packing": "Pack (96) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9781529112535,
+    "Master Order ID": "TFS552",
+    "Title": "THE WONDER (010)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 320,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 19,
+    "Packing": "Pack (56) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780099437093,
+    "Master Order ID": "TFS558",
+    "Title": "DICKENS (025)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 640,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 38,
+    "Packing": "Pack (24) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9781784701925,
+    "Master Order ID": "TFS582",
+    "Title": "THE EXPLOSION CHRONICLES (002)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 480,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 29,
+    "Packing": "Pack (32) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9781860469244,
+    "Master Order ID": "TFS593",
+    "Title": "JACQUES TATI (024)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 400,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 24,
+    "Packing": "Pack (24) (8) Base. MUST",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780099273868,
+    "Master Order ID": "TFS600",
+    "Title": "THE GREAT WORLD (023)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 336,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 20.5,
+    "Packing": "Pack (32) (8) Base. MUST",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780099501367,
+    "Master Order ID": "TFS602",
+    "Title": "KALOOKI NIGHTS (018)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 480,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 29,
+    "Packing": "Pack (40) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780099554134,
+    "Master Order ID": "TFS666",
+    "Title": "GINGER, YOU'RE BARMY (013)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 240,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 15.5,
+    "Packing": "Pack (80) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780099449294,
+    "Master Order ID": "TFS674",
+    "Title": "VERY LONG ENGAGEMENT (024)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 320,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 19.5,
+    "Packing": "Pack (34) MUST",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780099488675,
+    "Master Order ID": "TFS679",
+    "Title": "THE RICHNESS OF LIFE (023)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 656,
+    "Paper Desc": "Holmen Cream 65 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 46,
+    "Packing": "Pack (24) (8) Base - MUST",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9781786091536,
+    "Master Order ID": "TFS937",
+    "Title": "MADE FOR LOVE (002)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 320,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 19,
+    "Packing": "Pack (56) (8) Base. MUST",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9781844138302,
+    "Master Order ID": "TFT139",
+    "Title": "A LITTLE HISTORY OF THE ENGLISH COUNTRY CHURCH (011)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 288,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 16.5,
+    "Packing": "Pack (56) (8) Base.  MUST",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9781784707354,
+    "Master Order ID": "TFT146",
+    "Title": "ANIMALS STRIKE CURIOUS POSES (008)",
+    "Trim Height": 197,
+    "Trim Width": 133,
+    "Bind Style": "PU\/2",
+    "Extent": 256,
+    "Paper Desc": "Holmen Cream 65 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 19,
+    "Packing": "Pack (56) (8) Base.",
+    "Status": "MPI"
+  },
+  {
+    "ISBN": 9780099286714,
+    "Master Order ID": "TFT147",
+    "Title": "THE FERMATA (030)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 320,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 18.5,
+    "Packing": "Pack (56) MUST",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780099532149,
+    "Master Order ID": "TFT149",
+    "Title": "THE BRIDGE (014)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 160,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 10,
+    "Packing": "Pack (104) (8) Base. MUST",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9781784708863,
+    "Master Order ID": "TFT401",
+    "Title": "THE TRAVELERS (004)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 320,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec Code 1": "C400P2",
+    "Cover Spine": 20,
+    "Packing": "Pack (48) (8) Base.",
     "Status": "POD Ready"
   }
 ]

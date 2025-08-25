@@ -39,15 +39,6 @@
             display: none;
             margin-top: 0.25rem;
         }
-        
-        .access-status-bar {
-            border-left: 4px solid #0d6efd;
-        }
-        
-        .session-timer {
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-        }
     </style>
 </head>
 <body class="bg-light">
@@ -60,9 +51,6 @@
                             <i class="fas fa-industry"></i> CLAYS POD Order Processing Tool
                         </h4>
                         <div>
-                            <button class="btn btn-outline-light me-2" onclick="showInventoryTab()" id="inventoryTabBtn">
-                                <i class="fas fa-database"></i> Manage Repo
-                            </button>
                             <button class="btn btn-outline-light me-2" onclick="clearAll()" id="clearBtn" disabled>
                                 <i class="fas fa-broom"></i> Clear All
                             </button>
@@ -72,423 +60,166 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <!-- Tab Navigation -->
-                        <ul class="nav nav-tabs mb-4" id="mainTabs" role="tablist">
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders-pane" type="button" role="tab">
-                                    <i class="fas fa-shopping-cart"></i> Order Processing
-                                </button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="inventory-tab" data-bs-toggle="tab" data-bs-target="#inventory-pane" type="button" role="tab">
-                                    <i class="fas fa-database"></i> Repo Management
-                                </button>
-                            </li>
-                        </ul>
-
-                        <!-- Tab Content -->
-                        <div class="tab-content" id="mainTabContent">
-                            <!-- Orders Tab -->
-                            <div class="tab-pane fade show active" id="orders-pane" role="tabpanel">
-                                <div class="row mb-4">
-                                    <!-- Order Processing Card -->
-                                    <div class="col-md-8">
-                                        <div class="card h-100 shadow-sm">
-                                            <div class="card-header bg-light">
-                                                <h5 class="card-title mb-0">
-                                                    <i class="fas fa-file-excel"></i> Order Processing - Excel/CSV Upload
-                                                </h5>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="mb-3">
-                                                    <label for="orderRef" class="form-label">
-                                                        <i class="fas fa-hashtag"></i> Order Reference (required)
-                                                    </label>
-                                                    <input type="text" class="form-control" id="orderRef" placeholder="Enter order reference">
-                                                    <div class="order-ref-warning" id="orderRefWarning">
-                                                        <i class="fas fa-exclamation-triangle"></i> Please enter an order reference
-                                                    </div>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="excelFile" class="form-label">
-                                                        <i class="fas fa-upload"></i> Upload Order File (Excel/CSV)
-                                                    </label>
-                                                    <input type="file" class="form-control" id="excelFile" accept=".xlsx,.xls,.csv">
-                                                    <div class="form-text">Excel or CSV files (max 10MB)</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- ISBN Search Card -->
-                                    <div class="col-md-4">
-                                        <div class="card h-100 shadow-sm">
-                                            <div class="card-header bg-light">
-                                                <h5 class="card-title mb-0">
-                                                    <i class="fas fa-search"></i> ISBN/Master Order Lookup
-                                                </h5>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="mb-3">
-                                                    <label for="isbnSearch" class="form-label">Search ISBN or Master Order ID</label>
-                                                    <input type="text" class="form-control" id="isbnSearch" placeholder="Enter ISBN or Master Order ID">
-                                                </div>
-                                                <button type="button" class="btn btn-primary w-100 mb-3" onclick="searchISBN()">
-                                                    <i class="fas fa-search"></i> Search Repo
-                                                </button>
-                                                <div id="isbnResult" class="mt-3" style="display: none;">
-                                                    <div class="alert" id="isbnResultAlert">
-                                                        <div id="isbnResultContent"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Status Alert -->
-                                <div class="mb-3">
-                                    <div class="alert alert-info" id="status" style="display: none;"></div>
-                                </div>
-
-                                <!-- Table Controls -->
-                                <div class="mb-3 d-flex gap-2 align-items-center flex-wrap">
-                                    <button class="btn btn-danger" onclick="deleteSelected()" id="deleteSelectedBtn" disabled>
-                                        <i class="fas fa-trash"></i> Delete Selected Rows
-                                    </button>
-                                    <button class="btn btn-secondary" onclick="copyTableToClipboard()" id="copyBtn" disabled>
-                                        <i class="fas fa-copy"></i> Copy to Clipboard
-                                    </button>
-                                    <div class="form-check form-switch ms-3">
-                                        <input class="form-check-input" type="checkbox" id="showOnlyUnavailable" onchange="toggleTableFilter()">
-                                        <label class="form-check-label" for="showOnlyUnavailable">
-                                            <i class="fas fa-filter"></i> Miscellaneous Print Items (MPI)
-                                        </label>
-                                    </div>
-                                    <div class="form-check form-switch ms-3">
-                                        <input class="form-check-input" type="checkbox" id="showNotAvailable" onchange="toggleTableFilter()">
-                                        <label class="form-check-label" for="showNotAvailable">
-                                            <i class="fas fa-eye-slash"></i> Show Not Available Items
-                                        </label>
-                                    </div>
-                                </div>
-                                
-                                <!-- Orders Table -->
-                                <div class="table-responsive">
-                                    <table class="table table-bordered table-hover" id="previewTable">
-                                        <thead class="table-light">
-                                            <tr>
-                                                <th><input type="checkbox" id="selectAll" onclick="toggleAllCheckboxes()"></th>
-                                                <th>Action</th>
-                                                <th>Line No</th>
-                                                <th>ISBN</th>
-                                                <th>Description</th>
-                                                <th>Quantity</th>
-                                                <th>Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="previewBody">
-                                            <tr>
-                                                <td colspan="7" class="text-center text-muted">
-                                                    <i class="fas fa-inbox"></i> No data loaded
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-                            <!-- Repo Management Tab -->
-                            <div class="tab-pane fade" id="inventory-pane" role="tabpanel">
-                                <!-- Access Status Bar -->
-                                <div class="alert alert-info access-status-bar mb-4" id="accessStatusBar" style="display: none;">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <i class="fas fa-shield-alt"></i>
-                                            <strong>Repo Management Access</strong>
-                                            <span id="accessStatusText" class="session-timer"></span>
-                                        </div>
-                                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="logoutInventoryAccess()">
-                                            <i class="fas fa-sign-out-alt"></i> Logout
+                        <!-- Repository Statistics Dashboard -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <div class="card border-info shadow-sm">
+                                    <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-chart-pie"></i> Repository Statistics
+                                        </h5>
+                                        <button class="btn btn-outline-light btn-sm" onclick="downloadRepositoryData()" id="downloadRepoBtn">
+                                            <i class="fas fa-file-excel"></i> Download Repository
                                         </button>
                                     </div>
-                                </div>
-                                
-                                <div class="row mb-4">
-                                    <!-- Add New Titles -->
-                                    <div class="col-md-4">
-                                        <div class="card border-success shadow-sm">
-                                            <div class="card-header bg-success text-white">
-                                                <h5 class="mb-0">
-                                                    <i class="fas fa-plus-circle"></i> Add New Titles
-                                                </h5>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="mb-3">
-                                                    <label for="inventoryFile" class="form-label">
-                                                        <i class="fas fa-file-upload"></i> Upload JSON Repo File
-                                                    </label>
-                                                    <input type="file" class="form-control" id="inventoryFile" accept=".json">
-                                                    <div class="form-text">JSON file with complete book data (max 10MB)</div>
-                                                </div>
-                                                <button type="button" class="btn btn-success w-100 mb-3" onclick="processInventoryFile()" id="processInventoryBtn" disabled>
-                                                    <i class="fas fa-cogs"></i> Process JSON File
-                                                </button>
-                                                <button type="button" class="btn btn-outline-info w-100 mb-3" onclick="downloadJsonTemplate()">
-                                                    <i class="fas fa-download"></i> Download JSON Template
-                                                </button>
-                                                <div class="mt-3">
-                                                    <div class="accordion" id="jsonFormatAccordion">
-                                                        <div class="accordion-item">
-                                                            <h2 class="accordion-header">
-                                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#jsonFormatDetails" aria-expanded="false">
-                                                                    <i class="fas fa-info-circle me-2"></i> JSON Format Required
-                                                                </button>
-                                                            </h2>
-                                                            <div id="jsonFormatDetails" class="accordion-collapse collapse" data-bs-parent="#jsonFormatAccordion">
-                                                                <div class="accordion-body">
-                                                                    <div class="alert alert-info mb-0">
-                                                                        <p><strong>Upload a JSON file with the complete data.json structure:</strong></p>
-                                                                        <pre class="bg-light p-2 small mb-0">[
-  {
-    "ISBN": 9780140175936,
-    "Master Order ID": "SA1657",
-    "TITLE": "CLEOPATRA'S SISTER   (11)",
-    "Trim Height": 198,
-    "Trim Width": 129,
-    "Bind Style": "PU/2",
-    "Extent": 288,
-    "Paper Desc": "Holmen Bulky 52 gsm",
-    "Cover Spec Code 1": "C400P2",
-    "Cover Spine": 18,
-    "Packing": "Pack (64) (8) Base.",
-    "Status": "POD Ready"
-  }
-]</pre>
-                                                                        <small class="text-muted mt-2 d-block">All fields are preserved and merged into the repo database. Status can be "POD Ready" or "MPI".</small>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                    <div class="card-body">
+                                        <div class="row text-center">
+                                            <div class="col-md-3">
+                                                <div class="border rounded p-3 h-100">
+                                                    <h4 class="text-primary mb-1" id="currentTitlesCount">0</h4>
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-book"></i><br>Total Titles
+                                                    </small>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Remove Titles -->
-                                    <div class="col-md-4">
-                                        <div class="card border-danger shadow-sm">
-                                            <div class="card-header bg-danger text-white">
-                                                <h5 class="mb-0">
-                                                    <i class="fas fa-minus-circle"></i> Remove Titles
-                                                </h5>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="mb-3">
-                                                    <label for="removeIsbn" class="form-label">
-                                                        <i class="fas fa-search-minus"></i> Search & Remove by ISBN
-                                                    </label>
-                                                    <div class="input-group">
-                                                        <input type="text" class="form-control" id="removeIsbn" placeholder="Enter ISBN to remove">
-                                                        <button class="btn btn-outline-danger" onclick="searchAndMarkForRemoval()">
-                                                            <i class="fas fa-search"></i>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="removeFile" class="form-label">
-                                                        <i class="fas fa-file-upload"></i> Upload ISBNs to Remove
-                                                    </label>
-                                                    <input type="file" class="form-control" id="removeFile" accept=".json,.txt">
-                                                    <div class="form-text">JSON or text file with ISBNs to remove</div>
-                                                </div>
-                                                <button type="button" class="btn btn-danger w-100 mb-3" onclick="processBulkRemoval()" id="processBulkRemovalBtn" disabled>
-                                                    <i class="fas fa-cogs"></i> Process Bulk Removal
-                                                </button>
-                                                <button type="button" class="btn btn-outline-warning w-100" onclick="clearRemovals()">
-                                                    <i class="fas fa-undo"></i> Clear All Removals
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Download & Actions -->
-                                    <div class="col-md-4">
-                                        <div class="card border-primary shadow-sm">
-                                            <div class="card-header bg-primary text-white">
-                                                <h5 class="mb-0">
-                                                    <i class="fas fa-download"></i> Export & Backup
-                                                </h5>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="alert alert-info">
-                                                    <i class="fas fa-info-circle"></i>
-                                                    <strong>Workflow:</strong>
-                                                    <ol class="mb-0 mt-2">
-                                                        <li>Add/Remove titles as needed</li>
-                                                        <li>Preview changes below</li>
-                                                        <li>Download updated data.json</li>
-                                                        <li>Replace in GitHub repository</li>
-                                                    </ol>
-                                                </div>
-                                                <button type="button" class="btn btn-primary w-100 mb-3" onclick="downloadUpdatedInventory()" id="downloadInventoryBtn" disabled>
-                                                    <i class="fas fa-download"></i> Download Updated Repo
-                                                </button>
-                                                <button type="button" class="btn btn-outline-secondary w-100 mb-3" onclick="downloadCurrentInventory()">
-                                                    <i class="fas fa-file-download"></i> Backup Current Repo
-                                                </button>
-                                                <div class="alert alert-warning">
-                                                    <i class="fas fa-exclamation-triangle"></i>
-                                                    <strong>Note:</strong> Upload the downloaded file to your GitHub repository to update the live database.
+                                            <div class="col-md-3">
+                                                <div class="border rounded p-3 h-100">
+                                                    <h4 class="text-success mb-1" id="podReadyCount">0</h4>
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-check-circle"></i><br>POD Ready
+                                                    </small>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Statistics Dashboard -->
-                                <div class="row mb-4">
-                                    <div class="col-12">
-                                        <div class="card border-info shadow-sm">
-                                            <div class="card-header bg-info text-white">
-                                                <h5 class="mb-0">
-                                                    <i class="fas fa-chart-pie"></i> Repo Statistics
-                                                </h5>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="row text-center">
-                                                    <div class="col-md-2">
-                                                        <div class="border rounded p-3 h-100">
-                                                            <h4 class="text-primary mb-1" id="currentTitlesCount">0</h4>
-                                                            <small class="text-muted">
-                                                                <i class="fas fa-book"></i><br>Current Titles
-                                                            </small>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <div class="border rounded p-3 h-100">
-                                                            <h4 class="text-success mb-1" id="podReadyCount">0</h4>
-                                                            <small class="text-muted">
-                                                                <i class="fas fa-check-circle"></i><br>POD Ready
-                                                            </small>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <div class="border rounded p-3 h-100">
-                                                            <h4 class="text-warning mb-1" id="mpiCount">0</h4>
-                                                            <small class="text-muted">
-                                                                <i class="fas fa-exclamation-triangle"></i><br>MPI Items
-                                                            </small>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <div class="border rounded p-3 h-100">
-                                                            <h4 class="text-success mb-1" id="newTitlesCount">0</h4>
-                                                            <small class="text-muted">
-                                                                <i class="fas fa-plus"></i><br>To Add
-                                                            </small>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <div class="border rounded p-3 h-100">
-                                                            <h4 class="text-danger mb-1" id="removeTitlesCount">0</h4>
-                                                            <small class="text-muted">
-                                                                <i class="fas fa-minus"></i><br>To Remove
-                                                            </small>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <div class="border rounded p-3 h-100">
-                                                            <h4 class="text-warning mb-1" id="duplicatesCount">0</h4>
-                                                            <small class="text-muted">
-                                                                <i class="fas fa-copy"></i><br>Duplicates
-                                                            </small>
-                                                        </div>
-                                                    </div>
+                                            <div class="col-md-3">
+                                                <div class="border rounded p-3 h-100">
+                                                    <h4 class="text-warning mb-1" id="mpiCount">0</h4>
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-exclamation-triangle"></i><br>MPI Items
+                                                    </small>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Status Alert -->
-                                <div class="mb-3">
-                                    <div class="alert alert-info" id="inventoryStatus" style="display: none;"></div>
-                                </div>
-                                
-                                <!-- Preview Tables -->
-                                <div class="row">
-                                    <!-- New Titles -->
-                                    <div class="col-md-6">
-                                        <div class="card shadow-sm">
-                                            <div class="card-header d-flex justify-content-between align-items-center bg-light">
-                                                <h6 class="mb-0 text-success">
-                                                    <i class="fas fa-plus-circle"></i> New Titles to Add
-                                                </h6>
-                                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="clearNewTitles()" id="clearNewTitlesBtn" disabled>
-                                                    <i class="fas fa-broom"></i> Clear
-                                                </button>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="table-responsive">
-                                                    <table class="table table-sm table-hover" id="newTitlesTable">
-                                                        <thead class="table-light">
-                                                            <tr>
-                                                                <th><i class="fas fa-info-circle"></i> Status</th>
-                                                                <th><i class="fas fa-barcode"></i> ISBN</th>
-                                                                <th><i class="fas fa-book"></i> Description</th>
-                                                                <th><i class="fas fa-cog"></i> Action</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody id="newTitlesBody">
-                                                            <tr>
-                                                                <td colspan="4" class="text-center text-muted">
-                                                                    <i class="fas fa-inbox"></i> No new titles uploaded yet
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Remove Titles -->
-                                    <div class="col-md-6">
-                                        <div class="card shadow-sm">
-                                            <div class="card-header d-flex justify-content-between align-items-center bg-light">
-                                                <h6 class="mb-0 text-danger">
-                                                    <i class="fas fa-minus-circle"></i> Titles to Remove
-                                                </h6>
-                                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="clearRemovals()" id="clearRemovalsBtn" disabled>
-                                                    <i class="fas fa-undo"></i> Clear
-                                                </button>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="table-responsive">
-                                                    <table class="table table-sm table-hover" id="removeTitlesTable">
-                                                        <thead class="table-light">
-                                                            <tr>
-                                                                <th><i class="fas fa-barcode"></i> ISBN</th>
-                                                                <th><i class="fas fa-book"></i> Description</th>
-                                                                <th><i class="fas fa-cog"></i> Action</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody id="removeTitlesBody">
-                                                            <tr>
-                                                                <td colspan="3" class="text-center text-muted">
-                                                                    <i class="fas fa-inbox"></i> No titles marked for removal
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
+                                            <div class="col-md-3">
+                                                <div class="border rounded p-3 h-100">
+                                                    <h4 class="text-danger mb-1" id="duplicatesCount">0</h4>
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-copy"></i><br>Duplicates
+                                                    </small>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <!-- Order Processing Card -->
+                            <div class="col-md-8">
+                                <div class="card h-100 shadow-sm">
+                                    <div class="card-header bg-light">
+                                        <h5 class="card-title mb-0">
+                                            <i class="fas fa-file-excel"></i> Order Processing - Excel/CSV Upload
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="orderRef" class="form-label">
+                                                <i class="fas fa-hashtag"></i> Order Reference (required)
+                                            </label>
+                                            <input type="text" class="form-control" id="orderRef" placeholder="Enter order reference">
+                                            <div class="order-ref-warning" id="orderRefWarning">
+                                                <i class="fas fa-exclamation-triangle"></i> Please enter an order reference
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="excelFile" class="form-label">
+                                                <i class="fas fa-upload"></i> Upload Order File (Excel/CSV)
+                                            </label>
+                                            <input type="file" class="form-control" id="excelFile" accept=".xlsx,.xls,.csv">
+                                            <div class="form-text">Excel or CSV files (max 10MB)</div>
+                                            <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="downloadTemplate()">
+                                                <i class="fas fa-download"></i> Download Excel Template
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- ISBN Search Card -->
+                            <div class="col-md-4">
+                                <div class="card h-100 shadow-sm">
+                                    <div class="card-header bg-light">
+                                        <h5 class="card-title mb-0">
+                                            <i class="fas fa-search"></i> ISBN/Master Order Lookup
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="isbnSearch" class="form-label">Search ISBN or Master Order ID</label>
+                                            <input type="text" class="form-control" id="isbnSearch" placeholder="Enter ISBN or Master Order ID">
+                                        </div>
+                                        <button type="button" class="btn btn-primary w-100 mb-3" onclick="searchISBN()">
+                                            <i class="fas fa-search"></i> Search Repository
+                                        </button>
+                                        <div id="isbnResult" class="mt-3" style="display: none;">
+                                            <div class="alert" id="isbnResultAlert">
+                                                <div id="isbnResultContent"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Status Alert -->
+                        <div class="mb-3">
+                            <div class="alert alert-info" id="status" style="display: none;"></div>
+                        </div>
+
+                        <!-- Table Controls -->
+                        <div class="mb-3 d-flex gap-2 align-items-center flex-wrap">
+                            <button class="btn btn-danger" onclick="deleteSelected()" id="deleteSelectedBtn" disabled>
+                                <i class="fas fa-trash"></i> Delete Selected Rows
+                            </button>
+                            <button class="btn btn-secondary" onclick="copyTableToClipboard()" id="copyBtn" disabled>
+                                <i class="fas fa-copy"></i> Copy to Clipboard
+                            </button>
+                            <div class="form-check form-switch ms-3">
+                                <input class="form-check-input" type="checkbox" id="showOnlyUnavailable" onchange="toggleTableFilter()">
+                                <label class="form-check-label" for="showOnlyUnavailable">
+                                    <i class="fas fa-filter"></i> Miscellaneous Print Items (MPI)
+                                </label>
+                            </div>
+                            <div class="form-check form-switch ms-3">
+                                <input class="form-check-input" type="checkbox" id="showNotAvailable" onchange="toggleTableFilter()">
+                                <label class="form-check-label" for="showNotAvailable">
+                                    <i class="fas fa-eye-slash"></i> Show Not Available Items
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- Orders Table -->
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover" id="previewTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th><input type="checkbox" id="selectAll" onclick="toggleAllCheckboxes()"></th>
+                                        <th>Action</th>
+                                        <th>Line No</th>
+                                        <th>ISBN</th>
+                                        <th>Description</th>
+                                        <th>Quantity</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="previewBody">
+                                    <tr>
+                                        <td colspan="7" class="text-center text-muted">
+                                            <i class="fas fa-inbox"></i> No data loaded
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
