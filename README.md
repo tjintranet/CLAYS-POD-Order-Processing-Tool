@@ -1,6 +1,6 @@
 # CLAYS POD Order Processing Tool
 
-A streamlined web-based application for processing print-on-demand orders for Clays Ltd. Features complete order processing, real-time repository validation, ISBN/Master Order ID lookup, and an integrated repository statistics dashboard with download functionality.
+A streamlined web-based application for processing print-on-demand orders for Clays Ltd. Features complete order processing, real-time repository validation, ISBN/Master Order ID lookup with XML specification downloads, and an integrated repository statistics dashboard with download functionality.
 
 ## 🚀 Features
 
@@ -14,15 +14,23 @@ A streamlined web-based application for processing print-on-demand orders for Cl
 - **Bulk Operations**: Select and delete multiple rows, copy to clipboard
 - **CSV Export**: Generate Clays POD-compliant CSV files with correct format
 
-### **ISBN/Master Order ID Lookup**
+### **ISBN/Master Order ID Lookup with XML Generation**
 - **Dual Search**: Search by ISBN or Master Order ID
 - **Comprehensive Results**: Shows ISBN, title, Master Order ID, and status
+- **XML Download**: Download complete XML specification files (`{ISBN}_c.xml` and `{ISBN}_t.xml`) for found items
 - **Status Indicators**: 
   - 🟢 **POD Ready**: Available for print-on-demand
   - 🟡 **MPI**: Miscellaneous Print Item
   - 🔴 **Not Available**: Item not in repository catalog
 - **Format Flexibility**: Accepts ISBNs with or without dashes/spaces
 - **Keyboard Shortcuts**: Press Enter to trigger searches
+
+### **XML Specification Generation**
+- **Automatic Generation**: Creates XML files matching Clays printing specifications
+- **Dual File Output**: Downloads both `{ISBN}_c.xml` and `{ISBN}_t.xml` files simultaneously
+- **Complete Specifications**: Includes book dimensions, materials, binding, and extent information
+- **Secure Processing**: XML content is properly sanitized and validated
+- **Professional Format**: UTF-8 encoded XML with proper structure for production use
 
 ### **Repository Statistics Dashboard**
 - **Real-time Overview**: Total titles, POD Ready count, MPI count, and duplicate detection
@@ -31,7 +39,7 @@ A streamlined web-based application for processing print-on-demand orders for Cl
 - **Duplicate Detection**: Accurately identifies and counts duplicate ISBN entries
 
 ### **Security & Data Handling** 🛡️
-- **Input Sanitization**: Comprehensive validation of all user inputs
+- **Input Sanitization**: Comprehensive validation of all user inputs including XML-specific sanitization
 - **File Validation**: Size limits (10MB), type checking, and format verification
 - **Content Security Policy**: XSS protection and resource validation
 - **Error Handling**: Safe error messages with graceful degradation
@@ -53,7 +61,7 @@ project-root/
 ```
 
 ### **Repository Database Format**
-The `data.json` file must contain an array of book objects with the complete structure:
+The `data.json` file must contain an array of book objects with the complete structure for XML generation:
 ```json
 [
   {
@@ -62,30 +70,26 @@ The `data.json` file must contain an array of book objects with the complete str
     "TITLE": "CLEOPATRA'S SISTER   (11)",
     "Trim Height": 198,
     "Trim Width": 129,
-    "Bind Style": "PU/2",
+    "Bind Style": "Limp",
     "Extent": 288,
     "Paper Desc": "Holmen Bulky 52 gsm",
     "Cover Spec Code 1": "C400P2",
     "Cover Spine": 18,
     "Packing": "Pack (64) (8) Base.",
     "Status": "POD Ready"
-  },
-  {
-    "ISBN": 9780140256932,
-    "Master Order ID": "SA1659",
-    "TITLE": "BEYOND THE BLUE MOUNTAINS (07)",
-    "Trim Height": 198,
-    "Trim Width": 129,
-    "Bind Style": "PU/2",
-    "Extent": 160,
-    "Paper Desc": "Holmen Bulky 52 gsm",
-    "Cover Spec Code 1": "C400P2",
-    "Cover Spine": 11,
-    "Packing": "Pack (104) (8) Base.",
-    "Status": "MPI"
   }
 ]
 ```
+
+**Required Fields for XML Generation:**
+- `ISBN` or `isbn`: Book identifier
+- `TITLE`, `Title`, or `title`: Book title
+- `Trim Height`: Book height in mm
+- `Trim Width`: Book width in mm
+- `Cover Spine` or `Spine Size`: Spine thickness in mm
+- `Paper Desc` or `Paper Description`: Paper specification
+- `Bind Style` or `Binding Style`: Binding method
+- `Extent` or `Page Extent`: Number of pages
 
 ## 🛠️ Installation
 
@@ -162,17 +166,44 @@ Your order files should contain:
 - **Copy to Clipboard**: Export table as HTML for external use
 - **Smart Filtering**: Focus on specific item types or statuses
 
-### **ISBN/Master Order ID Lookup**
+### **ISBN/Master Order ID Lookup with XML Downloads**
 
 #### **Dual Search Capability**
 1. Enter ISBN (e.g., `9780140175936`) or Master Order ID (e.g., `SA1657`)
 2. Click "Search Repository" or press Enter
 3. View comprehensive results including status badge
 
-#### **Search Results Display**
-- **Available Items**: Shows ISBN, title, Master Order ID, and status badge
+#### **Search Results with XML Download**
+- **Available Items**: Shows complete book information with status badge
+- **XML Download**: Full-width "Download XML Specification Files" button at bottom of results
+- **Dual File Download**: Automatically downloads both `{ISBN}_c.xml` and `{ISBN}_t.xml`
 - **Not Available Items**: Clear indication that item is not in repository
 - **Auto-hide**: Success results disappear after 10 seconds
+
+#### **XML File Structure**
+Downloaded XML files contain:
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<book>
+    <basic_info>
+        <isbn>9780002711845</isbn>
+        <title>LIVING (00)</title>
+    </basic_info>
+    <specifications>
+        <dimensions>
+            <trim_height>216</trim_height>
+            <trim_width>135</trim_width>
+            <spine_size>17</spine_size>
+        </dimensions>
+        <materials>
+            <paper_type>Holmen Cream 65 gsm</paper_type>
+            <binding_style>Limp</binding_style>
+            <lamination>No Lamination</lamination>
+        </materials>
+        <page_extent>240</page_extent>
+    </specifications>
+</book>
+```
 
 ### **Repository Management**
 
@@ -244,7 +275,7 @@ DTL,ORDER123,002,9780987654321,3
 - **File Type Checking**: Only allows specified file extensions (.xlsx, .xls, .csv)
 - **Size Limits**: 10MB maximum for all file uploads
 - **ISBN Validation**: Ensures proper format before processing
-- **Text Sanitization**: Removes potentially dangerous characters
+- **Text Sanitization**: Removes potentially dangerous characters including XML-specific sanitization
 - **Quantity Validation**: Reasonable limits and numeric validation
 
 ### **Error Handling**
@@ -266,7 +297,8 @@ DTL,ORDER123,002,9780987654321,3
 - **File Exists**: Confirm `data.json` is present in same directory
 - **Valid JSON**: Check syntax with JSON validator
 - **Proper Format**: Ensure array structure with complete book objects
-- **Required Fields**: ISBN, Master Order ID, TITLE, Status fields required
+- **Required Fields**: ISBN, Master Order ID, TITLE, Status fields required for basic functionality
+- **XML Fields**: Additional fields required for XML generation (see Repository Database Format)
 - **File Permissions**: Ensure web server can read the file
 
 #### **File Upload Problems**
@@ -281,6 +313,13 @@ DTL,ORDER123,002,9780987654321,3
 - **Server Permissions**: Check that web server can serve .xlsx files
 - **Pop-up Blockers**: Disable pop-up blockers for the application domain
 - **Browser Settings**: Ensure downloads are allowed
+
+#### **XML Download Issues**
+- **Missing Data**: Ensure repository contains required fields for XML generation
+- **File Generation**: Check browser console for XML generation errors
+- **Download Blocked**: Verify browser allows multiple file downloads
+- **Pop-up Blockers**: Disable pop-up blockers for the application domain
+- **Field Mapping**: Ensure JSON uses expected field names (TITLE, Trim Height, etc.)
 
 #### **Books Showing "Not Available"**
 - **ISBN Matching**: Ensure exact match with repository ISBNs
@@ -329,15 +368,17 @@ DTL,ORDER123,002,9780987654321,3
 
 ### **Regular Tasks**
 - **Repository Updates**: Keep `data.json` current with new titles and status changes
+- **XML Field Validation**: Ensure new entries contain all required fields for XML generation
 - **Template Updates**: Update Excel template if column requirements change
 - **Backup Data**: Regular backups of repository database
 - **Library Updates**: Monitor CDN dependencies for security updates
 
 ### **Monitoring**
 - **Error Logs**: Check browser console for recurring issues
-- **Usage Patterns**: Monitor which features are most used
+- **Usage Patterns**: Monitor which features are most used (order processing vs XML downloads)
 - **Performance**: Watch for slow uploads or processing times
 - **Status Accuracy**: Verify status indicators match actual production capabilities
+- **XML Generation**: Test XML downloads with sample data regularly
 
 ### **Updates**
 - **Dependencies**: Keep external libraries updated for security
@@ -357,20 +398,22 @@ DTL,ORDER123,002,9780987654321,3
 - **File API**: For file upload and processing
 - **Clipboard API**: For copy-to-clipboard functionality
 - **Fetch API**: For loading repository data
-- **Blob API**: For file downloads
+- **Blob API**: For file downloads including XML generation
 
 ### **Performance Characteristics**
 - **File Processing**: Up to 10MB files supported
 - **Repository Size**: Tested with 10,000+ book entries
 - **Response Time**: Near-instantaneous for local operations
 - **Memory Usage**: Optimized for large datasets
+- **XML Generation**: Real-time generation and download
 
 ### **Data Structure Requirements**
 - **Complete JSON**: Repository must include full data.json structure
 - **Required Fields**: ISBN, Master Order ID, TITLE, Status minimum
+- **XML Fields**: Additional fields required for XML generation (dimensions, materials, etc.)
 - **Status Values**: "POD Ready", "MPI", or custom status strings
 - **ISBN Format**: 10-13 digit numbers, automatically normalized
-- **Flexible Field Names**: Supports various ISBN field name variations
+- **Flexible Field Names**: Supports various ISBN and title field name variations
 
 ## 🤝 Support
 
@@ -388,6 +431,7 @@ When reporting problems, include:
 - Steps to reproduce the issue
 - Sample data (if applicable)
 - Expected vs actual behavior
+- Whether issue is with order processing or XML downloads
 
 ### **Feature Requests**
 The application is designed for extensibility. Common enhancement areas:
@@ -396,8 +440,17 @@ The application is designed for extensibility. Common enhancement areas:
 - Integration with external systems
 - Batch processing optimizations
 - Custom CSV export formats
+- Advanced XML customization options
 
 ## 📝 Version History
+
+### **v5.2** - Enhanced XML Download with Improved UX
+- **Enhanced**: XML download functionality with dedicated XMLModule
+- **Improved**: XML button styling - now full-width primary button at bottom of search results
+- **Added**: Proper XML sanitization for security
+- **Enhanced**: Better field name detection for XML generation (TITLE variations)
+- **Improved**: Error handling for XML generation and downloads
+- **Enhanced**: User experience with cleaner search result layout
 
 ### **v5.1** - Template Download & CSV Format Fix
 - **Added**: Excel template download button under file upload
@@ -436,7 +489,7 @@ The application is designed for extensibility. Common enhancement areas:
 
 ## 📄 License
 
-This application is designed specifically for Clays Ltd print-on-demand operations. All configuration and branding elements are customized for Clays POD workflow requirements with status-aware processing capabilities.
+This application is designed specifically for Clays Ltd print-on-demand operations. All configuration and branding elements are customized for Clays POD workflow requirements with status-aware processing capabilities and XML specification generation.
 
 ## 🎯 Quick Start Guide
 
@@ -446,6 +499,7 @@ This application is designed specifically for Clays Ltd print-on-demand operatio
 4. **Prepare**: Fill template with ISBN and Quantity columns
 5. **Process**: Enter order reference, upload file, review results
 6. **Export**: Download CSV for Clays POD processing
+7. **XML Downloads**: Search for individual ISBNs to download XML specification files
 
 ---
 

@@ -49,6 +49,15 @@ const SecurityModule = {
                    .trim();
     },
 
+    sanitizeXML(text) {
+        if (typeof text !== 'string') return '';
+        return text.replace(/&/g, '&amp;')
+                   .replace(/</g, '&lt;')
+                   .replace(/>/g, '&gt;')
+                   .replace(/"/g, '&quot;')
+                   .replace(/'/g, '&#39;');
+    },
+
     validateFile(file) {
         if (!file) {
             throw new Error('No file provided');
@@ -122,7 +131,7 @@ const DataProcessor = {
     processBookData(rawData) {
         return rawData.map((item, index) => {
             const isbn = this.extractISBN(item);
-            const title = SecurityModule.sanitizeText(item.Title || item.TITLE || item.title || 'No title available');
+            const title = SecurityModule.sanitizeText(item.Title || item.title || item.TITLE || 'No title available');
             const masterOrderId = SecurityModule.sanitizeText(item['Master Order ID'] || item.masterOrderId || '');
             const status = SecurityModule.sanitizeText(item.Status || item.status || 'POD Ready');
             const paperDesc = SecurityModule.sanitizeText(item['Paper Desc'] || item.paperDesc || item['Paper Description'] || '');
@@ -137,7 +146,7 @@ const DataProcessor = {
                 trimWidth: item['Trim Width'],
                 bindStyle: SecurityModule.sanitizeText(item['Bind Style'] || ''),
                 extent: item.Extent,
-                coverSpecCode1: SecurityModule.sanitizeText(item['Cover Spec Code 1'] || ''),
+                coverSpec: SecurityModule.sanitizeText(item['Cover Spec'] || ''),
                 coverSpine: item['Cover Spine'],
                 packing: SecurityModule.sanitizeText(item.Packing || ''),
                 originalData: item,
@@ -200,7 +209,7 @@ const SearchModule = {
         const isbn = DataProcessor.extractISBN(rawItem);
         return {
             isbn: isbn,
-            title: SecurityModule.sanitizeText(rawItem.Title || rawItem.TITLE || rawItem.title || 'No title available'),
+            title: SecurityModule.sanitizeText(rawItem.Title || rawItem.title || rawItem.TITLE || 'No title available'),
             masterOrderId: SecurityModule.sanitizeText(rawItem['Master Order ID'] || rawItem.masterOrderId || ''),
             status: SecurityModule.sanitizeText(rawItem.Status || rawItem.status || 'POD Ready'),
             paperDesc: SecurityModule.sanitizeText(rawItem['Paper Desc'] || rawItem.paperDesc || rawItem['Paper Description'] || 'Not specified')
@@ -495,12 +504,94 @@ const OrderProcessor = {
     }
 };
 
+// XML Generation Module
+const XMLModule = {
+    generateXMLForBook(book) {
+        if (!book) {
+            throw new Error('No book data provided for XML generation');
+        }
+
+        // Extract data with fallbacks for different field name variations
+        const isbn = SecurityModule.sanitizeXML(String(book.ISBN || book.isbn || ''));
+        const title = SecurityModule.sanitizeXML(book.TITLE || book.Title || book.title || 'LIVING (00)');
+        const trimHeight = book['Trim Height'] || 216;
+        const trimWidth = book['Trim Width'] || 135;
+        const spineSize = book['Cover Spine'] || book['Spine Size'] || 17;
+        const paperType = SecurityModule.sanitizeXML(book['Paper Desc'] || book['Paper Description'] || 'Holmen Cream 65 gsm');
+        const bindingStyle = SecurityModule.sanitizeXML(book['Bind Style'] || book['Binding Style'] || 'Limp');
+        const pageExtent = book.Extent || book['Page Extent'] || 240;
+
+        return `<?xml version="1.0" encoding="UTF-8"?>
+<book>
+    <basic_info>
+        <isbn>${isbn}</isbn>
+        <title>${title}</title>
+    </basic_info>
+    <specifications>
+        <dimensions>
+            <trim_height>${trimHeight}</trim_height>
+            <trim_width>${trimWidth}</trim_width>
+            <spine_size>${spineSize}</spine_size>
+        </dimensions>
+        <materials>
+            <paper_type>${paperType}</paper_type>
+            <binding_style>${bindingStyle}</binding_style>
+            <lamination>No Lamination</lamination>
+        </materials>
+        <page_extent>${pageExtent}</page_extent>
+    </specifications>
+</book>`;
+    },
+
+    downloadXMLFiles(book) {
+        if (!book || (!book.isbn && !book.ISBN)) {
+            UIModule.showStatus('No valid book data available for XML download', 'warning');
+            return;
+        }
+
+        try {
+            const xmlContent = this.generateXMLForBook(book);
+            const isbn = book.ISBN || book.isbn;
+            
+            // Create download function
+            const downloadXML = (content, filename) => {
+                const blob = new Blob([content], { type: 'application/xml' });
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+            };
+            
+            // Download _c.xml file
+            downloadXML(xmlContent, `${isbn}_c.xml`);
+            
+            // Download _t.xml file with slight delay
+            setTimeout(() => {
+                downloadXML(xmlContent, `${isbn}_t.xml`);
+                UIModule.showStatus(`XML files downloaded: ${isbn}_c.xml and ${isbn}_t.xml`, 'success');
+            }, 100);
+            
+        } catch (error) {
+            console.error('XML download error:', error);
+            UIModule.showStatus('Error creating XML files: ' + error.message, 'danger');
+        }
+    }
+};
+
 // Export Module
 const ExportModule = {
     formatDate() {
         const now = new Date();
         return `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
     },
+
+    // Alias for backward compatibility
+    generateXMLForBook: XMLModule.generateXMLForBook,
+    downloadXMLFiles: XMLModule.downloadXMLFiles,
 
     downloadCsv() {
         if (AppState.processedOrders.length === 0) {
@@ -631,7 +722,7 @@ const ExportModule = {
                 'Trim Width': book.trimWidth || '',
                 'Bind Style': book.bindStyle || '',
                 'Extent': book.extent || '',
-                'Cover Spec Code': book.coverSpecCode1 || '',
+                'Cover Spec': book.coverSpec || '',
                 'Cover Spine': book.coverSpine || '',
                 'Packing': book.packing || ''
             }));
@@ -682,7 +773,7 @@ const ExportModule = {
                 'Trim Width': book.trimWidth || '',
                 'Bind Style': book.bindStyle || '',
                 'Extent': book.extent || '',
-                'Cover Spec Code': book.coverSpecCode1 || '',
+                'Cover Spec': book.coverSpec || '',
                 'Cover Spine': book.coverSpine || '',
                 'Packing': book.packing || ''
             }));
@@ -812,7 +903,7 @@ function searchISBN() {
     if (SecurityModule.validateISBN(rawInput)) {
         const rawFound = SearchModule.findByISBN(rawInput);
         if (rawFound) {
-            foundBook = SearchModule.createBookFromRaw(rawFound);
+            foundBook = rawFound; // Use raw data for XML generation
             searchType = 'ISBN';
         }
     }
@@ -821,25 +912,33 @@ function searchISBN() {
     if (!foundBook) {
         const rawFound = SearchModule.findByMasterOrderId(rawInput);
         if (rawFound) {
-            foundBook = SearchModule.createBookFromRaw(rawFound);
+            foundBook = rawFound; // Use raw data for XML generation
             searchType = 'Master Order ID';
         }
     }
     
     if (foundBook) {
-        UIModule.showISBNResult(`
-            <strong>✓ Available</strong><br>
-            <strong>ISBN:</strong> ${foundBook.isbn || 'Not available'}<br>
-            <strong>Title:</strong> ${foundBook.title}<br>
-            <strong>Master Order ID:</strong> ${foundBook.masterOrderId || 'N/A'}<br>
-            <strong>Paper:</strong> ${foundBook.paperDesc}<br>
-            <strong>Status:</strong> <span class="badge ${UIModule.getStatusBadgeClass(foundBook.status)}">${foundBook.status}</span><br>
-            <small class="text-muted">Found by ${searchType}</small>
-        `, 'success');
+        const processedBook = SearchModule.createBookFromRaw(foundBook);
+        const bookDataForXML = JSON.stringify(foundBook).replace(/"/g, '&quot;');
+    
+    UIModule.showISBNResult(`
+        <div>
+            <strong>Available</strong><br>
+            <strong>ISBN:</strong> ${processedBook.isbn || 'Not available'}<br>
+            <strong>Title:</strong> ${processedBook.title}<br>
+            <strong>Master Order ID:</strong> ${processedBook.masterOrderId || 'N/A'}<br>
+            <strong>Paper:</strong> ${processedBook.paperDesc}<br>
+            <strong>Status:</strong> <span class="badge ${UIModule.getStatusBadgeClass(processedBook.status)}">${processedBook.status}</span><br>
+            <hr class="my-3">
+            <button class="btn btn-primary w-100" onclick="XMLModule.downloadXMLFiles(${bookDataForXML})" title="Download XML specification files">
+                <i class="fas fa-download me-2"></i>Download XML Specification Files
+            </button>
+        </div>
+    `, 'success');
     } else {
         const searchTypeMsg = SecurityModule.validateISBN(rawInput) ? 'ISBN' : 'Master Order ID';
         UIModule.showISBNResult(`
-            <strong>✗ Not Available</strong><br>
+            <strong>Not Available</strong><br>
             <strong>${searchTypeMsg}:</strong> ${rawInput}<br>
             This title is not available in the current repository.
         `, 'danger');
