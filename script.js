@@ -277,20 +277,25 @@ const UIModule = {
     },
 
     showISBNResult(content, type) {
-        const resultDiv = document.getElementById('isbnResult');
-        const alertDiv = document.getElementById('isbnResultAlert');
-        const contentDiv = document.getElementById('isbnResultContent');
-        
-        alertDiv.className = `alert alert-${type}`;
-        contentDiv.innerHTML = content;
-        resultDiv.style.display = 'block';
-        
-        if (type === 'success' || type === 'info') {
-            setTimeout(() => {
-                resultDiv.style.display = 'none';
-            }, 10000);
-        }
-    },
+    const resultDiv = document.getElementById('isbnResult');
+    const alertDiv = document.getElementById('isbnResultAlert');
+    const contentDiv = document.getElementById('isbnResultContent');
+    
+    alertDiv.className = `alert alert-${type}`;
+    contentDiv.innerHTML = content;
+    resultDiv.style.display = 'block';
+    
+    if (type === 'success' || type === 'info') {
+        setTimeout(() => {
+            resultDiv.style.display = 'none';
+            // Clear the search field when results disappear
+            const isbnSearchField = document.getElementById('isbnSearch');
+            if (isbnSearchField) {
+                isbnSearchField.value = '';
+            }
+        }, 10000);
+    }
+},
 
     updatePreviewTable() {
         const tbody = document.getElementById('previewBody');
