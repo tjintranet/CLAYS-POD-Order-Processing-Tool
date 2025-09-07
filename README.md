@@ -1,6 +1,6 @@
 # CLAYS POD Order Processing Tool
 
-A streamlined web-based application for processing print-on-demand orders for Clays Ltd. Features complete order processing, real-time repository validation, ISBN/Master Order ID lookup with XML specification downloads, and an integrated repository statistics dashboard with download functionality.
+A streamlined web-based application for processing print-on-demand orders for Clays Ltd. Features complete order processing, real-time repository validation, ISBN/Master Order ID lookup with XML specification downloads, batch XML generation, and an integrated repository statistics dashboard with download functionality.
 
 ## 🚀 Features
 
@@ -9,21 +9,23 @@ A streamlined web-based application for processing print-on-demand orders for Cl
 - **Excel Template**: Download pre-formatted Excel template for consistent order format
 - **Real-time Validation**: Check ISBNs against live repository database with status information
 - **Smart Filtering**: 
-  - **Print as Miscellaneous Items (MPI)**: Show only MPI status items
+  - **POD Ready Only**: Show only items available for print-on-demand
+  - **Miscellaneous Print Items (MPI)**: Show only MPI status items
   - **Show Not Available Items**: Display items not found in repository
-- **Bulk Operations**: Select and delete multiple rows, copy to clipboard
+- **Bulk Operations**: Select and delete multiple rows with checkbox selection
 - **CSV Export**: Generate Clays POD-compliant CSV files with correct format
 
 ### **ISBN/Master Order ID Lookup with XML Generation**
-- **Dual Search**: Search by ISBN or Master Order ID
-- **Comprehensive Results**: Shows ISBN, title, Master Order ID, and status
+- **Dual Search**: Search by ISBN or Master Order ID with Enter key support
+- **Comprehensive Results**: Shows ISBN, title, Master Order ID, status, and paper description
 - **XML Download**: Download complete XML specification files (`{ISBN}_c.xml` and `{ISBN}_t.xml`) for found items
+- **Batch XML Processing**: Upload CSV/Excel file with ISBN column to generate ZIP archive of all XML files
 - **Status Indicators**: 
   - 🟢 **POD Ready**: Available for print-on-demand
   - 🟡 **MPI**: Miscellaneous Print Item
   - 🔴 **Not Available**: Item not in repository catalog
 - **Format Flexibility**: Accepts ISBNs with or without dashes/spaces
-- **Keyboard Shortcuts**: Press Enter to trigger searches
+- **Auto-hide Results**: Success results disappear after 10 seconds
 
 ### **XML Specification Generation**
 - **Automatic Generation**: Creates XML files matching Clays printing specifications
@@ -31,6 +33,7 @@ A streamlined web-based application for processing print-on-demand orders for Cl
 - **Complete Specifications**: Includes book dimensions, materials, binding, and extent information
 - **Secure Processing**: XML content is properly sanitized and validated
 - **Professional Format**: UTF-8 encoded XML with proper structure for production use
+- **Batch Processing**: Generate ZIP archives containing XML files for multiple ISBNs
 
 ### **Repository Statistics Dashboard**
 - **Real-time Overview**: Total titles, POD Ready count, MPI count, and duplicate detection
@@ -139,7 +142,8 @@ php -S localhost:8000
 2. **Upload File** using the template or CSV with ISBN and Qty columns
 3. **Review Results** in the preview table with status indicators
 4. **Filter Items** using available filter options:
-   - **Print as Miscellaneous Items (MPI)**: Shows only MPI status items
+   - **POD Ready Only**: Shows only POD Ready status items
+   - **Miscellaneous Print Items (MPI)**: Shows only MPI status items
    - **Show Not Available Items**: Shows items not in repository catalog
 5. **Export CSV** for Clays POD processing
 
@@ -163,19 +167,26 @@ Your order files should contain:
 #### **5. Managing Orders**
 - **Individual Deletion**: Click trash icon in Action column
 - **Bulk Selection**: Use checkboxes to select multiple rows
-- **Copy to Clipboard**: Export table as HTML for external use
+- **Delete Selected**: Remove multiple items at once
 - **Smart Filtering**: Focus on specific item types or statuses
 
 ### **ISBN/Master Order ID Lookup with XML Downloads**
 
-#### **Dual Search Capability**
+#### **Individual Search**
 1. Enter ISBN (e.g., `9780140175936`) or Master Order ID (e.g., `SA1657`)
 2. Click "Search Repository" or press Enter
-3. View comprehensive results including status badge
+3. View comprehensive results including status badge and paper description
+4. Click "Download XML Specification Files" to get both XML files
+
+#### **Batch XML Generation**
+1. **Upload File**: Select CSV or Excel file with ISBN column
+2. **Process**: Click "Download XML ZIP" 
+3. **Download**: Receive ZIP archive containing all XML specification files
+4. **Results**: View processing summary with found/not found counts
 
 #### **Search Results with XML Download**
 - **Available Items**: Shows complete book information with status badge
-- **XML Download**: Full-width "Download XML Specification Files" button at bottom of results
+- **XML Download**: Full-width "Download XML Specification Files" button
 - **Dual File Download**: Automatically downloads both `{ISBN}_c.xml` and `{ISBN}_t.xml`
 - **Not Available Items**: Clear indication that item is not in repository
 - **Auto-hide**: Success results disappear after 10 seconds
@@ -227,16 +238,16 @@ The dashboard provides four key metrics:
 Update Clays POD details in `script.js`:
 ```javascript
 const customerConfig = {
-    "name": "Your Company Name",
+    "name": "Clays Ltd",
     "address": {
-        "street": "Your Street",
-        "city": "Your City",
-        "region": "Your Region",
-        "country": "Your Country",
-        "postcode": "Your Postcode",
-        "countryCode": "Your Country Code"
+        "street": "Popson Street",
+        "city": "Bungay",
+        "region": "Suffolk",
+        "country": "UK",
+        "postcode": "NR35 1ED",
+        "countryCode": "GB"
     },
-    "phone": "Your Phone Number"
+    "phone": "01986 893 211"
 };
 ```
 
@@ -321,6 +332,12 @@ DTL,ORDER123,002,9780987654321,3
 - **Pop-up Blockers**: Disable pop-up blockers for the application domain
 - **Field Mapping**: Ensure JSON uses expected field names (TITLE, Trim Height, etc.)
 
+#### **Batch XML Processing Issues**
+- **File Format**: Ensure CSV/Excel file contains ISBN column
+- **Large Files**: Process files with many ISBNs may take time
+- **ZIP Generation**: Browser must support JSZip for batch processing
+- **Memory Limits**: Very large batches may hit browser memory limits
+
 #### **Books Showing "Not Available"**
 - **ISBN Matching**: Ensure exact match with repository ISBNs
 - **Format Consistency**: Check for leading zeros or formatting differences
@@ -393,12 +410,13 @@ DTL,ORDER123,002,9780987654321,3
 - **Font Awesome 6.4.0**: Icon library
 - **SheetJS 0.18.5**: Excel file processing
 - **PapaParse 5.4.1**: CSV parsing and generation
+- **JSZip 3.10.1**: ZIP file generation for batch XML downloads
 
 ### **Browser APIs Used**
 - **File API**: For file upload and processing
-- **Clipboard API**: For copy-to-clipboard functionality
-- **Fetch API**: For loading repository data
 - **Blob API**: For file downloads including XML generation
+- **Fetch API**: For loading repository data
+- **URL API**: For file download handling
 
 ### **Performance Characteristics**
 - **File Processing**: Up to 10MB files supported
@@ -406,6 +424,7 @@ DTL,ORDER123,002,9780987654321,3
 - **Response Time**: Near-instantaneous for local operations
 - **Memory Usage**: Optimized for large datasets
 - **XML Generation**: Real-time generation and download
+- **Batch Processing**: Handles hundreds of XML files efficiently
 
 ### **Data Structure Requirements**
 - **Complete JSON**: Repository must include full data.json structure
@@ -431,7 +450,7 @@ When reporting problems, include:
 - Steps to reproduce the issue
 - Sample data (if applicable)
 - Expected vs actual behavior
-- Whether issue is with order processing or XML downloads
+- Whether issue is with order processing, XML downloads, or batch processing
 
 ### **Feature Requests**
 The application is designed for extensibility. Common enhancement areas:
@@ -444,48 +463,25 @@ The application is designed for extensibility. Common enhancement areas:
 
 ## 📝 Version History
 
-### **v5.2** - Enhanced XML Download with Improved UX
-- **Enhanced**: XML download functionality with dedicated XMLModule
+### **Current Version** - Enhanced Batch XML Processing
+- **Enhanced**: Batch XML generation with ZIP download functionality
+- **Added**: CSV/Excel upload for batch XML processing
 - **Improved**: XML button styling - now full-width primary button at bottom of search results
 - **Added**: Proper XML sanitization for security
 - **Enhanced**: Better field name detection for XML generation (TITLE variations)
 - **Improved**: Error handling for XML generation and downloads
 - **Enhanced**: User experience with cleaner search result layout
-
-### **v5.1** - Template Download & CSV Format Fix
-- **Added**: Excel template download button under file upload
-- **Fixed**: CSV DTL lines now have correct 5-field format
+- **Added**: JSZip dependency for batch processing
+- **Fixed**: Template download functionality
 - **Enhanced**: Repository export with complete data structure
 - **Improved**: Duplicate detection accuracy
 
-### **v5.0** - Streamlined Order Processing Focus
-- **Removed**: Repository management functionality and related tab
-- **Moved**: Repository statistics dashboard to main order processing page
-- **Simplified**: Interface focused on core order processing workflow
-- **Maintained**: All order processing, CSV export, and ISBN lookup functionality
-- **Enhanced**: Cleaner, more focused user experience
-
-### **v4.0** - Status Field & Enhanced Search
-- **Added**: Status field support with POD Ready/MPI/Not Available indicators
-- **Added**: Dual search capability (ISBN and Master Order ID)
-- **Added**: Enhanced filtering for MPI and Not Available items
-- **Enhanced**: Status-aware processing and display throughout application
-- **Fixed**: Search functionality with robust ISBN processing
-
-### **v3.0** - Complete Security Enhancement
-- **Enhanced**: Security headers and comprehensive input validation
-- **Enhanced**: User interface with professional styling
-- **Enhanced**: Error handling and user feedback systems
-
-### **v2.0** - Enhanced Security & ISBN Search
-- **Added**: Individual ISBN lookup functionality
-- **Added**: Comprehensive security enhancements (CSP, input validation, XSS protection)
-- **Enhanced**: User interface with responsive design
-
-### **v1.0** - Initial Release
-- **Core**: Excel upload, validation, and CSV export
-- **Core**: Order processing with Clays POD format
-- **Core**: Batch operations and clipboard integration
+### **Previous Versions**
+- **v5.0**: Streamlined interface focused on core order processing workflow
+- **v4.0**: Status field support with POD Ready/MPI/Not Available indicators
+- **v3.0**: Complete security enhancement with comprehensive input validation
+- **v2.0**: Enhanced security & ISBN search functionality
+- **v1.0**: Initial release with core Excel upload, validation, and CSV export
 
 ## 📄 License
 
@@ -499,7 +495,7 @@ This application is designed specifically for Clays Ltd print-on-demand operatio
 4. **Prepare**: Fill template with ISBN and Quantity columns
 5. **Process**: Enter order reference, upload file, review results
 6. **Export**: Download CSV for Clays POD processing
-7. **XML Downloads**: Search for individual ISBNs to download XML specification files
+7. **XML Downloads**: Search for individual ISBNs or upload batch file for XML specification downloads
 
 ---
 
