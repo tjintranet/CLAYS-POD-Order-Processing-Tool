@@ -2,16 +2,16 @@
 <root>
     <meta>
         <version value="73"/>
-        <last_saved_by value="Easy_Data_Transform_v2_0_1_on_macOS_15_6_x86_64_at_2025_08_31_09_52_33"/>
+        <last_saved_by value="Easy_Data_Transform_v2_0_1_on_macOS_15_6_x86_64_at_2025_09_07_14_03_38"/>
         <locale value="en_001"/>
-        <id value="7d7605083474070a0b747a7409083c"/>
+        <id value="7177050e3777070b0b747a7403083c"/>
         <snap_to_grid value="1"/>
         <notes/>
-        <doc_path value="%2FUsers%2Fcolingammon%2FDev%20Projects%2FClays%20POD%2FCLAYS-POD-Order-Processing-Tool-No-Repo-Management%2FCreate%20Data%20JSON.transform"/>
+        <doc_path value="%2FUsers%2Fcolingammon%2FDev%20Projects%2FClays%20POD%2FCLAYS-POD-Order-Processing-Tool-USE%20THIS%2FCreate%20Data%20JSON.transform"/>
         <auto_run_on value="1"/>
     </meta>
     <inputs>
-        <input worksheet="Sheet1" pos="149.4^-164.7" ignored_rows="0" show_meta="0" json_arrays_as_rows="0" delimiter="0" ignore_excel_hidden_cols="0" schema_in_use="0" name="PRH%20Master%20Titles.xlsx%5BSheet1%5D" schema_extra_cols="0" pos_v12="149.4-164.7" watching="0" medium="0" auto_fixed_widths="1" path="%2FUsers%2Fcolingammon%2FDev%20Projects%2FClays%20POD%2FCLAYS-POD-Order-Processing-Tool%2FPRH%20Master%20Titles.xlsx" schema_missing_cols="0" header="1" ignore_empty_cols="0" schema_reorder_cols="0" trim="1" file_type="1" id="0" alias="PRH%20Master%20Titles%20upto%2024-7-20" custom_delimiter="%2A" ignore_repeated_delim="0" meta_text="%24%28FilePath%29%20%24%28CurrentDateTime%29" ignore_excel_hidden_rows="0" ignore_empty="1" encoding="Automatic" quote="0" simplify="1"/>
+        <input worksheet="Sheet1" pos="149.4^-164.7" ignored_rows="0" show_meta="0" json_arrays_as_rows="0" delimiter="0" ignore_excel_hidden_cols="0" schema_in_use="0" name="PRH%20Master%20Titles.xlsx%5BSheet1%5D" schema_extra_cols="0" pos_v12="149.4-164.7" watching="0" medium="0" auto_fixed_widths="1" path="%2FUsers%2Fcolingammon%2FDev%20Projects%2FClays%20POD%2FCLAYS-POD-Order-Processing-Tool-USE%20THIS%2FPRH%20Master%20Titles.xlsx" schema_missing_cols="0" header="1" ignore_empty_cols="0" schema_reorder_cols="0" trim="1" file_type="1" id="0" alias="PRH%20Master%20Titles" custom_delimiter="%2A" ignore_repeated_delim="0" meta_text="%24%28FilePath%29%20%24%28CurrentDateTime%29" ignore_excel_hidden_rows="0" ignore_empty="1" encoding="Automatic" quote="0" simplify="1"/>
     </inputs>
     <transforms>
         <transform id="1" name="Remove" pos="149.4^-45" pos_v12="149.4-45">
@@ -38,6 +38,16 @@
                 <parameter type="5" name="Case_Sensitive" value="1"/>
             </parameters>
         </transform>
+        <transform id="15" name="Num_Format" pos="149.4^433.8" pos_v12="149.4433.8">
+            <parameters>
+                <parameter type="1" name="Columns" value="10"/>
+                <parameter type="6" name="Decimal_From" value="Automatic"/>
+                <parameter type="6" name="Format" value="f"/>
+                <parameter type="8" name="Precision" value="0"/>
+                <parameter type="5" name="Group_Separator" value="0"/>
+                <parameter type="6" name="Non_Numeric" value="Leave"/>
+            </parameters>
+        </transform>
     </transforms>
     <outputs>
         <output enable_output="1" pos="388.8^314.1" delimiter="1" html_encode="1" excel_output="0" multi_file_confirm="1" multi_file_column="0" name="data.json" json_manual_col_types="000000000000" write_header_first_append_only="1" bom="0" pos_v12="388.8314.1" excel_use_style_template="0" single_or_multi="0" overwrite_sheet="1" path="%2FUsers%2Fcolingammon%2FDesktop%2Fdata.json" xml_root="root" remove_empty="1" file_type="4" id="11" custom_delimiter="%2A" alias="data" file_comment="%20File%20created%20by%20Easy%20Data%20Transform%20%7Bversion%7D%20at%20%7Bdate%7D%20%7Btime%7D%20" write_header="1" excel_manual_col_formats="000000000000" json_types="0" xml_row="record" encoding="UTF-8" line_endings="0" quote="0"/>
@@ -47,8 +57,9 @@
         <connection start_id="0" end_id="1"/>
         <connection start_id="1" end_id="10"/>
         <connection start_id="5" end_id="8"/>
-        <connection start_id="8" end_id="11"/>
+        <connection start_id="8" end_id="15"/>
         <connection start_id="10" end_id="5"/>
+        <connection start_id="15" end_id="11"/>
     </connections>
     <batch_values/>
     <batch_logging enabled="0" mode="0"/>

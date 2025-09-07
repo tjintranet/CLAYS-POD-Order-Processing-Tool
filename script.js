@@ -2,7 +2,9 @@
 const AppState = {
     booksData: [],
     processedOrders: [],
-    originalRawData: null
+    originalRawData: null,
+    booksMap: new Map(),
+    masterOrderMap: new Map()
 };
 
 // Configuration
@@ -59,9 +61,7 @@ const SecurityModule = {
     },
 
     validateFile(file) {
-        if (!file) {
-            throw new Error('No file provided');
-        }
+        if (!file) throw new Error('No file provided');
         
         if (file.size > SECURITY_CONFIG.maxFileSize) {
             throw new Error(`File size exceeds limit of ${SECURITY_CONFIG.maxFileSize / (1024 * 1024)}MB`);
@@ -88,16 +88,10 @@ const SecurityModule = {
     validateQuantity(qty) {
         const quantity = parseInt(qty);
         return !isNaN(quantity) && quantity > 0 && quantity <= 10000;
-    },
-
-    secureLog(message, data = null) {
-        if (SECURITY_CONFIG.enableDebugLogging) {
-            console.log(message, data);
-        }
     }
 };
 
-// Data Processing Module
+// Data Processing Module (Optimized)
 const DataProcessor = {
     normalizeISBN(isbn) {
         if (!isbn) return '';
@@ -129,7 +123,7 @@ const DataProcessor = {
     },
 
     processBookData(rawData) {
-        return rawData.map((item, index) => {
+        const processedData = rawData.map(item => {
             const isbn = this.extractISBN(item);
             const title = SecurityModule.sanitizeText(item.Title || item.title || item.TITLE || 'No title available');
             const masterOrderId = SecurityModule.sanitizeText(item['Master Order ID'] || item.masterOrderId || '');
@@ -156,26 +150,28 @@ const DataProcessor = {
                 setupdate: SecurityModule.sanitizeText(item.setupdate || '')
             };
         });
+
+        // Create optimized lookup maps
+        this.createBooksMaps(processedData);
+        return processedData;
     },
 
     createBooksMaps(booksData) {
-        const booksMap = new Map();
-        const masterOrderMap = new Map();
+        AppState.booksMap.clear();
+        AppState.masterOrderMap.clear();
         
         booksData.forEach(item => {
             if (item.isbn) {
-                booksMap.set(item.isbn, item);
+                AppState.booksMap.set(item.isbn, item);
             }
             if (item.masterOrderId) {
-                masterOrderMap.set(item.masterOrderId.toLowerCase(), item);
+                AppState.masterOrderMap.set(item.masterOrderId.toLowerCase(), item);
             }
         });
-        
-        return { booksMap, masterOrderMap };
     }
 };
 
-// Search Module
+// Optimized Search Module
 const SearchModule = {
     findByISBN(searchISBN) {
         if (!AppState.originalRawData || !SecurityModule.validateISBN(searchISBN)) {
@@ -183,7 +179,6 @@ const SearchModule = {
         }
         
         const normalizedSearchISBN = DataProcessor.normalizeISBN(searchISBN);
-        
         return AppState.originalRawData.find(item => {
             const itemISBN = DataProcessor.extractISBN(item);
             return itemISBN === normalizedSearchISBN;
@@ -194,7 +189,6 @@ const SearchModule = {
         if (!AppState.originalRawData) return null;
         
         const possibleFields = ['Master Order ID', 'masterOrderId', 'MasterOrderId', 'Master Order Id'];
-        
         return AppState.originalRawData.find(item => {
             return possibleFields.some(field => {
                 const value = item[field];
@@ -217,7 +211,7 @@ const SearchModule = {
     }
 };
 
-// UI Module
+// UI Module (Optimized)
 const UIModule = {
     showStatus(message, type) {
         const statusDiv = document.getElementById('status');
@@ -228,12 +222,12 @@ const UIModule = {
         if (type === 'success' || type === 'info') {
             setTimeout(() => {
                 statusDiv.style.display = 'none';
-            }, 5000);
+            }, 15000);
         }
     },
 
     enableButtons(enabled) {
-        const buttonIds = ['clearBtn', 'downloadBtn', 'deleteSelectedBtn', 'copyBtn'];
+        const buttonIds = ['clearBtn', 'downloadBtn', 'deleteSelectedBtn'];
         buttonIds.forEach(id => {
             const button = document.getElementById(id);
             if (button) button.disabled = !enabled;
@@ -243,11 +237,21 @@ const UIModule = {
         if (selectAll) selectAll.checked = false;
     },
 
+    enableBatchXML(enabled) {
+        const csvUpload = document.getElementById('csvUpload');
+        const batchBtn = document.getElementById('batchXMLBtn');
+        if (csvUpload) csvUpload.disabled = !enabled;
+        if (batchBtn) batchBtn.disabled = !enabled;
+    },
+
     updateRepositoryStats() {
-        const podReadyCount = AppState.booksData.filter(book => book.status === 'POD Ready').length;
-        const mpiCount = AppState.booksData.filter(book => book.status === 'MPI').length;
+        const stats = AppState.booksData.reduce((acc, book) => {
+            if (book.status === 'POD Ready') acc.podReady++;
+            else if (book.status === 'MPI') acc.mpi++;
+            return acc;
+        }, { podReady: 0, mpi: 0 });
         
-        // Improved duplicate detection
+        // Optimized duplicate detection using Map
         const isbnCounts = new Map();
         AppState.booksData.forEach(book => {
             if (book.isbn && book.isbn.trim() !== '') {
@@ -260,156 +264,122 @@ const UIModule = {
             .reduce((total, count) => total + (count - 1), 0);
         
         document.getElementById('currentTitlesCount').textContent = AppState.booksData.length;
-        document.getElementById('podReadyCount').textContent = podReadyCount;
-        document.getElementById('mpiCount').textContent = mpiCount;
+        document.getElementById('podReadyCount').textContent = stats.podReady;
+        document.getElementById('mpiCount').textContent = stats.mpi;
         document.getElementById('duplicatesCount').textContent = duplicatesCount;
     },
 
     getStatusBadgeClass(status) {
         switch (status) {
-            case 'POD Ready':
-                return 'bg-success';
-            case 'MPI':
-                return 'bg-warning text-dark';
-            default:
-                return 'bg-info';
+            case 'POD Ready': return 'bg-success';
+            case 'MPI': return 'bg-warning text-dark';
+            default: return 'bg-info';
         }
     },
 
     showISBNResult(content, type) {
-    const resultDiv = document.getElementById('isbnResult');
-    const alertDiv = document.getElementById('isbnResultAlert');
-    const contentDiv = document.getElementById('isbnResultContent');
-    
-    alertDiv.className = `alert alert-${type}`;
-    contentDiv.innerHTML = content;
-    resultDiv.style.display = 'block';
-    
-    if (type === 'success' || type === 'info') {
-        setTimeout(() => {
-            resultDiv.style.display = 'none';
-            // Clear the search field when results disappear
-            const isbnSearchField = document.getElementById('isbnSearch');
-            if (isbnSearchField) {
-                isbnSearchField.value = '';
-            }
-        }, 10000);
-    }
-},
+        const resultDiv = document.getElementById('isbnResult');
+        const alertDiv = document.getElementById('isbnResultAlert');
+        const contentDiv = document.getElementById('isbnResultContent');
+        
+        alertDiv.className = `alert alert-${type}`;
+        contentDiv.innerHTML = content;
+        resultDiv.style.display = 'block';
+        
+        if (type === 'success' || type === 'info') {
+            setTimeout(() => {
+                resultDiv.style.display = 'none';
+                const isbnSearchField = document.getElementById('isbnSearch');
+                if (isbnSearchField) {
+                    isbnSearchField.value = '';
+                }
+            }, 10000);
+        }
+    },
 
     updatePreviewTable() {
         const tbody = document.getElementById('previewBody');
         tbody.innerHTML = '';
 
         if (AppState.processedOrders.length === 0) {
-            const row = document.createElement('tr');
-            const cell = document.createElement('td');
-            cell.colSpan = 7;
-            cell.className = 'text-center text-muted';
-            cell.innerHTML = '<i class="fas fa-inbox"></i> No data loaded';
-            row.appendChild(cell);
-            tbody.appendChild(row);
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted"><i class="fas fa-inbox"></i> No data loaded</td></tr>';
             return;
         }
 
+        const filteredOrders = this.getFilteredOrders();
+
+        if (filteredOrders.length === 0) {
+            const message = this.getFilterMessage();
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center text-success">${message}</td></tr>`;
+            return;
+        }
+
+        const fragment = document.createDocumentFragment();
+        filteredOrders.forEach(order => {
+            const originalIndex = AppState.processedOrders.indexOf(order);
+            const tr = this.createTableRow(order, originalIndex);
+            fragment.appendChild(tr);
+        });
+        
+        tbody.appendChild(fragment);
+    },
+
+    getFilteredOrders() {
+        const showOnlyPodReady = document.getElementById('showOnlyPodReady')?.checked || false;
         const printAsMiscellaneous = document.getElementById('showOnlyUnavailable').checked;
         const showNotAvailable = document.getElementById('showNotAvailable')?.checked || false;
         
-        let filteredOrders = AppState.processedOrders;
-
-        if (printAsMiscellaneous) {
-            filteredOrders = AppState.processedOrders.filter(order => order.available && order.status === 'MPI');
+        if (showOnlyPodReady) {
+            return AppState.processedOrders.filter(order => order.available && order.status === 'POD Ready');
+        } else if (printAsMiscellaneous) {
+            return AppState.processedOrders.filter(order => order.available && order.status === 'MPI');
         } else if (showNotAvailable) {
-            filteredOrders = AppState.processedOrders.filter(order => !order.available);
+            return AppState.processedOrders.filter(order => !order.available);
         }
+        
+        return AppState.processedOrders;
+    },
 
-        if (filteredOrders.length === 0) {
-            const row = document.createElement('tr');
-            const cell = document.createElement('td');
-            cell.colSpan = 7;
-            cell.className = 'text-center text-success';
-            
-            if (printAsMiscellaneous) {
-                cell.textContent = 'No MPI items found!';
-            } else if (showNotAvailable) {
-                cell.textContent = 'All items are available in repository!';
-            } else {
-                cell.textContent = 'No data to display';
-            }
-            
-            row.appendChild(cell);
-            tbody.appendChild(row);
-            return;
-        }
+    getFilterMessage() {
+        const showOnlyPodReady = document.getElementById('showOnlyPodReady')?.checked || false;
+        const printAsMiscellaneous = document.getElementById('showOnlyUnavailable').checked;
+        const showNotAvailable = document.getElementById('showNotAvailable')?.checked || false;
+        
+        if (showOnlyPodReady) return 'No POD Ready items found!';
+        if (printAsMiscellaneous) return 'No MPI items found!';
+        if (showNotAvailable) return 'All items are available in repository!';
+        return 'No data to display';
+    },
 
-        filteredOrders.forEach(order => {
-            const originalIndex = AppState.processedOrders.indexOf(order);
-            const tr = document.createElement('tr');
-            
-            // Checkbox cell
-            const checkboxCell = document.createElement('td');
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.className = 'row-checkbox';
-            checkbox.dataset.index = originalIndex;
-            checkboxCell.appendChild(checkbox);
-            
-            // Action cell
-            const actionCell = document.createElement('td');
-            const deleteBtn = document.createElement('button');
-            deleteBtn.className = 'btn btn-danger btn-sm';
-            deleteBtn.onclick = () => OrderProcessor.deleteRow(originalIndex);
-            deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
-            actionCell.appendChild(deleteBtn);
-            
-            // Data cells
-            const lineCell = document.createElement('td');
-            lineCell.textContent = order.lineNumber;
-            
-            const isbnCell = document.createElement('td');
-            isbnCell.textContent = order.isbn;
-            
-            const descCell = document.createElement('td');
-            descCell.textContent = order.description;
-            
-            const qtyCell = document.createElement('td');
-            qtyCell.textContent = order.quantity;
-            
-            // Status cell with badge
-            const statusCell = document.createElement('td');
-            const badge = document.createElement('span');
-            
-            if (!order.available) {
-                badge.className = 'badge bg-danger';
-                badge.textContent = 'Not Available';
-            } else {
-                badge.className = `badge ${this.getStatusBadgeClass(order.status)}`;
-                badge.textContent = order.status;
-            }
-            
-            statusCell.appendChild(badge);
-            
-            tr.appendChild(checkboxCell);
-            tr.appendChild(actionCell);
-            tr.appendChild(lineCell);
-            tr.appendChild(isbnCell);
-            tr.appendChild(descCell);
-            tr.appendChild(qtyCell);
-            tr.appendChild(statusCell);
-            
-            tbody.appendChild(tr);
-        });
+    createTableRow(order, originalIndex) {
+        const tr = document.createElement('tr');
+        
+        // Build row HTML efficiently
+        tr.innerHTML = `
+            <td><input type="checkbox" class="row-checkbox" data-index="${originalIndex}"></td>
+            <td><button class="btn btn-danger btn-sm" onclick="OrderProcessor.deleteRow(${originalIndex})"><i class="fas fa-trash"></i></button></td>
+            <td>${order.lineNumber}</td>
+            <td>${order.isbn}</td>
+            <td>${order.description}</td>
+            <td>${order.quantity}</td>
+            <td><span class="badge ${this.getStatusBadgeClass(order.status)}">${order.available ? order.status : 'Not Available'}</span></td>
+        `;
+        
+        return tr;
     }
 };
 
-// File Processing Module
+// File Processing Module (Optimized)
 const FileProcessor = {
     async processFile(file, orderRef) {
         SecurityModule.validateFile(file);
         
         const arrayBuffer = await file.arrayBuffer();
-        let excelData = [];
-        
+        const excelData = await this.parseFileData(file, arrayBuffer);
+        return this.processOrderData(excelData, orderRef);
+    },
+
+    async parseFileData(file, arrayBuffer) {
         if (file.name.toLowerCase().endsWith('.csv')) {
             const text = new TextDecoder().decode(arrayBuffer);
             const parsed = Papa.parse(text, {
@@ -418,21 +388,16 @@ const FileProcessor = {
                 skipEmptyLines: true,
                 delimitersToGuess: [',', '\t', '|', ';']
             });
-            excelData = parsed.data;
+            return parsed.data;
         } else {
             const workbook = XLSX.read(arrayBuffer);
             const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-            excelData = XLSX.utils.sheet_to_json(worksheet);
+            return XLSX.utils.sheet_to_json(worksheet);
         }
-
-        return this.processOrderData(excelData, orderRef);
     },
 
     processOrderData(excelData, orderRef) {
-        const { booksMap } = DataProcessor.createBooksMaps(AppState.booksData);
-        
         return excelData.map((row, index) => {
-            // Extract and normalize ISBN
             let isbn = String(row.ISBN || row.isbn || '').trim();
             
             if (isbn.includes('e') || isbn.includes('E')) {
@@ -445,12 +410,10 @@ const FileProcessor = {
                 isbn = DataProcessor.normalizeISBN(isbn);
             }
             
-            // Extract and validate quantity
             const rawQuantity = row.Qty || row.qty || row.Quantity || row.quantity || 0;
             const quantity = SecurityModule.validateQuantity(rawQuantity) ? parseInt(rawQuantity) : 0;
             
-            // Look up in repository
-            const stockItem = booksMap.get(isbn);
+            const stockItem = AppState.booksMap.get(isbn);
             
             return {
                 lineNumber: String(index + 1).padStart(3, '0'),
@@ -466,7 +429,7 @@ const FileProcessor = {
     }
 };
 
-// Order Processing Module
+// Order Processing Module (Optimized)
 const OrderProcessor = {
     deleteRow(index) {
         AppState.processedOrders.splice(index, 1);
@@ -484,6 +447,7 @@ const OrderProcessor = {
         UIModule.updatePreviewTable();
         document.getElementById('excelFile').value = '';
         document.getElementById('orderRef').value = '';
+        document.getElementById('csvUpload').value = '';
         UIModule.showStatus('All data cleared', 'info');
         UIModule.enableButtons(false);
     },
@@ -509,14 +473,13 @@ const OrderProcessor = {
     }
 };
 
-// XML Generation Module
+// Enhanced XML Generation Module with Batch Processing
 const XMLModule = {
     generateXMLForBook(book) {
         if (!book) {
             throw new Error('No book data provided for XML generation');
         }
 
-        // Extract data with fallbacks for different field name variations
         const isbn = SecurityModule.sanitizeXML(String(book.ISBN || book.isbn || ''));
         const title = SecurityModule.sanitizeXML(book.TITLE || book.Title || book.title || 'LIVING (00)');
         const trimHeight = book['Trim Height'] || 216;
@@ -558,7 +521,6 @@ const XMLModule = {
             const xmlContent = this.generateXMLForBook(book);
             const isbn = book.ISBN || book.isbn;
             
-            // Create download function
             const downloadXML = (content, filename) => {
                 const blob = new Blob([content], { type: 'application/xml' });
                 const url = window.URL.createObjectURL(blob);
@@ -571,10 +533,8 @@ const XMLModule = {
                 window.URL.revokeObjectURL(url);
             };
             
-            // Download _c.xml file
             downloadXML(xmlContent, `${isbn}_c.xml`);
             
-            // Download _t.xml file with slight delay
             setTimeout(() => {
                 downloadXML(xmlContent, `${isbn}_t.xml`);
                 UIModule.showStatus(`XML files downloaded: ${isbn}_c.xml and ${isbn}_t.xml`, 'success');
@@ -584,19 +544,49 @@ const XMLModule = {
             console.error('XML download error:', error);
             UIModule.showStatus('Error creating XML files: ' + error.message, 'danger');
         }
+    },
+
+    async processBatchXML(csvData) {
+        const zip = new JSZip();
+        const results = {
+            processed: 0,
+            found: 0,
+            notFound: []
+        };
+
+        for (const row of csvData) {
+            const isbn = DataProcessor.normalizeISBN(row.ISBN || row.isbn || '');
+            
+            if (!isbn) continue;
+            
+            results.processed++;
+            const book = SearchModule.findByISBN(isbn);
+            
+            if (book) {
+                results.found++;
+                try {
+                    const xmlContent = this.generateXMLForBook(book);
+                    zip.file(`${isbn}_c.xml`, xmlContent);
+                    zip.file(`${isbn}_t.xml`, xmlContent);
+                } catch (error) {
+                    console.error(`Error generating XML for ISBN ${isbn}:`, error);
+                    results.notFound.push(isbn);
+                }
+            } else {
+                results.notFound.push(isbn);
+            }
+        }
+
+        return { zip, results };
     }
 };
 
-// Export Module
+// Export Module (Optimized and Copy-to-Clipboard removed)
 const ExportModule = {
     formatDate() {
         const now = new Date();
         return `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
     },
-
-    // Alias for backward compatibility
-    generateXMLForBook: XMLModule.generateXMLForBook,
-    downloadXMLFiles: XMLModule.downloadXMLFiles,
 
     downloadCsv() {
         if (AppState.processedOrders.length === 0) {
@@ -640,13 +630,8 @@ const ExportModule = {
             const a = document.createElement('a');
             a.href = url;
             
-            const now = new Date();
-            const filename = `pod_order_${now.getFullYear()}_${
-                String(now.getMonth() + 1).padStart(2, '0')}_${
-                String(now.getDate()).padStart(2, '0')}_${
-                String(now.getHours()).padStart(2, '0')}_${
-                String(now.getMinutes()).padStart(2, '0')}_${
-                String(now.getSeconds()).padStart(2, '0')}.csv`;
+            const timestamp = this.getTimestamp();
+            const filename = `pod_order_${timestamp}.csv`;
             
             a.download = filename;
             document.body.appendChild(a);
@@ -661,53 +646,14 @@ const ExportModule = {
         }
     },
 
-    copyTableToClipboard() {
-        if (AppState.processedOrders.length === 0) return;
-
-        let tableHtml = `
-            <table border="1" style="border-collapse: collapse; width: 100%;">
-                <thead>
-                    <tr style="background-color: #f8f9fa;">
-                        <th style="padding: 8px; border: 1px solid #dee2e6;">Line No</th>
-                        <th style="padding: 8px; border: 1px solid #dee2e6;">ISBN</th>
-                        <th style="padding: 8px; border: 1px solid #dee2e6;">Description</th>
-                        <th style="padding: 8px; border: 1px solid #dee2e6;">Quantity</th>
-                        <th style="padding: 8px; border: 1px solid #dee2e6;">Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-        `;
-
-        AppState.processedOrders.forEach(order => {
-            const safeDescription = order.description.replace(/[<>&"']/g, function(match) {
-                const escapeMap = {
-                    '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&#39;'
-                };
-                return escapeMap[match];
-            });
-            
-            tableHtml += `
-                <tr>
-                    <td style="padding: 8px; border: 1px solid #dee2e6;">${order.lineNumber}</td>
-                    <td style="padding: 8px; border: 1px solid #dee2e6;">${order.isbn}</td>
-                    <td style="padding: 8px; border: 1px solid #dee2e6;">${safeDescription}</td>
-                    <td style="padding: 8px; border: 1px solid #dee2e6;">${order.quantity}</td>
-                    <td style="padding: 8px; border: 1px solid #dee2e6; ${order.available ? 'color: green;' : 'color: red;'}">${order.available ? 'Available' : 'Not Found'}</td>
-                </tr>
-            `;
-        });
-
-        tableHtml += '</tbody></table>';
-
-        const blob = new Blob([tableHtml], { type: 'text/html' });
-        const clipboardItem = new ClipboardItem({ 'text/html': blob });
-        
-        navigator.clipboard.write([clipboardItem]).then(() => {
-            UIModule.showStatus('Table copied to clipboard', 'success');
-        }).catch(err => {
-            console.error('Failed to copy:', err);
-            UIModule.showStatus('Failed to copy table', 'danger');
-        });
+    getTimestamp() {
+        const now = new Date();
+        return `${now.getFullYear()}_${
+            String(now.getMonth() + 1).padStart(2, '0')}_${
+            String(now.getDate()).padStart(2, '0')}_${
+            String(now.getHours()).padStart(2, '0')}_${
+            String(now.getMinutes()).padStart(2, '0')}_${
+            String(now.getSeconds()).padStart(2, '0')}`;
     },
 
     downloadRepositoryData() {
@@ -750,19 +696,15 @@ const ExportModule = {
             
             XLSX.utils.book_append_sheet(wb, ws, 'Repository Data');
             
-            const now = new Date();
-            const filename = `repository_data_${now.getFullYear()}_${
-                String(now.getMonth() + 1).padStart(2, '0')}_${
-                String(now.getDate()).padStart(2, '0')}_${
-                String(now.getHours()).padStart(2, '0')}_${
-                String(now.getMinutes()).padStart(2, '0')}.xlsx`;
+            const timestamp = this.getTimestamp();
+            const filename = `repository_data_${timestamp}.xlsx`;
             
             XLSX.writeFile(wb, filename);
             UIModule.showStatus(`Repository data downloaded as Excel file: ${filename}`, 'success');
             
         } catch (error) {
             console.error('Excel download error:', error);
-            this.downloadRepositoryDataAsCsv(); // Fallback to CSV
+            this.downloadRepositoryDataAsCsv();
         }
     },
 
@@ -789,12 +731,8 @@ const ExportModule = {
             
             const a = document.createElement('a');
             a.href = url;
-            const now = new Date();
-            const filename = `repository_data_${now.getFullYear()}_${
-                String(now.getMonth() + 1).padStart(2, '0')}_${
-                String(now.getDate()).padStart(2, '0')}_${
-                String(now.getHours()).padStart(2, '0')}_${
-                String(now.getMinutes()).padStart(2, '0')}.csv`;
+            const timestamp = this.getTimestamp();
+            const filename = `repository_data_${timestamp}.csv`;
             a.download = filename;
             document.body.appendChild(a);
             a.click();
@@ -825,29 +763,27 @@ const ExportModule = {
     }
 };
 
-// Main Application Logic
+// Main Application Logic (Optimized)
 async function fetchData() {
     try {
-        SecurityModule.secureLog('Attempting to fetch data.json...');
         const response = await fetch('data.json');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const rawData = await response.json();
         
-        // Store original data for search functionality
         AppState.originalRawData = rawData;
-        
-        // Process data with improved structure
         AppState.booksData = DataProcessor.processBookData(rawData);
         
         UIModule.showStatus(`Successfully loaded ${AppState.booksData.length} books from repository`, 'success');
         UIModule.updateRepositoryStats();
+        UIModule.enableBatchXML(true);
         
     } catch (error) {
         console.error('Error fetching data:', error);
         UIModule.showStatus('Error loading book data. Please ensure data.json exists and is properly formatted.', 'danger');
         AppState.booksData = [];
+        UIModule.enableBatchXML(false);
     }
 }
 
@@ -873,13 +809,19 @@ async function handleFileSelect(e) {
         AppState.processedOrders = await FileProcessor.processFile(file, orderRef);
         UIModule.updatePreviewTable();
         
-        const validCount = AppState.processedOrders.filter(order => order.available).length;
-        const totalCount = AppState.processedOrders.length;
-        const podReadyCount = AppState.processedOrders.filter(order => order.available && order.status === 'POD Ready').length;
-        const mpiCount = AppState.processedOrders.filter(order => order.available && order.status === 'MPI').length;
-        const notAvailableCount = AppState.processedOrders.filter(order => !order.available).length;
+        const stats = AppState.processedOrders.reduce((acc, order) => {
+            acc.total++;
+            if (order.available) {
+                acc.found++;
+                if (order.status === 'POD Ready') acc.podReady++;
+                else if (order.status === 'MPI') acc.mpi++;
+            } else {
+                acc.notFound++;
+            }
+            return acc;
+        }, { total: 0, found: 0, podReady: 0, mpi: 0, notFound: 0 });
         
-        UIModule.showStatus(`Data loaded successfully! ${validCount}/${totalCount} items found in repository (${podReadyCount} POD Ready, ${mpiCount} MPI, ${notAvailableCount} Not Available).`, 'success');
+        UIModule.showStatus(`Data loaded successfully! ${stats.found}/${stats.total} items found in repository (${stats.podReady} POD Ready, ${stats.mpi} MPI, ${stats.notFound} Not Available).`, 'success');
         UIModule.enableButtons(true);
         
     } catch (error) {
@@ -902,22 +844,18 @@ function searchISBN() {
     let foundBook = null;
     let searchType = '';
     
-    console.log('Searching for:', rawInput);
-    
-    // Try ISBN search first
     if (SecurityModule.validateISBN(rawInput)) {
         const rawFound = SearchModule.findByISBN(rawInput);
         if (rawFound) {
-            foundBook = rawFound; // Use raw data for XML generation
+            foundBook = rawFound;
             searchType = 'ISBN';
         }
     }
     
-    // If not found, try Master Order ID
     if (!foundBook) {
         const rawFound = SearchModule.findByMasterOrderId(rawInput);
         if (rawFound) {
-            foundBook = rawFound; // Use raw data for XML generation
+            foundBook = rawFound;
             searchType = 'Master Order ID';
         }
     }
@@ -925,21 +863,22 @@ function searchISBN() {
     if (foundBook) {
         const processedBook = SearchModule.createBookFromRaw(foundBook);
         const bookDataForXML = JSON.stringify(foundBook).replace(/"/g, '&quot;');
-    
-    UIModule.showISBNResult(`
-        <div>
-            <strong>Available</strong><br>
-            <strong>ISBN:</strong> ${processedBook.isbn || 'Not available'}<br>
-            <strong>Title:</strong> ${processedBook.title}<br>
-            <strong>Master Order ID:</strong> ${processedBook.masterOrderId || 'N/A'}<br>
-            <strong>Paper:</strong> ${processedBook.paperDesc}<br>
-            <strong>Status:</strong> <span class="badge ${UIModule.getStatusBadgeClass(processedBook.status)}">${processedBook.status}</span><br>
-            <hr class="my-3">
-            <button class="btn btn-primary w-100" onclick="XMLModule.downloadXMLFiles(${bookDataForXML})" title="Download XML specification files">
-                <i class="fas fa-download me-2"></i>Download XML Specification Files
-            </button>
-        </div>
-    `, 'success');
+        
+        UIModule.showISBNResult(`
+            <div>
+                <strong>Available</strong><br>
+                <strong>ISBN:</strong> ${processedBook.isbn || 'Not available'}<br>
+                <strong>Title:</strong> ${processedBook.title}<br>
+                <strong>Master Order ID:</strong> ${processedBook.masterOrderId || 'N/A'}<br>
+                <strong>Paper:</strong> ${processedBook.paperDesc}<br>
+                <strong>Status:</strong> <span class="badge ${UIModule.getStatusBadgeClass(processedBook.status)}">${processedBook.status}</span><br>
+                <small class="text-muted">Found by ${searchType}</small>
+                <hr class="my-3">
+                <button class="btn btn-primary w-100" onclick="XMLModule.downloadXMLFiles(${bookDataForXML})" title="Download XML specification files">
+                    <i class="fas fa-download me-2"></i>Download XML Specification Files
+                </button>
+            </div>
+        `, 'success');
     } else {
         const searchTypeMsg = SecurityModule.validateISBN(rawInput) ? 'ISBN' : 'Master Order ID';
         UIModule.showISBNResult(`
@@ -950,6 +889,62 @@ function searchISBN() {
     }
 }
 
+async function processBatchXML() {
+    const csvUpload = document.getElementById('csvUpload');
+    const file = csvUpload.files[0];
+    
+    if (!file) {
+        UIModule.showStatus('Please select a CSV or Excel file first', 'warning');
+        return;
+    }
+
+    try {
+        // Validate file
+        SecurityModule.validateFile(file);
+        
+        UIModule.showStatus('Processing file and generating XML files...', 'info');
+        
+        // Parse file data using the same logic as order processing
+        const arrayBuffer = await file.arrayBuffer();
+        const fileData = await FileProcessor.parseFileData(file, arrayBuffer);
+
+        if (fileData.length === 0) {
+            UIModule.showStatus('No data found in file', 'warning');
+            return;
+        }
+
+        const { zip, results } = await XMLModule.processBatchXML(fileData);
+        
+        if (results.found === 0) {
+            UIModule.showStatus(`No matching ISBNs found in repository out of ${results.processed} processed`, 'warning');
+            return;
+        }
+
+        const timestamp = ExportModule.getTimestamp();
+        const zipBlob = await zip.generateAsync({ type: 'blob' });
+        
+        const url = window.URL.createObjectURL(zipBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `xml_specifications_${timestamp}.zip`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+
+        let statusMessage = `ZIP downloaded successfully! ${results.found}/${results.processed} ISBNs found and processed.`;
+        if (results.notFound.length > 0) {
+            statusMessage += ` ${results.notFound.length} ISBNs not found in repository.`;
+        }
+        
+        UIModule.showStatus(statusMessage, 'success');
+        
+    } catch (error) {
+        console.error('Batch XML processing error:', error);
+        UIModule.showStatus('Error processing file: ' + error.message, 'danger');
+    }
+}
+
 function toggleTableFilter() {
     UIModule.updatePreviewTable();
     document.getElementById('selectAll').checked = false;
@@ -957,7 +952,6 @@ function toggleTableFilter() {
     const printAsMiscellaneous = document.getElementById('showOnlyUnavailable').checked;
     const showNotAvailable = document.getElementById('showNotAvailable')?.checked || false;
     
-    // Ensure only one filter is active at a time
     if (printAsMiscellaneous && showNotAvailable) {
         if (event.target.id === 'showOnlyUnavailable') {
             document.getElementById('showNotAvailable').checked = false;
@@ -968,13 +962,16 @@ function toggleTableFilter() {
         return;
     }
     
-    const mpiCount = AppState.processedOrders.filter(order => order.available && order.status === 'MPI').length;
-    const notAvailableCount = AppState.processedOrders.filter(order => !order.available).length;
+    const stats = AppState.processedOrders.reduce((acc, order) => {
+        if (order.available && order.status === 'MPI') acc.mpi++;
+        if (!order.available) acc.notAvailable++;
+        return acc;
+    }, { mpi: 0, notAvailable: 0 });
     
     if (printAsMiscellaneous) {
-        UIModule.showStatus(`Showing ${mpiCount} MPI items`, 'info');
+        UIModule.showStatus(`Showing ${stats.mpi} MPI items`, 'info');
     } else if (showNotAvailable) {
-        UIModule.showStatus(`Showing ${notAvailableCount} not available items`, 'info');
+        UIModule.showStatus(`Showing ${stats.notAvailable} not available items`, 'info');
     } else {
         UIModule.showStatus(`Showing all ${AppState.processedOrders.length} items`, 'info');
     }
@@ -989,15 +986,36 @@ function toggleAllCheckboxes() {
 }
 
 // Global function exports for HTML onclick handlers
-window.clearAll = OrderProcessor.clearAll;
-window.downloadCsv = ExportModule.downloadCsv;
-window.downloadRepositoryData = ExportModule.downloadRepositoryData;
-window.downloadTemplate = ExportModule.downloadTemplate;
+function clearAll() {
+    OrderProcessor.clearAll();
+}
+
+function downloadCsv() {
+    ExportModule.downloadCsv();
+}
+
+function downloadRepositoryData() {
+    ExportModule.downloadRepositoryData();
+}
+
+function downloadTemplate() {
+    ExportModule.downloadTemplate();
+}
+
+function deleteSelected() {
+    OrderProcessor.deleteSelected();
+}
+
+// Make functions globally available
+window.clearAll = clearAll;
+window.downloadCsv = downloadCsv;
+window.downloadRepositoryData = downloadRepositoryData;
+window.downloadTemplate = downloadTemplate;
 window.searchISBN = searchISBN;
-window.deleteSelected = OrderProcessor.deleteSelected;
-window.copyTableToClipboard = ExportModule.copyTableToClipboard;
+window.deleteSelected = deleteSelected;
 window.toggleTableFilter = toggleTableFilter;
 window.toggleAllCheckboxes = toggleAllCheckboxes;
+window.processBatchXML = processBatchXML;
 
 // Initialize the application
 function initializeApp() {
@@ -1015,19 +1033,15 @@ function initializeApp() {
             }
         });
         
-        // Auto-capitalize Master Order IDs as user types
         isbnSearch.addEventListener('input', function(e) {
             const value = e.target.value;
             
-            // Check if this looks like a Master Order ID (contains letters)
             if (/[a-zA-Z]/.test(value) && !SecurityModule.validateISBN(value)) {
-                // Convert to uppercase for Master Order ID format
                 e.target.value = value.toUpperCase();
             }
         });
     }
     
-    SecurityModule.secureLog('Initializing application...');
     fetchData();
 }
 

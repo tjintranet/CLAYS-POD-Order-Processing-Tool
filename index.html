@@ -31,6 +31,7 @@
     <!-- Required libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     
     <style>
         .order-ref-warning {
@@ -55,7 +56,7 @@
                                 <i class="fas fa-broom"></i> Clear All
                             </button>
                             <button class="btn btn-outline-light" onclick="downloadCsv()" id="downloadBtn" disabled>
-                                <i class="fas fa-file-csv"></i> Download CSV
+                                <i class="fas fa-file-csv"></i> Download Order File
                             </button>
                         </div>
                     </div>
@@ -161,6 +162,15 @@
                                         <button type="button" class="btn btn-primary w-100 mb-3" onclick="searchISBN()">
                                             <i class="fas fa-search"></i> Search Repository
                                         </button>
+                                        <hr>
+                                        <div class="mb-3">
+                                            <label for="csvUpload" class="form-label">Batch XML Download</label>
+                                            <input type="file" class="form-control" id="csvUpload" accept=".csv,.xlsx,.xls" disabled>
+                                            <div class="form-text">Excel or CSV file with ISBN column (max 10MB)</div>
+                                        </div>
+                                        <button type="button" class="btn btn-success w-100" onclick="processBatchXML()" id="batchXMLBtn" disabled>
+                                            <i class="fas fa-file-archive"></i> Download XML ZIP
+                                        </button>
                                         <div id="isbnResult" class="mt-3" style="display: none;">
                                             <div class="alert" id="isbnResultAlert">
                                                 <div id="isbnResultContent"></div>
@@ -177,24 +187,34 @@
                         </div>
 
                         <!-- Table Controls -->
-                        <div class="mb-3 d-flex gap-2 align-items-center flex-wrap">
-                            <button class="btn btn-danger" onclick="deleteSelected()" id="deleteSelectedBtn" disabled>
-                                <i class="fas fa-trash"></i> Delete Selected Rows
-                            </button>
-                            <button class="btn btn-secondary" onclick="copyTableToClipboard()" id="copyBtn" disabled>
-                                <i class="fas fa-copy"></i> Copy to Clipboard
-                            </button>
-                            <div class="form-check form-switch ms-3">
-                                <input class="form-check-input" type="checkbox" id="showOnlyUnavailable" onchange="toggleTableFilter()">
-                                <label class="form-check-label" for="showOnlyUnavailable">
-                                    <i class="fas fa-filter"></i> Miscellaneous Print Items (MPI)
-                                </label>
+                        <div class="mb-3">
+                            <!-- Buttons Row -->
+                            <div class="d-flex gap-2 align-items-center flex-wrap mb-3">
+                                <button class="btn btn-danger" onclick="deleteSelected()" id="deleteSelectedBtn" disabled>
+                                    <i class="fas fa-trash"></i> Delete Selected Rows
+                                </button>
                             </div>
-                            <div class="form-check form-switch ms-3">
-                                <input class="form-check-input" type="checkbox" id="showNotAvailable" onchange="toggleTableFilter()">
-                                <label class="form-check-label" for="showNotAvailable">
-                                    <i class="fas fa-eye-slash"></i> Show Not Available Items
-                                </label>
+                            
+                            <!-- Toggles Row -->
+                            <div class="d-flex gap-4 align-items-center flex-wrap">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="showOnlyPodReady" onchange="toggleTableFilter()">
+                                    <label class="form-check-label" for="showOnlyPodReady">
+                                        <i class="fas fa-check-circle text-success"></i> POD Ready Only
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="showOnlyUnavailable" onchange="toggleTableFilter()">
+                                    <label class="form-check-label" for="showOnlyUnavailable">
+                                        <i class="fas fa-filter text-warning"></i> Miscellaneous Print Items (MPI)
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="showNotAvailable" onchange="toggleTableFilter()">
+                                    <label class="form-check-label" for="showNotAvailable">
+                                        <i class="fas fa-eye-slash text-danger"></i> Not Available Items
+                                    </label>
+                                </div>
                             </div>
                         </div>
                         
