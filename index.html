@@ -31,7 +31,6 @@
     <!-- Required libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     
     <style>
         .order-ref-warning {
@@ -56,7 +55,7 @@
                                 <i class="fas fa-broom"></i> Clear All
                             </button>
                             <button class="btn btn-outline-light" onclick="downloadCsv()" id="downloadBtn" disabled>
-                                <i class="fas fa-file-csv"></i> Download Order File
+                                <i class="fas fa-file-csv"></i> Download CSV
                             </button>
                         </div>
                     </div>
@@ -162,17 +161,22 @@
                                         <button type="button" class="btn btn-primary w-100 mb-3" onclick="searchISBN()">
                                             <i class="fas fa-search"></i> Search Repository
                                         </button>
-                                        <hr>
-                                        <div class="mb-3">
-                                            <label for="csvUpload" class="form-label">Batch XML Download</label>
-                                            <input type="file" class="form-control" id="csvUpload" accept=".csv,.xlsx,.xls" disabled>
-                                            <div class="form-text">Excel or CSV file with ISBN column (max 10MB)</div>
+                                        
+                                        <!-- Batch XML Download Section -->
+                                        <div class="border-top pt-3 mb-3">
+                                            <h6 class="mb-2">Batch XML Download</h6>
+                                            <div class="mb-2">
+                                                <input type="file" class="form-control form-control-sm" id="batchXmlFile" accept=".xlsx,.xls,.csv">
+                                                <div class="form-text">Excel or CSV file with ISBN column (max 10MB)</div>
+                                            </div>
+                                            <button type="button" class="btn btn-success w-100 btn-sm" onclick="downloadBatchXML()" id="downloadXmlBtn">
+                                                <i class="fas fa-file-archive"></i> Download XML ZIP
+                                            </button>
                                         </div>
-                                        <button type="button" class="btn btn-success w-100" onclick="processBatchXML()" id="batchXMLBtn" disabled>
-                                            <i class="fas fa-file-archive"></i> Download XML ZIP
-                                        </button>
-                                        <div id="isbnResult" class="mt-3" style="display: none;">
-                                            <div class="alert" id="isbnResultAlert">
+                                        
+                                        <!-- Search Results - Positioned directly under search in same card -->
+                                        <div id="isbnResult" style="display: none;">
+                                            <div class="alert mb-0" id="isbnResultAlert">
                                                 <div id="isbnResultContent"></div>
                                             </div>
                                         </div>
@@ -193,6 +197,9 @@
                                 <button class="btn btn-danger" onclick="deleteSelected()" id="deleteSelectedBtn" disabled>
                                     <i class="fas fa-trash"></i> Delete Selected Rows
                                 </button>
+                                <button class="btn btn-secondary" onclick="copyTableToClipboard()" id="copyBtn" disabled>
+                                    <i class="fas fa-copy"></i> Copy to Clipboard
+                                </button>
                             </div>
                             
                             <!-- Toggles Row -->
@@ -212,7 +219,7 @@
                                 <div class="form-check form-switch">
                                     <input class="form-check-input" type="checkbox" id="showNotAvailable" onchange="toggleTableFilter()">
                                     <label class="form-check-label" for="showNotAvailable">
-                                        <i class="fas fa-eye-slash text-danger"></i> Not Available Items
+                                        <i class="fas fa-eye-slash text-danger"></i> Show Not Available Items
                                     </label>
                                 </div>
                             </div>
