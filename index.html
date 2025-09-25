@@ -31,6 +31,7 @@
     <!-- Required libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     
     <style>
         .order-ref-warning {
@@ -166,10 +167,10 @@
                                         <div class="border-top pt-3 mb-3">
                                             <h6 class="mb-2">Batch XML Download</h6>
                                             <div class="mb-2">
-                                                <input type="file" class="form-control form-control-sm" id="batchXmlFile" accept=".xlsx,.xls,.csv">
+                                                <input type="file" class="form-control form-control-sm" id="csvUpload" accept=".xlsx,.xls,.csv">
                                                 <div class="form-text">Excel or CSV file with ISBN column (max 10MB)</div>
                                             </div>
-                                            <button type="button" class="btn btn-success w-100 btn-sm" onclick="downloadBatchXML()" id="downloadXmlBtn">
+                                            <button type="button" class="btn btn-success w-100 btn-sm" onclick="processBatchXML()" id="batchXMLBtn">
                                                 <i class="fas fa-file-archive"></i> Download XML ZIP
                                             </button>
                                         </div>

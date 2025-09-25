@@ -1,19 +1,62 @@
 # CLAYS POD Order Processing Tool
 
-A streamlined web-based application for processing print-on-demand orders for Clays Ltd. Features complete order processing, real-time repository validation, ISBN/Master Order ID lookup with XML specification downloads, batch XML generation, and an integrated repository statistics dashboard with download functionality.
+A streamlined web-based application for processing print-on-demand orders for Clays Ltd. Features complete order processing with dual lookup methods (ISBN and Master Order ID), real-time repository validation, ISBN/Master Order ID lookup with XML specification downloads, batch XML generation, automatic duplicate consolidation, and an integrated repository statistics dashboard with download functionality.
 
 ## 🚀 Features
 
 ### **Order Processing**
 - **Excel/CSV Upload**: Process `.xlsx`, `.xls`, `.csv` order files up to 10MB
+- **Dual Lookup Methods**: 
+  - **ISBN-based lookup**: Traditional method using ISBN columns
+  - **Master Order ID lookup**: New method for files containing Master Order IDs
+  - Automatic fallback between methods for maximum compatibility
 - **Excel Template**: Download pre-formatted Excel template for consistent order format
-- **Real-time Validation**: Check ISBNs against live repository database with status information
+- **Real-time Validation**: Check ISBNs/Master Order IDs against live repository database with status information
+- **Duplicate Consolidation**: Automatically combines duplicate ISBNs and sums quantities
 - **Smart Filtering**: 
   - **POD Ready Only**: Show only items available for print-on-demand
   - **Miscellaneous Print Items (MPI)**: Show only MPI status items
   - **Show Not Available Items**: Display items not found in repository
 - **Bulk Operations**: Select and delete multiple rows with checkbox selection
 - **CSV Export**: Generate Clays POD-compliant CSV files with correct format
+  - **Smart Export**: Automatically excludes items not available in database
+  - **Sequential Line Numbering**: Clean, consecutive numbering in export
+  - **Export Statistics**: Shows items included and omitted counts
+
+### **Supported File Formats**
+
+#### **ISBN-based Files (Original Format)**
+Your order files should contain:
+| Column | Description | Example |
+|--------|-------------|---------|
+| ISBN | Book identifier (10-13 digits) | 9781234567890 |
+| Qty | Quantity to order | 5 |
+
+**Supported variations:**
+- Column names: `ISBN`, `isbn`
+- Quantity names: `Qty`, `qty`, `Quantity`, `quantity`
+
+#### **Master Order ID Files (New Format)**
+Alternative file format using Master Order IDs:
+| Column | Description | Example |
+|--------|-------------|---------|
+| Master | Master Order ID | SA1657 |
+| Rem | Quantity remaining/to order | 5 |
+| Title | Book title (optional) | CLEOPATRA'S SISTER |
+| Date | Order/delivery date (optional) | 2024-06-05 |
+
+**Supported variations:**
+- Master Order ID: `Master`, `master`, `Master Order ID`
+- Quantity: `Rem`, `rem`, `Qty`, `qty`, `Quantity`, `quantity`
+- Title: `Title`, `title`
+- Date: `Date`, `date`
+
+**Processing Logic:**
+1. System attempts ISBN lookup first (if ISBN column present)
+2. Falls back to Master Order ID lookup (if Master column present)
+3. Retrieves ISBN from matched book record
+4. Uses ISBN for order processing
+5. Automatically consolidates duplicate ISBNs with summed quantities
 
 ### **ISBN/Master Order ID Lookup with XML Generation**
 - **Dual Search**: Search by ISBN or Master Order ID with Enter key support
@@ -40,6 +83,15 @@ A streamlined web-based application for processing print-on-demand orders for Cl
 - **Repository Download**: Export complete repository data as Excel file with all fields
 - **Visual Design**: Clean, professional statistics display integrated on main page
 - **Duplicate Detection**: Accurately identifies and counts duplicate ISBN entries
+
+### **Import Statistics**
+- **Persistent Summary**: Import statistics remain visible after file upload
+- **Comprehensive Metrics**:
+  - Total items processed vs items found
+  - POD Ready, MPI, and Not Available counts
+  - Lookup method breakdown (ISBN vs Master Order ID)
+  - Duplicate consolidation count
+- **Export Statistics**: Clear reporting of items included/omitted from CSV export
 
 ### **Security & Data Handling** 🛡️
 - **Input Sanitization**: Comprehensive validation of all user inputs including XML-specific sanitization
@@ -86,6 +138,7 @@ The `data.json` file must contain an array of book objects with the complete str
 
 **Required Fields for XML Generation:**
 - `ISBN` or `isbn`: Book identifier
+- `Master Order ID`: Unique identifier for Master Order ID lookup
 - `TITLE`, `Title`, or `title`: Book title
 - `Trim Height`: Book height in mm
 - `Trim Width`: Book width in mm
@@ -93,6 +146,7 @@ The `data.json` file must contain an array of book objects with the complete str
 - `Paper Desc` or `Paper Description`: Paper specification
 - `Bind Style` or `Binding Style`: Binding method
 - `Extent` or `Page Extent`: Number of pages
+- `Status`: Item status ("POD Ready", "MPI", etc.)
 
 ## 🛠️ Installation
 
@@ -137,38 +191,48 @@ php -S localhost:8000
 2. **Fill Template**: Add ISBN and Quantity columns for your orders
 3. **Save File**: Save as Excel (.xlsx) or CSV format
 
-#### **2. Processing Orders**
+#### **2. Processing Orders (ISBN-based)**
 1. **Enter Order Reference** (required field)
-2. **Upload File** using the template or CSV with ISBN and Qty columns
+2. **Upload File** with ISBN and Qty columns
 3. **Review Results** in the preview table with status indicators
-4. **Filter Items** using available filter options:
-   - **POD Ready Only**: Shows only POD Ready status items
-   - **Miscellaneous Print Items (MPI)**: Shows only MPI status items
-   - **Show Not Available Items**: Shows items not in repository catalog
-5. **Export CSV** for Clays POD processing
+4. **System will**:
+   - Look up each ISBN in the repository
+   - Consolidate duplicate ISBNs with summed quantities
+   - Display lookup statistics
+5. **Export CSV** for Clays POD processing (excludes unavailable items)
 
-#### **3. Supported File Formats**
-Your order files should contain:
-| Column | Description | Example |
-|--------|-------------|---------|
-| ISBN | Book identifier (10-13 digits) | 9781234567890 |
-| Qty | Quantity to order | 5 |
+#### **3. Processing Orders (Master Order ID-based)**
+1. **Enter Order Reference** (required field)
+2. **Upload File** with Master, Rem, Title, and Date columns
+3. **System will**:
+   - Look up each Master Order ID in the repository
+   - Retrieve corresponding ISBN
+   - Consolidate duplicate ISBNs with summed quantities
+   - Display comprehensive import statistics
+4. **Review consolidated results** in the preview table
+5. **Export CSV** for Clays POD processing (excludes unavailable items)
 
-**Supported variations:**
-- Column names: `ISBN`, `isbn`, `Qty`, `qty`, `Quantity`, `quantity`
-- ISBN formats: With/without dashes, scientific notation handling
-- File types: `.xlsx`, `.xls`, `.csv` (max 10MB)
+#### **4. Understanding Import Statistics**
+After upload, persistent statistics show:
+- **Items Found**: Successfully matched in repository
+- **POD Ready/MPI Counts**: Status breakdown
+- **Lookup Methods**: How items were matched (ISBN vs Master Order ID)
+- **Duplicates Consolidated**: Number of ISBNs that were combined
 
-#### **4. Status Understanding**
+#### **5. Status Understanding**
 - 🟢 **POD Ready**: Items available for print-on-demand production
 - 🟡 **MPI**: Miscellaneous Print Items requiring special handling
 - 🔴 **Not Available**: Items not found in current repository catalog
 
-#### **5. Managing Orders**
+#### **6. Managing Orders**
 - **Individual Deletion**: Click trash icon in Action column
 - **Bulk Selection**: Use checkboxes to select multiple rows
 - **Delete Selected**: Remove multiple items at once
 - **Smart Filtering**: Focus on specific item types or statuses
+- **Filter Items** using available filter options:
+   - **POD Ready Only**: Shows only POD Ready status items
+   - **Miscellaneous Print Items (MPI)**: Shows only MPI status items
+   - **Show Not Available Items**: Shows items not in repository catalog
 
 ### **ISBN/Master Order ID Lookup with XML Downloads**
 
@@ -275,6 +339,12 @@ DTL,ORDER123,002,9780987654321,3
   4. ISBN (13 digits, zero-padded)
   5. Quantity
 
+**Export Behavior:**
+- Only includes items available in database (`available === true`)
+- Automatically excludes items marked as "Not Available"
+- Renumbers lines sequentially after filtering
+- Provides statistics on items included and omitted
+
 ## 🛡️ Security Features
 
 ### **Content Security Policy**
@@ -286,6 +356,7 @@ DTL,ORDER123,002,9780987654321,3
 - **File Type Checking**: Only allows specified file extensions (.xlsx, .xls, .csv)
 - **Size Limits**: 10MB maximum for all file uploads
 - **ISBN Validation**: Ensures proper format before processing
+- **Master Order ID Validation**: Case-insensitive matching
 - **Text Sanitization**: Removes potentially dangerous characters including XML-specific sanitization
 - **Quantity Validation**: Reasonable limits and numeric validation
 
@@ -315,9 +386,21 @@ DTL,ORDER123,002,9780987654321,3
 #### **File Upload Problems**
 - **File Size**: Maximum 10MB limit for all uploads
 - **File Type**: Only `.xlsx`, `.xls`, `.csv` files accepted
-- **Column Names**: Use `ISBN`/`isbn` and `Qty`/`quantity` columns
+- **Column Names**: Use supported column name variations (see Supported File Formats)
 - **Order Reference**: Must be entered before file upload
 - **Template Format**: Use provided Excel template for best results
+
+#### **Master Order ID Lookup Issues**
+- **Case Sensitivity**: Master Order IDs are case-insensitive
+- **Exact Match**: Ensure Master Order ID exists in repository
+- **Field Names**: Check that JSON uses `Master Order ID` field
+- **Whitespace**: Leading/trailing spaces are automatically trimmed
+
+#### **Duplicate Consolidation**
+- **Same ISBN**: Duplicate ISBNs are automatically consolidated
+- **Quantity Summing**: Quantities are summed across all duplicates
+- **Line Renumbering**: Lines are renumbered sequentially after consolidation
+- **Statistics**: Import summary shows number of duplicates consolidated
 
 #### **Template Download Issues**
 - **File Missing**: Ensure `order_template.xlsx` exists in same directory as `index.html`
@@ -340,6 +423,7 @@ DTL,ORDER123,002,9780987654321,3
 
 #### **Books Showing "Not Available"**
 - **ISBN Matching**: Ensure exact match with repository ISBNs
+- **Master Order ID**: Try searching by Master Order ID instead
 - **Format Consistency**: Check for leading zeros or formatting differences
 - **Database Update**: Verify `data.json` contains expected entries
 - **Case Sensitivity**: Master Order IDs are case-insensitive
@@ -355,6 +439,8 @@ DTL,ORDER123,002,9780987654321,3
 - **Character Encoding**: Files saved as UTF-8
 - **Line Endings**: Uses standard CSV line endings
 - **Special Characters**: Text is properly escaped in CSV output
+- **Missing Items**: Unavailable items are automatically excluded
+- **Empty Export**: Warning shown if all items are unavailable
 
 #### **Search Not Working**
 - **ISBN Format**: Try with or without dashes/spaces
@@ -367,6 +453,11 @@ DTL,ORDER123,002,9780987654321,3
 - **Data Processing**: ISBNs are normalized before comparison
 - **Field Names**: Ensure ISBN field is correctly named in JSON
 
+#### **Import Statistics Not Visible**
+- **Auto-hide Disabled**: Import summaries remain visible permanently
+- **Browser Refresh**: Force refresh (Ctrl+F5 or Cmd+Shift+R)
+- **Console Errors**: Check browser console for JavaScript errors
+
 ### **Advanced Troubleshooting**
 
 #### **Performance Issues**
@@ -374,6 +465,7 @@ DTL,ORDER123,002,9780987654321,3
 - **Browser Memory**: Close other tabs if processing large repositories
 - **Network**: Ensure stable internet for CDN resource loading
 - **Repository Size**: Tested with 10,000+ entries
+- **Consolidation**: Large numbers of duplicates may take extra processing time
 
 #### **Browser Compatibility**
 - **Modern Browsers**: Use recent versions of Chrome, Firefox, Safari, Edge
@@ -385,6 +477,7 @@ DTL,ORDER123,002,9780987654321,3
 
 ### **Regular Tasks**
 - **Repository Updates**: Keep `data.json` current with new titles and status changes
+- **Master Order ID Mapping**: Ensure all books have unique Master Order IDs
 - **XML Field Validation**: Ensure new entries contain all required fields for XML generation
 - **Template Updates**: Update Excel template if column requirements change
 - **Backup Data**: Regular backups of repository database
@@ -392,10 +485,11 @@ DTL,ORDER123,002,9780987654321,3
 
 ### **Monitoring**
 - **Error Logs**: Check browser console for recurring issues
-- **Usage Patterns**: Monitor which features are most used (order processing vs XML downloads)
+- **Usage Patterns**: Monitor which features are most used (ISBN vs Master Order ID lookup)
 - **Performance**: Watch for slow uploads or processing times
 - **Status Accuracy**: Verify status indicators match actual production capabilities
 - **XML Generation**: Test XML downloads with sample data regularly
+- **Consolidation**: Monitor duplicate consolidation statistics
 
 ### **Updates**
 - **Dependencies**: Keep external libraries updated for security
@@ -425,6 +519,7 @@ DTL,ORDER123,002,9780987654321,3
 - **Memory Usage**: Optimized for large datasets
 - **XML Generation**: Real-time generation and download
 - **Batch Processing**: Handles hundreds of XML files efficiently
+- **Duplicate Consolidation**: Efficient Map-based algorithm
 
 ### **Data Structure Requirements**
 - **Complete JSON**: Repository must include full data.json structure
@@ -432,7 +527,8 @@ DTL,ORDER123,002,9780987654321,3
 - **XML Fields**: Additional fields required for XML generation (dimensions, materials, etc.)
 - **Status Values**: "POD Ready", "MPI", or custom status strings
 - **ISBN Format**: 10-13 digit numbers, automatically normalized
-- **Flexible Field Names**: Supports various ISBN and title field name variations
+- **Master Order ID**: Unique identifiers for alternative lookup
+- **Flexible Field Names**: Supports various ISBN, title, and quantity field name variations
 
 ## 🤝 Support
 
@@ -447,6 +543,7 @@ When reporting problems, include:
 - Browser type and version
 - Error messages from console (F12 → Console tab)
 - File types and sizes being processed
+- File format (ISBN-based or Master Order ID-based)
 - Steps to reproduce the issue
 - Sample data (if applicable)
 - Expected vs actual behavior
@@ -460,21 +557,21 @@ The application is designed for extensibility. Common enhancement areas:
 - Batch processing optimizations
 - Custom CSV export formats
 - Advanced XML customization options
+- Additional lookup methods
 
 ## 📝 Version History
 
-### **Current Version** - Enhanced Batch XML Processing
-- **Enhanced**: Batch XML generation with ZIP download functionality
-- **Added**: CSV/Excel upload for batch XML processing
-- **Improved**: XML button styling - now full-width primary button at bottom of search results
-- **Added**: Proper XML sanitization for security
-- **Enhanced**: Better field name detection for XML generation (TITLE variations)
-- **Improved**: Error handling for XML generation and downloads
-- **Enhanced**: User experience with cleaner search result layout
-- **Added**: JSZip dependency for batch processing
-- **Fixed**: Template download functionality
-- **Enhanced**: Repository export with complete data structure
-- **Improved**: Duplicate detection accuracy
+### **Current Version** - Master Order ID & Duplicate Consolidation
+- **Added**: Master Order ID lookup support for alternative file formats
+- **Added**: Automatic duplicate ISBN consolidation with quantity summation
+- **Added**: Support for `Rem` quantity column and `Date` field
+- **Enhanced**: Dual lookup method (ISBN and Master Order ID)
+- **Enhanced**: Persistent import statistics that remain visible
+- **Enhanced**: CSV export automatically excludes unavailable items
+- **Enhanced**: Export statistics showing items included and omitted
+- **Improved**: Status messages with comprehensive import breakdown
+- **Fixed**: All ID mismatches between HTML and JavaScript
+- **Added**: JSZip dependency for batch XML processing
 
 ### **Previous Versions**
 - **v5.0**: Streamlined interface focused on core order processing workflow
@@ -485,17 +582,18 @@ The application is designed for extensibility. Common enhancement areas:
 
 ## 📄 License
 
-This application is designed specifically for Clays Ltd print-on-demand operations. All configuration and branding elements are customized for Clays POD workflow requirements with status-aware processing capabilities and XML specification generation.
+This application is designed specifically for Clays Ltd print-on-demand operations. All configuration and branding elements are customized for Clays POD workflow requirements with status-aware processing capabilities, dual lookup methods, duplicate consolidation, and XML specification generation.
 
 ## 🎯 Quick Start Guide
 
 1. **Setup**: Place `index.html`, `script.js`, `data.json`, and `order_template.xlsx` in same directory
 2. **Open**: Launch `index.html` in web browser
-3. **Template**: Download Excel template using the button
-4. **Prepare**: Fill template with ISBN and Quantity columns
-5. **Process**: Enter order reference, upload file, review results
-6. **Export**: Download CSV for Clays POD processing
-7. **XML Downloads**: Search for individual ISBNs or upload batch file for XML specification downloads
+3. **Template**: Download Excel template using the button (optional for Master Order ID files)
+4. **Prepare**: Fill template with ISBN/Qty OR Master/Rem columns
+5. **Process**: Enter order reference, upload file, review consolidated results
+6. **Review**: Check persistent import statistics showing duplicates consolidated
+7. **Export**: Download CSV for Clays POD processing (automatically excludes unavailable items)
+8. **XML Downloads**: Search for individual ISBNs or upload batch file for XML specification downloads
 
 ---
 

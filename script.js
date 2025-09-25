@@ -213,16 +213,21 @@ const SearchModule = {
 
 // UI Module (Optimized)
 const UIModule = {
-    showStatus(message, type) {
+    showStatus(message, type, persist = false) {
         const statusDiv = document.getElementById('status');
         statusDiv.className = `alert alert-${type}`;
         statusDiv.textContent = message;
         statusDiv.style.display = 'block';
         
-        if (type === 'success' || type === 'info') {
-            setTimeout(() => {
-                statusDiv.style.display = 'none';
-            }, 15000);
+        // Don't auto-hide if persist is true or if it's an import summary
+        const isImportSummary = message.includes('Data loaded successfully');
+        
+        if (!persist && !isImportSummary) {
+            if (type === 'success' || type === 'info') {
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 60000);
+            }
         }
     },
 
@@ -397,35 +402,84 @@ const FileProcessor = {
     },
 
     processOrderData(excelData, orderRef) {
-        return excelData.map((row, index) => {
-            let isbn = String(row.ISBN || row.isbn || '').trim();
+        const orderItems = excelData.map((row, index) => {
+            let isbn = '';
+            let stockItem = null;
+            let lookupMethod = '';
             
-            if (isbn.includes('e') || isbn.includes('E')) {
-                isbn = Number(isbn).toFixed(0);
+            // Try ISBN lookup first (original method)
+            const rawISBN = String(row.ISBN || row.isbn || '').trim();
+            if (rawISBN) {
+                let processedISBN = rawISBN;
+                
+                if (processedISBN.includes('e') || processedISBN.includes('E')) {
+                    processedISBN = Number(processedISBN).toFixed(0);
+                }
+                
+                if (SecurityModule.validateISBN(processedISBN)) {
+                    isbn = DataProcessor.normalizeISBN(processedISBN);
+                    stockItem = AppState.booksMap.get(isbn);
+                    if (stockItem) {
+                        lookupMethod = 'ISBN';
+                    }
+                }
             }
             
-            if (!SecurityModule.validateISBN(isbn)) {
-                isbn = '';
-            } else {
-                isbn = DataProcessor.normalizeISBN(isbn);
+            // If ISBN lookup failed, try Master Order ID lookup (new method)
+            if (!stockItem) {
+                const masterOrderId = String(row.Master || row.master || row['Master Order ID'] || '').trim();
+                if (masterOrderId) {
+                    stockItem = AppState.masterOrderMap.get(masterOrderId.toLowerCase());
+                    if (stockItem) {
+                        isbn = stockItem.isbn;
+                        lookupMethod = 'Master Order ID';
+                    }
+                }
             }
             
-            const rawQuantity = row.Qty || row.qty || row.Quantity || row.quantity || 0;
+            // Extract quantity - support multiple column names
+            const rawQuantity = row.Qty || row.qty || row.Quantity || row.quantity || row.Rem || row.rem || 0;
             const quantity = SecurityModule.validateQuantity(rawQuantity) ? parseInt(rawQuantity) : 0;
             
-            const stockItem = AppState.booksMap.get(isbn);
+            // Extract optional date field
+            const orderDate = SecurityModule.sanitizeText(row.Date || row.date || '');
             
             return {
-                lineNumber: String(index + 1).padStart(3, '0'),
+                originalIndex: index,
                 orderRef: SecurityModule.sanitizeText(orderRef),
-                isbn,
-                description: stockItem?.title || 'Not Found',
+                isbn: isbn || '',
+                description: stockItem?.title || row.Title || row.title || 'Not Found',
                 quantity,
                 available: !!stockItem,
                 status: stockItem?.status || 'Not Available',
-                masterOrderId: stockItem?.masterOrderId || ''
+                masterOrderId: stockItem?.masterOrderId || '',
+                orderDate: orderDate,
+                lookupMethod: lookupMethod || 'Not Found'
             };
         });
+        
+        // Consolidate duplicate ISBNs by summing quantities
+        const consolidatedMap = new Map();
+        
+        orderItems.forEach(item => {
+            const key = item.isbn || `NOT_FOUND_${item.originalIndex}`;
+            
+            if (consolidatedMap.has(key)) {
+                const existing = consolidatedMap.get(key);
+                existing.quantity += item.quantity;
+                existing.consolidatedCount = (existing.consolidatedCount || 1) + 1;
+            } else {
+                consolidatedMap.set(key, { ...item, consolidatedCount: 1 });
+            }
+        });
+        
+        // Convert back to array and add line numbers
+        const consolidatedOrders = Array.from(consolidatedMap.values()).map((order, idx) => ({
+            ...order,
+            lineNumber: String(idx + 1).padStart(3, '0')
+        }));
+        
+        return consolidatedOrders;
     }
 };
 
@@ -581,7 +635,7 @@ const XMLModule = {
     }
 };
 
-// Export Module (Optimized and Copy-to-Clipboard removed)
+// Export Module (Optimized)
 const ExportModule = {
     formatDate() {
         const now = new Date();
@@ -595,6 +649,20 @@ const ExportModule = {
         }
 
         try {
+            // Filter out items that are not available in the database
+            const availableOrders = AppState.processedOrders.filter(order => order.available);
+            
+            if (availableOrders.length === 0) {
+                UIModule.showStatus('No available items to download. All items are missing from the database.', 'warning');
+                return;
+            }
+            
+            // Re-number the filtered orders sequentially
+            const renumberedOrders = availableOrders.map((order, idx) => ({
+                ...order,
+                lineNumber: String(idx + 1).padStart(3, '0')
+            }));
+            
             const formattedDate = this.formatDate();
             const orderRef = SecurityModule.sanitizeText(document.getElementById('orderRef').value);
         
@@ -613,7 +681,7 @@ const ExportModule = {
             const finalCsvRow = [...csvRow, ''];
             const csvContent = [finalCsvRow];
         
-            AppState.processedOrders.forEach(order => {
+            renumberedOrders.forEach(order => {
                 const dtlRow = [
                     'DTL',
                     orderRef,
@@ -639,7 +707,12 @@ const ExportModule = {
             document.body.removeChild(a);
             window.URL.revokeObjectURL(url);
         
-            UIModule.showStatus('CSV downloaded successfully!', 'success');
+            const omittedCount = AppState.processedOrders.length - availableOrders.length;
+            let successMessage = `CSV downloaded successfully! ${availableOrders.length} items included.`;
+            if (omittedCount > 0) {
+                successMessage += ` ${omittedCount} unavailable item(s) omitted.`;
+            }
+            UIModule.showStatus(successMessage, 'success');
         } catch (error) {
             console.error('Download error:', error);
             UIModule.showStatus('Error creating CSV file: ' + error.message, 'danger');
@@ -811,6 +884,7 @@ async function handleFileSelect(e) {
         
         const stats = AppState.processedOrders.reduce((acc, order) => {
             acc.total++;
+            acc.totalQuantity += order.quantity;
             if (order.available) {
                 acc.found++;
                 if (order.status === 'POD Ready') acc.podReady++;
@@ -818,10 +892,27 @@ async function handleFileSelect(e) {
             } else {
                 acc.notFound++;
             }
+            // Track lookup methods
+            if (order.lookupMethod === 'ISBN') acc.isbnLookup++;
+            else if (order.lookupMethod === 'Master Order ID') acc.masterLookup++;
+            // Track consolidations
+            if (order.consolidatedCount > 1) acc.consolidated++;
             return acc;
-        }, { total: 0, found: 0, podReady: 0, mpi: 0, notFound: 0 });
+        }, { total: 0, found: 0, podReady: 0, mpi: 0, notFound: 0, isbnLookup: 0, masterLookup: 0, consolidated: 0, totalQuantity: 0 });
         
-        UIModule.showStatus(`Data loaded successfully! ${stats.found}/${stats.total} items found in repository (${stats.podReady} POD Ready, ${stats.mpi} MPI, ${stats.notFound} Not Available).`, 'success');
+        let statusMessage = `Data loaded successfully! ${stats.found}/${stats.total} items found in repository (${stats.podReady} POD Ready, ${stats.mpi} MPI, ${stats.notFound} Not Available).`;
+        
+        // Add lookup method breakdown
+        if (stats.isbnLookup > 0 || stats.masterLookup > 0) {
+            statusMessage += ` Lookup methods: ${stats.isbnLookup} by ISBN, ${stats.masterLookup} by Master Order ID.`;
+        }
+        
+        // Add consolidation info
+        if (stats.consolidated > 0) {
+            statusMessage += ` ${stats.consolidated} duplicate ISBN(s) consolidated.`;
+        }
+        
+        UIModule.showStatus(statusMessage, 'success', true);
         UIModule.enableButtons(true);
         
     } catch (error) {
