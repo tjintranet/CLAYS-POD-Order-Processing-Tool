@@ -1,6 +1,6 @@
 # CLAYS POD Order Processing Tool
 
-A streamlined web-based application for processing print-on-demand orders for Clays Ltd. Features complete order processing with dual lookup methods (ISBN and Master Order ID), real-time repository validation, ISBN/Master Order ID lookup with XML specification downloads, batch XML generation, automatic duplicate consolidation, and an integrated repository statistics dashboard with download functionality.
+A streamlined web-based application for processing print-on-demand orders for Clays Ltd. Features complete order processing with dual lookup methods (ISBN and Master Order ID), real-time repository validation, ISBN/Master Order ID lookup with XML specification downloads, batch XML generation, automatic duplicate consolidation, paper type filtering and sorting, and an integrated repository statistics dashboard with download functionality.
 
 ## 🚀 Features
 
@@ -17,6 +17,11 @@ A streamlined web-based application for processing print-on-demand orders for Cl
   - **POD Ready Only**: Show only items available for print-on-demand
   - **Miscellaneous Print Items (MPI)**: Show only MPI status items
   - **Show Not Available Items**: Display items not found in repository
+  - **Paper Type Filter**: Dropdown filter to view/exclude specific paper types
+- **Paper Type Management**:
+  - **Filter by Paper Type**: Select specific paper types from dropdown to view/exclude
+  - **Sort by Paper Type**: Visual grouping with headers for easy identification
+  - **Auto-populated Dropdown**: Dynamically updates with paper types from current order
 - **Bulk Operations**: Select and delete multiple rows with checkbox selection
 - **CSV Export**: Generate Clays POD-compliant CSV files with correct format
   - **Smart Export**: Automatically excludes items not available in database
@@ -224,15 +229,37 @@ After upload, persistent statistics show:
 - 🟡 **MPI**: Miscellaneous Print Items requiring special handling
 - 🔴 **Not Available**: Items not found in current repository catalog
 
-#### **6. Managing Orders**
+#### **6. Managing Orders and Paper Types**
+- **Paper Type Filter Dropdown**: Select specific paper types to view only those items
+- **Sort by Paper Type Button**: Click to group items with visual headers by paper type
 - **Individual Deletion**: Click trash icon in Action column
 - **Bulk Selection**: Use checkboxes to select multiple rows
 - **Delete Selected**: Remove multiple items at once
-- **Smart Filtering**: Focus on specific item types or statuses
-- **Filter Items** using available filter options:
-   - **POD Ready Only**: Shows only POD Ready status items
-   - **Miscellaneous Print Items (MPI)**: Shows only MPI status items
-   - **Show Not Available Items**: Shows items not in repository catalog
+- **Smart Filtering**: Focus on specific item types, statuses, or paper types
+
+#### **7. Workflow for Excluding Paper Types**
+**Method 1: Using Paper Type Filter (Recommended)**
+1. Upload order file
+2. Select paper type from dropdown filter (e.g., "Holmen Cream 65 gsm")
+3. Review filtered items
+4. Select unwanted items with checkboxes
+5. Click "Delete Selected Rows"
+6. Repeat for other paper types if needed
+7. Download CSV with only desired paper types
+
+**Method 2: Using Sort by Paper Type**
+1. Upload order file
+2. Click "Sort by Paper Type" button
+3. View grouped items with grey header rows for each paper type
+4. Select entire paper type groups using checkboxes
+5. Click "Delete Selected Rows"
+6. Download CSV with remaining items
+
+**Combined Approach:**
+- Use sort to visualize groupings
+- Use filter to isolate specific paper types
+- Delete unwanted items
+- Clear filter to see all remaining items
 
 ### **ISBN/Master Order ID Lookup with XML Downloads**
 
@@ -429,10 +456,17 @@ DTL,ORDER123,002,9780987654321,3
 - **Case Sensitivity**: Master Order IDs are case-insensitive
 - **Data Types**: Ensure ISBNs are stored as numbers or strings, not other formats
 
-#### **Status Display Issues**
-- **Missing Status**: Items without Status field default to "POD Ready"
-- **Valid Values**: Status should be "POD Ready", "MPI", or custom status
-- **Badge Colors**: Green=POD Ready, Yellow=MPI, Red=Not Available
+#### **Paper Type Filter Not Working**
+- **Dropdown Empty**: Ensure order file has been uploaded and contains items with paper descriptions
+- **Filter Not Applying**: Check that paper type is selected in dropdown (not "All Paper Types")
+- **No Results Shown**: Verify that items with selected paper type exist in current order
+- **Filter Clears After Delete**: This is normal - filter repopulates with remaining paper types
+
+#### **Sort by Paper Type Issues**
+- **Button Disabled**: Ensure order file is uploaded first
+- **No Grouping Headers**: Verify items have paper descriptions in repository
+- **Sort Not Working**: Click button again to toggle back to original order
+- **Mixed Sorting**: Clear all filters before sorting for best visual grouping
 
 #### **CSV Export Problems**
 - **Format Issues**: DTL lines should have exactly 5 comma-separated fields
@@ -520,14 +554,16 @@ DTL,ORDER123,002,9780987654321,3
 - **XML Generation**: Real-time generation and download
 - **Batch Processing**: Handles hundreds of XML files efficiently
 - **Duplicate Consolidation**: Efficient Map-based algorithm
+- **Paper Type Filtering**: Dynamic dropdown population and real-time filtering
 
 ### **Data Structure Requirements**
 - **Complete JSON**: Repository must include full data.json structure
-- **Required Fields**: ISBN, Master Order ID, TITLE, Status minimum
+- **Required Fields**: ISBN, Master Order ID, TITLE, Status, Paper Desc minimum
 - **XML Fields**: Additional fields required for XML generation (dimensions, materials, etc.)
 - **Status Values**: "POD Ready", "MPI", or custom status strings
 - **ISBN Format**: 10-13 digit numbers, automatically normalized
 - **Master Order ID**: Unique identifiers for alternative lookup
+- **Paper Description**: Required for paper type filtering and sorting
 - **Flexible Field Names**: Supports various ISBN, title, and quantity field name variations
 
 ## 🤝 Support
@@ -561,19 +597,23 @@ The application is designed for extensibility. Common enhancement areas:
 
 ## 📝 Version History
 
-### **Current Version** - Master Order ID & Duplicate Consolidation
-- **Added**: Master Order ID lookup support for alternative file formats
-- **Added**: Automatic duplicate ISBN consolidation with quantity summation
-- **Added**: Support for `Rem` quantity column and `Date` field
-- **Enhanced**: Dual lookup method (ISBN and Master Order ID)
-- **Enhanced**: Persistent import statistics that remain visible
-- **Enhanced**: CSV export automatically excludes unavailable items
-- **Enhanced**: Export statistics showing items included and omitted
-- **Improved**: Status messages with comprehensive import breakdown
-- **Fixed**: All ID mismatches between HTML and JavaScript
-- **Added**: JSZip dependency for batch XML processing
+### **Current Version** - Paper Type Filtering & Enhanced Management
+- **Added**: Paper type filter dropdown for selective viewing/exclusion
+- **Added**: Sort by Paper Type button with visual grouping headers
+- **Added**: Paper type column in orders table
+- **Enhanced**: Dynamic paper type dropdown auto-population from orders
+- **Enhanced**: Combined filtering - paper type works with status filters
+- **Improved**: Delete operations update paper type filter automatically
+- **Added**: Two workflow methods for excluding paper types (filter & sort)
+- **Enhanced**: User experience with intuitive paper type management
 
 ### **Previous Versions**
+- **v6.0**: Master Order ID & Duplicate Consolidation
+  - Added Master Order ID lookup support
+  - Automatic duplicate ISBN consolidation with quantity summation
+  - Support for Rem quantity column and Date field
+  - Persistent import statistics
+  - CSV export excludes unavailable items
 - **v5.0**: Streamlined interface focused on core order processing workflow
 - **v4.0**: Status field support with POD Ready/MPI/Not Available indicators
 - **v3.0**: Complete security enhancement with comprehensive input validation
@@ -592,8 +632,10 @@ This application is designed specifically for Clays Ltd print-on-demand operatio
 4. **Prepare**: Fill template with ISBN/Qty OR Master/Rem columns
 5. **Process**: Enter order reference, upload file, review consolidated results
 6. **Review**: Check persistent import statistics showing duplicates consolidated
-7. **Export**: Download CSV for Clays POD processing (automatically excludes unavailable items)
-8. **XML Downloads**: Search for individual ISBNs or upload batch file for XML specification downloads
+7. **Filter/Sort**: Use paper type dropdown to filter OR sort button to group by paper type
+8. **Exclude**: Delete unwanted paper types or individual items using checkboxes
+9. **Export**: Download CSV for Clays POD processing (automatically excludes unavailable items)
+10. **XML Downloads**: Search for individual ISBNs or upload batch file for XML specification downloads
 
 ---
 

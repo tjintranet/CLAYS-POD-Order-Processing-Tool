@@ -4,7 +4,8 @@ const AppState = {
     processedOrders: [],
     originalRawData: null,
     booksMap: new Map(),
-    masterOrderMap: new Map()
+    masterOrderMap: new Map(),
+    sortedByPaperType: false
 };
 
 // Configuration
@@ -226,13 +227,13 @@ const UIModule = {
             if (type === 'success' || type === 'info') {
                 setTimeout(() => {
                     statusDiv.style.display = 'none';
-                }, 60000);
+                }, 15000);
             }
         }
     },
 
     enableButtons(enabled) {
-        const buttonIds = ['clearBtn', 'downloadBtn', 'deleteSelectedBtn'];
+        const buttonIds = ['clearBtn', 'downloadBtn', 'deleteSelectedBtn', 'sortPaperBtn'];
         buttonIds.forEach(id => {
             const button = document.getElementById(id);
             if (button) button.disabled = !enabled;
@@ -307,7 +308,7 @@ const UIModule = {
         tbody.innerHTML = '';
 
         if (AppState.processedOrders.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted"><i class="fas fa-inbox"></i> No data loaded</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted"><i class="fas fa-inbox"></i> No data loaded</td></tr>';
             return;
         }
 
@@ -315,13 +316,32 @@ const UIModule = {
 
         if (filteredOrders.length === 0) {
             const message = this.getFilterMessage();
-            tbody.innerHTML = `<tr><td colspan="7" class="text-center text-success">${message}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center text-success">${message}</td></tr>`;
             return;
         }
 
         const fragment = document.createDocumentFragment();
-        filteredOrders.forEach(order => {
+        
+        // Check if we should show paper type grouping headers
+        const sortedByPaper = AppState.sortedByPaperType || false;
+        let lastPaperType = null;
+        
+        filteredOrders.forEach((order, idx) => {
             const originalIndex = AppState.processedOrders.indexOf(order);
+            
+            // Add paper type grouping header if sorted by paper type
+            if (sortedByPaper && order.paperDesc !== lastPaperType) {
+                const headerRow = document.createElement('tr');
+                headerRow.className = 'table-secondary';
+                headerRow.innerHTML = `
+                    <td colspan="8" class="fw-bold">
+                        <i class="fas fa-layer-group"></i> Paper Type: ${order.paperDesc || 'Not specified'}
+                    </td>
+                `;
+                fragment.appendChild(headerRow);
+                lastPaperType = order.paperDesc;
+            }
+            
             const tr = this.createTableRow(order, originalIndex);
             fragment.appendChild(tr);
         });
@@ -333,16 +353,25 @@ const UIModule = {
         const showOnlyPodReady = document.getElementById('showOnlyPodReady')?.checked || false;
         const printAsMiscellaneous = document.getElementById('showOnlyUnavailable').checked;
         const showNotAvailable = document.getElementById('showNotAvailable')?.checked || false;
+        const paperTypeFilter = document.getElementById('paperTypeFilter')?.value || '';
         
+        let filtered = AppState.processedOrders;
+        
+        // Apply status filters
         if (showOnlyPodReady) {
-            return AppState.processedOrders.filter(order => order.available && order.status === 'POD Ready');
+            filtered = filtered.filter(order => order.available && order.status === 'POD Ready');
         } else if (printAsMiscellaneous) {
-            return AppState.processedOrders.filter(order => order.available && order.status === 'MPI');
+            filtered = filtered.filter(order => order.available && order.status === 'MPI');
         } else if (showNotAvailable) {
-            return AppState.processedOrders.filter(order => !order.available);
+            filtered = filtered.filter(order => !order.available);
         }
         
-        return AppState.processedOrders;
+        // Apply paper type filter
+        if (paperTypeFilter) {
+            filtered = filtered.filter(order => order.paperDesc === paperTypeFilter);
+        }
+        
+        return filtered;
     },
 
     getFilterMessage() {
@@ -359,7 +388,7 @@ const UIModule = {
     createTableRow(order, originalIndex) {
         const tr = document.createElement('tr');
         
-        // Build row HTML efficiently
+        // Build row HTML efficiently - Status before Paper Type
         tr.innerHTML = `
             <td><input type="checkbox" class="row-checkbox" data-index="${originalIndex}"></td>
             <td><button class="btn btn-danger btn-sm" onclick="OrderProcessor.deleteRow(${originalIndex})"><i class="fas fa-trash"></i></button></td>
@@ -368,6 +397,7 @@ const UIModule = {
             <td>${order.description}</td>
             <td>${order.quantity}</td>
             <td><span class="badge ${this.getStatusBadgeClass(order.status)}">${order.available ? order.status : 'Not Available'}</span></td>
+            <td><small>${order.paperDesc || 'Not specified'}</small></td>
         `;
         
         return tr;
@@ -454,7 +484,8 @@ const FileProcessor = {
                 status: stockItem?.status || 'Not Available',
                 masterOrderId: stockItem?.masterOrderId || '',
                 orderDate: orderDate,
-                lookupMethod: lookupMethod || 'Not Found'
+                lookupMethod: lookupMethod || 'Not Found',
+                paperDesc: stockItem?.paperDesc || 'Not specified'
             };
         });
         
@@ -491,6 +522,10 @@ const OrderProcessor = {
             ...order,
             lineNumber: String(idx + 1).padStart(3, '0')
         }));
+        
+        // Repopulate paper type filter after deletion
+        populatePaperTypeFilter();
+        
         UIModule.updatePreviewTable();
         UIModule.showStatus(`Row ${index + 1} deleted`, 'info');
         UIModule.enableButtons(AppState.processedOrders.length > 0);
@@ -498,6 +533,14 @@ const OrderProcessor = {
 
     clearAll() {
         AppState.processedOrders = [];
+        AppState.sortedByPaperType = false;
+        
+        // Clear paper type filter
+        const paperTypeFilter = document.getElementById('paperTypeFilter');
+        if (paperTypeFilter) {
+            paperTypeFilter.innerHTML = '<option value="">All Paper Types</option>';
+        }
+        
         UIModule.updatePreviewTable();
         document.getElementById('excelFile').value = '';
         document.getElementById('orderRef').value = '';
@@ -520,6 +563,9 @@ const OrderProcessor = {
             ...order,
             lineNumber: String(idx + 1).padStart(3, '0')
         }));
+
+        // Repopulate paper type filter after deletion
+        populatePaperTypeFilter();
 
         UIModule.updatePreviewTable();
         UIModule.showStatus(`${indices.length} rows deleted`, 'info');
@@ -880,6 +926,11 @@ async function handleFileSelect(e) {
         UIModule.showStatus('Processing file...', 'info');
         
         AppState.processedOrders = await FileProcessor.processFile(file, orderRef);
+        AppState.sortedByPaperType = false;
+        
+        // Populate paper type filter dropdown
+        populatePaperTypeFilter();
+        
         UIModule.updatePreviewTable();
         
         const stats = AppState.processedOrders.reduce((acc, order) => {
@@ -1042,6 +1093,7 @@ function toggleTableFilter() {
     
     const printAsMiscellaneous = document.getElementById('showOnlyUnavailable').checked;
     const showNotAvailable = document.getElementById('showNotAvailable')?.checked || false;
+    const paperTypeFilter = document.getElementById('paperTypeFilter')?.value || '';
     
     if (printAsMiscellaneous && showNotAvailable) {
         if (event.target.id === 'showOnlyUnavailable') {
@@ -1063,9 +1115,39 @@ function toggleTableFilter() {
         UIModule.showStatus(`Showing ${stats.mpi} MPI items`, 'info');
     } else if (showNotAvailable) {
         UIModule.showStatus(`Showing ${stats.notAvailable} not available items`, 'info');
+    } else if (paperTypeFilter) {
+        const filteredCount = UIModule.getFilteredOrders().length;
+        UIModule.showStatus(`Showing ${filteredCount} items with paper type: ${paperTypeFilter}`, 'info');
     } else {
         UIModule.showStatus(`Showing all ${AppState.processedOrders.length} items`, 'info');
     }
+}
+
+function populatePaperTypeFilter() {
+    const paperTypeFilter = document.getElementById('paperTypeFilter');
+    if (!paperTypeFilter) return;
+    
+    // Get unique paper types from current orders
+    const paperTypes = new Set();
+    AppState.processedOrders.forEach(order => {
+        if (order.paperDesc && order.paperDesc !== 'Not specified') {
+            paperTypes.add(order.paperDesc);
+        }
+    });
+    
+    // Sort alphabetically
+    const sortedPaperTypes = Array.from(paperTypes).sort();
+    
+    // Clear existing options except the first "All Paper Types"
+    paperTypeFilter.innerHTML = '<option value="">All Paper Types</option>';
+    
+    // Add paper type options
+    sortedPaperTypes.forEach(paperType => {
+        const option = document.createElement('option');
+        option.value = paperType;
+        option.textContent = paperType;
+        paperTypeFilter.appendChild(option);
+    });
 }
 
 function toggleAllCheckboxes() {
@@ -1097,6 +1179,40 @@ function deleteSelected() {
     OrderProcessor.deleteSelected();
 }
 
+function sortByPaperType() {
+    if (AppState.processedOrders.length === 0) {
+        UIModule.showStatus('No data to sort', 'warning');
+        return;
+    }
+    
+    // Toggle sort state
+    AppState.sortedByPaperType = !AppState.sortedByPaperType;
+    
+    if (AppState.sortedByPaperType) {
+        // Sort by paper type, then by description
+        AppState.processedOrders.sort((a, b) => {
+            const paperA = (a.paperDesc || 'Not specified').toLowerCase();
+            const paperB = (b.paperDesc || 'Not specified').toLowerCase();
+            
+            if (paperA === paperB) {
+                return a.description.localeCompare(b.description);
+            }
+            return paperA.localeCompare(paperB);
+        });
+        
+        UIModule.showStatus('Orders sorted by paper type', 'info');
+    } else {
+        // Sort by line number (restore original order)
+        AppState.processedOrders.sort((a, b) => {
+            return parseInt(a.lineNumber) - parseInt(b.lineNumber);
+        });
+        
+        UIModule.showStatus('Orders restored to original order', 'info');
+    }
+    
+    UIModule.updatePreviewTable();
+}
+
 // Make functions globally available
 window.clearAll = clearAll;
 window.downloadCsv = downloadCsv;
@@ -1107,6 +1223,7 @@ window.deleteSelected = deleteSelected;
 window.toggleTableFilter = toggleTableFilter;
 window.toggleAllCheckboxes = toggleAllCheckboxes;
 window.processBatchXML = processBatchXML;
+window.sortByPaperType = sortByPaperType;
 
 // Initialize the application
 function initializeApp() {

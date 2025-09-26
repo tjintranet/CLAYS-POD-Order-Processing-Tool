@@ -201,6 +201,9 @@
                                 <button class="btn btn-secondary" onclick="copyTableToClipboard()" id="copyBtn" disabled>
                                     <i class="fas fa-copy"></i> Copy to Clipboard
                                 </button>
+                                <button class="btn btn-info" onclick="sortByPaperType()" id="sortPaperBtn" disabled>
+                                    <i class="fas fa-sort"></i> Sort by Paper Type
+                                </button>
                             </div>
                             
                             <!-- Toggles Row -->
@@ -223,6 +226,14 @@
                                         <i class="fas fa-eye-slash text-danger"></i> Show Not Available Items
                                     </label>
                                 </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <label for="paperTypeFilter" class="form-label mb-0">
+                                        <i class="fas fa-file-alt text-info"></i> Paper Type:
+                                    </label>
+                                    <select class="form-select form-select-sm" id="paperTypeFilter" onchange="toggleTableFilter()" style="width: auto; min-width: 200px;">
+                                        <option value="">All Paper Types</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                         
@@ -238,11 +249,12 @@
                                         <th>Description</th>
                                         <th>Quantity</th>
                                         <th>Status</th>
+                                        <th>Paper Type</th>
                                     </tr>
                                 </thead>
                                 <tbody id="previewBody">
                                     <tr>
-                                        <td colspan="7" class="text-center text-muted">
+                                        <td colspan="8" class="text-center text-muted">
                                             <i class="fas fa-inbox"></i> No data loaded
                                         </td>
                                     </tr>
