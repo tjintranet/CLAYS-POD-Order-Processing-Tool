@@ -325,17 +325,24 @@ const UIModule = {
         // Check if we should show paper type grouping headers
         const sortedByPaper = AppState.sortedByPaperType || false;
         let lastPaperType = null;
+        let paperTypeQuantity = 0;
         
         filteredOrders.forEach((order, idx) => {
             const originalIndex = AppState.processedOrders.indexOf(order);
             
             // Add paper type grouping header if sorted by paper type
             if (sortedByPaper && order.paperDesc !== lastPaperType) {
+                // Calculate total quantity for this paper type
+                paperTypeQuantity = filteredOrders
+                    .filter(o => o.paperDesc === order.paperDesc)
+                    .reduce((sum, o) => sum + o.quantity, 0);
+                
                 const headerRow = document.createElement('tr');
                 headerRow.className = 'table-secondary';
                 headerRow.innerHTML = `
                     <td colspan="8" class="fw-bold">
-                        <i class="fas fa-layer-group"></i> Paper Type: ${order.paperDesc || 'Not specified'}
+                        <i class="fas fa-layer-group"></i> Paper Type: ${order.paperDesc || 'Not specified'} 
+                        <span class="badge bg-primary ms-2">Total Qty: ${paperTypeQuantity}</span>
                     </td>
                 `;
                 fragment.appendChild(headerRow);
@@ -910,22 +917,38 @@ async function handleFileSelect(e) {
     const file = e.target.files[0];
     if (!file) return;
 
-    const orderRef = SecurityModule.sanitizeText(document.getElementById('orderRef').value);
-    const orderRefWarning = document.getElementById('orderRefWarning');
-    
-    if (!orderRef) {
-        orderRefWarning.style.display = 'block';
-        UIModule.showStatus('Please enter an order reference before uploading a file', 'warning');
-        document.getElementById('excelFile').value = '';
-        return;
-    }
-    
-    orderRefWarning.style.display = 'none';
-
     try {
         UIModule.showStatus('Processing file...', 'info');
         
-        AppState.processedOrders = await FileProcessor.processFile(file, orderRef);
+        // Parse file first to get date information
+        const arrayBuffer = await file.arrayBuffer();
+        const fileData = await FileProcessor.parseFileData(file, arrayBuffer);
+        
+        // Auto-generate order reference from Date column if available
+        const orderRefField = document.getElementById('orderRef');
+        if (fileData.length > 0 && !orderRefField.value) {
+            const dateValue = fileData[0].Date || fileData[0].date;
+            if (dateValue) {
+                const generatedRef = generateOrderReference(dateValue);
+                if (generatedRef) {
+                    orderRefField.value = generatedRef;
+                }
+            }
+        }
+        
+        const orderRef = SecurityModule.sanitizeText(orderRefField.value);
+        const orderRefWarning = document.getElementById('orderRefWarning');
+        
+        if (!orderRef) {
+            orderRefWarning.style.display = 'block';
+            UIModule.showStatus('Please enter an order reference before uploading a file', 'warning');
+            document.getElementById('excelFile').value = '';
+            return;
+        }
+        
+        orderRefWarning.style.display = 'none';
+        
+        AppState.processedOrders = FileProcessor.processOrderData(fileData, orderRef);
         AppState.sortedByPaperType = false;
         
         // Populate paper type filter dropdown
@@ -971,6 +994,58 @@ async function handleFileSelect(e) {
         UIModule.showStatus('Error processing file: ' + error.message, 'danger');
         UIModule.enableButtons(false);
         document.getElementById('excelFile').value = '';
+    }
+}
+
+function generateOrderReference(dateValue) {
+    if (!dateValue) return null;
+    
+    try {
+        let date;
+        
+        // Handle different date formats
+        if (typeof dateValue === 'string') {
+            // Try to parse string date formats
+            // Common formats: YYYY-MM-DD, DD/MM/YYYY, DD-MM-YYYY, MM/DD/YYYY
+            const parts = dateValue.split(/[-\/]/);
+            
+            if (parts.length === 3) {
+                // Determine format based on first part length
+                if (parts[0].length === 4) {
+                    // YYYY-MM-DD format
+                    date = new Date(parts[0], parseInt(parts[1]) - 1, parts[2]);
+                } else if (parseInt(parts[0]) > 12) {
+                    // DD-MM-YYYY or DD/MM/YYYY
+                    date = new Date(parts[2], parseInt(parts[1]) - 1, parts[0]);
+                } else {
+                    // Assume DD-MM-YYYY or DD/MM/YYYY
+                    date = new Date(parts[2], parseInt(parts[1]) - 1, parts[0]);
+                }
+            } else {
+                date = new Date(dateValue);
+            }
+        } else if (typeof dateValue === 'number') {
+            // Excel serial date number
+            date = new Date((dateValue - 25569) * 86400 * 1000);
+        } else if (dateValue instanceof Date) {
+            date = dateValue;
+        } else {
+            return null;
+        }
+        
+        // Validate date
+        if (isNaN(date.getTime())) return null;
+        
+        // Format as DDMMYY
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = String(date.getFullYear()).slice(-2);
+        
+        return `CLAYS${day}${month}${year}`;
+        
+    } catch (error) {
+        console.error('Error generating order reference:', error);
+        return null;
     }
 }
 
@@ -1229,6 +1304,7 @@ window.sortByPaperType = sortByPaperType;
 function initializeApp() {
     const excelFile = document.getElementById('excelFile');
     const isbnSearch = document.getElementById('isbnSearch');
+    const paperTypeFilter = document.getElementById('paperTypeFilter');
     
     if (excelFile) {
         excelFile.addEventListener('change', handleFileSelect);
@@ -1247,6 +1323,13 @@ function initializeApp() {
             if (/[a-zA-Z]/.test(value) && !SecurityModule.validateISBN(value)) {
                 e.target.value = value.toUpperCase();
             }
+        });
+    }
+    
+    // Add explicit event listener for paper type filter (Chrome compatibility)
+    if (paperTypeFilter) {
+        paperTypeFilter.addEventListener('change', function(e) {
+            toggleTableFilter();
         });
     }
     
