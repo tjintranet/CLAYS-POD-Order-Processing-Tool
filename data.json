@@ -7053,7 +7053,7 @@
     "Cover Spec": "C400P2",
     "Cover Spine": 12,
     "Packing": "Pack (64) (4) Base.",
-    "Status": "POD Ready"
+    "Status": "MPI"
   },
   {
     "ISBN": 9780091955731,
@@ -7683,7 +7683,7 @@
     "Cover Spec": "C400P2",
     "Cover Spine": 29,
     "Packing": "Pack (24) (4) Base.",
-    "Status": "POD Ready"
+    "Status": "MPI"
   },
   {
     "ISBN": 9780140296860,
@@ -19373,7 +19373,7 @@
     "Cover Spec": "C400P2",
     "Cover Spine": 39,
     "Packing": "Pack (16) (4) Base.",
-    "Status": "POD Ready"
+    "Status": "MPI"
   },
   {
     "ISBN": 9780141026244,
