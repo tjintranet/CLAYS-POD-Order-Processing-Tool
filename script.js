@@ -539,22 +539,23 @@ const OrderProcessor = {
     },
 
     clearAll() {
-        AppState.processedOrders = [];
-        AppState.sortedByPaperType = false;
-        
-        // Clear paper type filter
-        const paperTypeFilter = document.getElementById('paperTypeFilter');
-        if (paperTypeFilter) {
-            paperTypeFilter.innerHTML = '<option value="">All Paper Types</option>';
-        }
-        
-        UIModule.updatePreviewTable();
-        document.getElementById('excelFile').value = '';
-        document.getElementById('orderRef').value = '';
-        document.getElementById('csvUpload').value = '';
-        UIModule.showStatus('All data cleared', 'info');
-        UIModule.enableButtons(false);
-    },
+    AppState.processedOrders = [];
+    UIModule.updatePreviewTable();
+    document.getElementById('excelFile').value = '';
+    document.getElementById('orderRef').value = '';
+    
+    // Reset all toggle switches
+    const showOnlyPodReady = document.getElementById('showOnlyPodReady');
+    const showOnlyUnavailable = document.getElementById('showOnlyUnavailable');
+    const showNotAvailable = document.getElementById('showNotAvailable');
+    
+    if (showOnlyPodReady) showOnlyPodReady.checked = false;
+    if (showOnlyUnavailable) showOnlyUnavailable.checked = false;
+    if (showNotAvailable) showNotAvailable.checked = false;
+    
+    UIModule.showStatus('All data cleared', 'info');
+    UIModule.enableButtons(false);
+},
 
     deleteSelected() {
         const checkboxes = document.querySelectorAll('.row-checkbox:checked');
