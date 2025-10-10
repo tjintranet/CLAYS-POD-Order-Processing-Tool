@@ -1,20 +1,20 @@
 <!DOCTYPE EasyDataTransform>
 <root>
     <meta>
-        <version value="73"/>
-        <last_saved_by value="Easy_Data_Transform_v2_0_1_on_macOS_15_7_x86_64_at_2025_09_29_17_30_21"/>
-        <locale value="en_001"/>
-        <id value="787705003571070b0b747a74080a3c"/>
+        <version value="65"/>
+        <last_saved_by value="Andrew_Watts_using_Easy_Data_Transform_v1_42_0_on_Windows_Server_2012_R2_Version_6_3_Build_9600_at_2025_10_10_07_45_02"/>
+        <locale value="en_GB"/>
+        <id value="70020509327807010a7476010e0f3804"/>
         <snap_to_grid value="1"/>
         <notes/>
-        <doc_path value="%2FUsers%2Fcolingammon%2FDocuments%2FGitHub%2FCLAYS-POD-Order-Processing-Tool%2FCreate%20Data%20JSON.transform"/>
+        <doc_path value="%5C%5C192.168.10.169%5Cpipeline3%5Cclays_POD%5Cdata%5CCreate%20Data%20JSON.transform"/>
         <auto_run_on value="1"/>
     </meta>
     <inputs>
-        <input worksheet="Sheet1" pos="149.4^-164.7" ignored_rows="0" show_meta="0" json_arrays_as_rows="0" delimiter="0" ignore_excel_hidden_cols="0" schema_in_use="0" name="PRH%20Master%20Titles.xlsx%5BSheet1%5D" schema_extra_cols="0" pos_v12="149.4-164.7" watching="0" medium="0" auto_fixed_widths="1" path="%2FUsers%2Fcolingammon%2FDocuments%2FGitHub%2FCLAYS-POD-Order-Processing-Tool%2FPRH%20Master%20Titles.xlsx" schema_missing_cols="0" header="1" ignore_empty_cols="0" schema_reorder_cols="0" trim="1" file_type="1" id="0" alias="PRH%20Master%20Titles" custom_delimiter="%2A" ignore_repeated_delim="0" meta_text="%24%28FilePath%29%20%24%28CurrentDateTime%29" ignore_excel_hidden_rows="0" ignore_empty="1" encoding="Automatic" quote="0" simplify="1"/>
+        <input worksheet="Sheet1" pos="149.4^-164.7" ignored_rows="0" show_meta="0" json_arrays_as_rows="0" delimiter="0" name="PRH%20Master%20Titles.xlsx%5BSheet1%5D" pos_v12="149.4-164.7" watching="0" medium="0" ignore_excel_hidden="0" auto_fixed_widths="1" path="%5C%5C192.168.10.169%5Cpipeline3%5Cclays_POD%5Cdata%5CPRH%20Master%20Titles.xlsx" header="1" ignore_empty_cols="0" trim="1" file_type="1" id="0" alias="PRH%20Master%20Titles" custom_delimiter="%2A" ignore_repeated_delim="0" meta_text="%24%28FilePath%29%20%24%28CurrentDateTime%29" ignore_empty="1" encoding="Automatic" quote="0" simplify="1"/>
     </inputs>
     <transforms>
-        <transform id="1" name="Remove" pos="147.324^-38.772" pos_v12="147.324-38.772">
+        <transform id="1" name="Remove" pos="149.4^-45" pos_v12="149.4-45">
             <parameters>
                 <parameter type="11" name="Columns" value="12345679131819"/>
             </parameters>
@@ -41,7 +41,6 @@
         <transform id="15" name="Num_Format" pos="149.4^433.8" pos_v12="149.4433.8">
             <parameters>
                 <parameter type="1" name="Columns" value="10"/>
-                <parameter type="6" name="Decimal_From" value="Automatic"/>
                 <parameter type="6" name="Format" value="f"/>
                 <parameter type="8" name="Precision" value="0"/>
                 <parameter type="5" name="Group_Separator" value="0"/>
@@ -50,7 +49,7 @@
         </transform>
     </transforms>
     <outputs>
-        <output enable_output="1" pos="388.8^314.1" delimiter="1" html_encode="1" excel_output="0" multi_file_confirm="1" multi_file_column="0" name="data.json" json_manual_col_types="000000000000" write_header_first_append_only="1" bom="0" pos_v12="388.8314.1" excel_use_style_template="0" single_or_multi="0" overwrite_sheet="1" path="%2FUsers%2Fcolingammon%2FDocuments%2FGitHub%2FCLAYS-POD-Order-Processing-Tool%2Fdata.json" xml_root="root" remove_empty="1" file_type="4" id="11" custom_delimiter="%2A" alias="data" file_comment="%20File%20created%20by%20Easy%20Data%20Transform%20%7Bversion%7D%20at%20%7Bdate%7D%20%7Btime%7D%20" write_header="1" excel_manual_col_formats="000000000000" json_types="0" xml_row="record" encoding="UTF-8" line_endings="0" quote="0"/>
+        <output enable_output="1" pos="388.8^433.8" delimiter="1" html_encode="1" excel_output="0" multi_file_confirm="1" multi_file_column="0" name="data.json" json_manual_col_types="000000000000" write_header_first_append_only="1" bom="0" pos_v12="388.8433.8" single_or_multi="0" overwrite_sheet="1" path="%5C%5C192.168.10.169%5Cpipeline3%5Cclays_POD%5Cdata%5Cdata.json" xml_root="root" remove_empty="1" file_type="4" id="16" custom_delimiter="%2A" alias="data1" file_comment="%20File%20created%20by%20Easy%20Data%20Transform%20%7Bversion%7D%20at%20%7Bdate%7D%20%7Btime%7D%20" write_header="1" json_types="0" excel_manual_col_formats="000000000000" xml_row="record" encoding="UTF-8" line_endings="0" quote="0"/>
     </outputs>
     <notes/>
     <connections>
@@ -59,7 +58,7 @@
         <connection start_id="5" end_id="8"/>
         <connection start_id="8" end_id="15"/>
         <connection start_id="10" end_id="5"/>
-        <connection start_id="15" end_id="11"/>
+        <connection start_id="15" end_id="16"/>
     </connections>
     <batch_values/>
     <batch_logging enabled="0" mode="0"/>
