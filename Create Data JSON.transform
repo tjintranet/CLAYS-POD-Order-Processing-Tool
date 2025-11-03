@@ -2,9 +2,9 @@
 <root>
     <meta>
         <version value="65"/>
-        <last_saved_by value="Andrew_Watts_using_Easy_Data_Transform_v1_42_0_on_Windows_Server_2012_R2_Version_6_3_Build_9600_at_2025_10_22_08_29_47"/>
+        <last_saved_by value="Andrew_Watts_using_Easy_Data_Transform_v1_42_0_on_Windows_Server_2012_R2_Version_6_3_Build_9600_at_2025_11_02_15_04_16"/>
         <locale value="en_GB"/>
-        <id value="7602050b317907010a7476010d0f3806"/>
+        <id value="7702050b337207000a7476010c0f3809"/>
         <snap_to_grid value="1"/>
         <notes/>
         <doc_path value="F%3A%5CClays%20POD%5Cdata%5CCreate%20Data%20JSON.transform"/>
@@ -50,6 +50,8 @@
     </transforms>
     <outputs>
         <output enable_output="1" pos="388.8^433.8" delimiter="1" html_encode="1" excel_output="0" multi_file_confirm="1" multi_file_column="0" name="data.json" json_manual_col_types="000000000000" write_header_first_append_only="1" bom="0" pos_v12="388.8433.8" single_or_multi="0" overwrite_sheet="1" path="F%3A%5CClays%20POD%5Cdata%5Cdata.json" xml_root="root" remove_empty="1" file_type="4" id="16" custom_delimiter="%2A" alias="data" file_comment="%20File%20created%20by%20Easy%20Data%20Transform%20%7Bversion%7D%20at%20%7Bdate%7D%20%7Btime%7D%20" write_header="1" json_types="0" excel_manual_col_formats="000000000000" xml_row="record" encoding="UTF-8" line_endings="0" quote="0"/>
+        <output enable_output="1" pos="388.8^314.1" delimiter="1" html_encode="1" excel_output="0" multi_file_confirm="1" multi_file_column="0" name="data.json" json_manual_col_types="000000000000" write_header_first_append_only="1" bom="0" pos_v12="388.8314.1" single_or_multi="0" overwrite_sheet="1" path="%5C%5C192.168.89.24%5Chtdocs%5Cclays-pod-order-processing-tool%5Cdata.json" xml_root="root" remove_empty="1" file_type="4" id="17" custom_delimiter="%2A" alias="data1" file_comment="%20File%20created%20by%20Easy%20Data%20Transform%20%7Bversion%7D%20at%20%7Bdate%7D%20%7Btime%7D%20" write_header="1" json_types="0" excel_manual_col_formats="000000000000" xml_row="record" encoding="UTF-8" line_endings="0" quote="0"/>
+        <output enable_output="1" pos="388.8^194.4" delimiter="1" html_encode="1" excel_output="0" multi_file_confirm="1" multi_file_column="0" name="data.json" json_manual_col_types="000000000000" write_header_first_append_only="1" bom="0" pos_v12="388.8194.4" single_or_multi="0" overwrite_sheet="1" path="%5C%5C192.168.89.24%5Chtdocs%5Cmpi-picklist-xml-creator%5Cdata.json" xml_root="root" remove_empty="1" file_type="4" id="18" custom_delimiter="%2A" alias="data2" file_comment="%20File%20created%20by%20Easy%20Data%20Transform%20%7Bversion%7D%20at%20%7Bdate%7D%20%7Btime%7D%20" write_header="1" json_types="0" excel_manual_col_formats="000000000000" xml_row="record" encoding="UTF-8" line_endings="0" quote="0"/>
     </outputs>
     <notes/>
     <connections>
@@ -59,6 +61,8 @@
         <connection start_id="8" end_id="15"/>
         <connection start_id="10" end_id="5"/>
         <connection start_id="15" end_id="16"/>
+        <connection start_id="15" end_id="17"/>
+        <connection start_id="15" end_id="18"/>
     </connections>
     <batch_values/>
     <batch_logging enabled="0" mode="0"/>
