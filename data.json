@@ -140012,5 +140012,19 @@
     "Cover Spine": 26,
     "Packing": "Pack (40) (8) Base.",
     "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9781785039508,
+    "Master Order ID": "TFV259",
+    "Title": "DIARY OF A DRAG QUEEN (003)",
+    "Trim Height": 198,
+    "Trim Width": 126,
+    "Bind Style": "PU\/2",
+    "Extent": 384,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec": "C400P2",
+    "Cover Spine": 23,
+    "Packing": "Pack (48) (8) Base.",
+    "Status": "POD Ready"
   }
 ]
