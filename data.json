@@ -140460,5 +140460,33 @@
     "Cover Spine": 20,
     "Packing": "Pack (56) (8) Base.",
     "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780241967737,
+    "Master Order ID": "SKX053",
+    "Title": "THE DWARVES OF DEATH (002)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 224,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec": "C400P2",
+    "Cover Spine": 14,
+    "Packing": "Pack (80) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780099526124,
+    "Master Order ID": "TFV915",
+    "Title": "TAIL OF THE BLUE BIRD (021)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 176,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec": "C400P2",
+    "Cover Spine": 11,
+    "Packing": "Pack (104) (8) Base. MUST",
+    "Status": "POD Ready"
   }
 ]
