@@ -141580,5 +141580,19 @@
     "Cover Spine": 27,
     "Packing": "Pack (40) (8) Base.",
     "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780091960094,
+    "Master Order ID": "TGX495",
+    "Title": "THE WIT AND WISDOM OF NIGEL FARAGE (010)",
+    "Trim Height": 156,
+    "Trim Width": 110,
+    "Bind Style": "PU\/2",
+    "Extent": 160,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec": "C400P2",
+    "Cover Spine": 10,
+    "Packing": "Pack (180) (10) Base.",
+    "Status": "MPI"
   }
 ]
