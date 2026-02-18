@@ -142476,5 +142476,19 @@
     "Cover Spine": 5,
     "Packing": "Pack (224) (8) Base.",
     "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780099739913,
+    "Master Order ID": "THW941",
+    "Title": "THE GIANT'S HOUSE (022)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 320,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec": "C400P2",
+    "Cover Spine": 20,
+    "Packing": "Pack (42) MUST",
+    "Status": "POD Ready"
   }
 ]
