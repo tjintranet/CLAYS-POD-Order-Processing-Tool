@@ -144282,5 +144282,33 @@
     "Cover Spine": 30,
     "Packing": "Pack (32) (8) Base.",
     "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780091894597,
+    "Master Order ID": "TFT924",
+    "Title": "THE SIX VALUE MEDALS (014)",
+    "Trim Height": 216,
+    "Trim Width": 135,
+    "Bind Style": "PU\/2",
+    "Extent": 176,
+    "Paper Desc": "Holmen Cream 65 gsm",
+    "Cover Spec": "C400P2",
+    "Cover Spine": 13,
+    "Packing": "Pack (56) (4) Base MUST",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780091914479,
+    "Master Order ID": "TFV257",
+    "Title": "A HOUSE IN THE HIGH HILLS (013)",
+    "Trim Height": 198,
+    "Trim Width": 126,
+    "Bind Style": "PU\/2",
+    "Extent": 336,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec": "C400P2",
+    "Cover Spine": 21,
+    "Packing": "Pack (56) (8) Base - MUST",
+    "Status": "POD Ready"
   }
 ]
