@@ -145178,5 +145178,33 @@
     "Cover Spine": 26,
     "Packing": "Pack (40) (8) Base MUST",
     "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780141342047,
+    "Master Order ID": "TFP562",
+    "Title": "GHOST DETECTIVES THE MISSING DANCER (003)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 224,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec": "C400P2",
+    "Cover Spine": 14,
+    "Packing": "Pack (80) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780141975245,
+    "Master Order ID": "TJL189",
+    "Title": "THE FOURTH REVOLUTION (006)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 336,
+    "Paper Desc": "Holmen Book 55 gsm",
+    "Cover Spec": "C400P2",
+    "Cover Spine": 19,
+    "Packing": "Pack (56) (8) Base.",
+    "Status": "POD Ready"
   }
 ]
