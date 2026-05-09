@@ -142636,14 +142636,14 @@
     "Master Order ID": "THY503",
     "Title": "THE EMPEROR OF ALL THINGS (002)",
     "Trim Height": 198,
-    "Trim Width": 127,
+    "Trim Width": 126,
     "Bind Style": "PU\/2",
     "Extent": 576,
     "Paper Desc": "Holmen Bulky 52 gsm",
     "Cover Spec": "C400P2",
     "Cover Spine": 34,
     "Packing": "Pack (32) (8) Base.",
-    "Status": "MPI"
+    "Status": "POD Ready"
   },
   {
     "ISBN": 9781529159356,
@@ -146115,6 +146115,48 @@
     "Cover Spec": "C400P2",
     "Cover Spine": 24,
     "Packing": "Pack (56) (8) Base MUST",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9781529111354,
+    "Master Order ID": "TJQ400",
+    "Title": "SLEEP DONATION (003)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 176,
+    "Paper Desc": "Holmen Cream 65 gsm",
+    "Cover Spec": "C400P2",
+    "Cover Spine": 13,
+    "Packing": "Pack (88) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780099571582,
+    "Master Order ID": "TJQ522",
+    "Title": "OLD SINS (013)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 992,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec": "C400P2",
+    "Cover Spine": 41,
+    "Packing": "Pack (16) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780099520634,
+    "Master Order ID": "TJQ588",
+    "Title": "IN BORROWED LIGHT (012)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 608,
+    "Paper Desc": "Holmen Book 55 gsm",
+    "Cover Spec": "C400P2",
+    "Cover Spine": 34,
+    "Packing": "Pack (32) (8) Base.",
     "Status": "POD Ready"
   }
 ]
