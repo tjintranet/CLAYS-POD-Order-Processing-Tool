@@ -146270,5 +146270,47 @@
     "Cover Spine": 16,
     "Packing": "Pack (64) (8) Base.",
     "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780552150484,
+    "Master Order ID": "SNJ107",
+    "Title": "THE PURSUIT (00)",
+    "Trim Height": 178,
+    "Trim Width": 106,
+    "Bind Style": "PU\/1",
+    "Extent": 384,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec": "C400P2",
+    "Cover Spine": 24,
+    "Packing": "Pack (70) (10) Base.",
+    "Status": "MPI"
+  },
+  {
+    "ISBN": 9780552150767,
+    "Master Order ID": "SSD356",
+    "Title": "ACORNA'S SEARCH (007)",
+    "Trim Height": 178,
+    "Trim Width": 106,
+    "Bind Style": "PU\/2",
+    "Extent": 352,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec": "C400P2",
+    "Cover Spine": 22,
+    "Packing": "Pack (42) MUST",
+    "Status": "MPI"
+  },
+  {
+    "ISBN": 9780141049571,
+    "Master Order ID": "TJS072",
+    "Title": "THE NET DELUSION (010)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 432,
+    "Paper Desc": "Holmen Book 55 gsm",
+    "Cover Spec": "C400P2",
+    "Cover Spine": 25,
+    "Packing": "Pack (40) (8) Base.",
+    "Status": "POD Ready"
   }
 ]
