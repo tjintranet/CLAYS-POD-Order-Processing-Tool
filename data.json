@@ -146312,5 +146312,19 @@
     "Cover Spine": 25,
     "Packing": "Pack (40) (8) Base.",
     "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780091940898,
+    "Master Order ID": "TJS377",
+    "Title": "MORANTHOLOGY (020)",
+    "Trim Height": 198,
+    "Trim Width": 126,
+    "Bind Style": "PU\/2",
+    "Extent": 368,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec": "C400P2",
+    "Cover Spine": 23,
+    "Packing": "Pack (48) (8) Base. MUST",
+    "Status": "POD Ready"
   }
 ]
