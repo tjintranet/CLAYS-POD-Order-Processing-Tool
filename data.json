@@ -146326,5 +146326,61 @@
     "Cover Spine": 23,
     "Packing": "Pack (48) (8) Base. MUST",
     "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780140424249,
+    "Master Order ID": "SLS833",
+    "Title": "SELECTED POEMS (011)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 384,
+    "Paper Desc": "Holmen Book 52 gsm",
+    "Cover Spec": "C400P2",
+    "Cover Spine": 17,
+    "Packing": "Pack (48) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780140437607,
+    "Master Order ID": "SLU527",
+    "Title": "CON MEN AND CUTPURSES (014)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 336,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec": "C400P2",
+    "Cover Spine": 19,
+    "Packing": "Pack (56) (8) Base.",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780140447712,
+    "Master Order ID": "SLU547",
+    "Title": "SAGAS OF WARRIOR-POETS (018)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 400,
+    "Paper Desc": "Holmen Book 52 gsm",
+    "Cover Spec": "C400P2",
+    "Cover Spine": 18,
+    "Packing": "Pack (32) (8) Base. must",
+    "Status": "POD Ready"
+  },
+  {
+    "ISBN": 9780099569244,
+    "Master Order ID": "TJS453",
+    "Title": "SILENT WITNESSES (010)",
+    "Trim Height": 198,
+    "Trim Width": 129,
+    "Bind Style": "PU\/2",
+    "Extent": 304,
+    "Paper Desc": "Holmen Bulky 52 gsm",
+    "Cover Spec": "C400P2",
+    "Cover Spine": 20,
+    "Packing": "Pack (48) (8) Base. MUST",
+    "Status": "POD Ready"
   }
 ]
